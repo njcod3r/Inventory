@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report Width="8.1in" UnitOfMeasure="Inch" Name="AccountStatment" xmlns="http://schemas.telerik.com/reporting/2012/3.6">
+  <DataSources>
+    <SqlDataSource ConnectionString="MSDBContext" SelectCommand="select * from Sys_Companies where Id=@CompanyId" Name="Companies" ParameterValues="{@CompanyId:1}">
+      <Parameters>
+        <SqlDataSourceParameter DbType="String" Name="@CompanyId">
+          <Value>
+            <String>=Parameters.CompanyId.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+      </Parameters>
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <DetailSection Height="0.459999879201248in" Name="detailSection1">
+      <Style Visible="False">
+        <BorderStyle Top="None" Bottom="Solid" Left="None" Right="None" />
+        <BorderColor Top="Black" Bottom="Black" Left="Black" Right="Black" />
+        <BorderWidth Top="1pt" Bottom="1pt" Left="1pt" Right="1pt" />
+      </Style>
+    </DetailSection>
+    <ReportFooterSection Height="1in" Name="reportFooterSection1">
+      <Style Visible="False" />
+    </ReportFooterSection>
+  </Items>
+  <StyleSheet>
+    <StyleRule>
+      <Style>
+        <Padding Left="2pt" Right="2pt" />
+      </Style>
+      <Selectors>
+        <TypeSelector Type="TextItemBase" />
+        <TypeSelector Type="HtmlTextBox" />
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style Color="Black">
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="9pt" />
+      </Style>
+      <Selectors>
+        <StyleSelector Type="Table" StyleName="Normal.TableNormal" />
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style VerticalAlign="Middle">
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="10pt" />
+      </Style>
+      <Selectors>
+        <DescendantSelector>
+          <Selectors>
+            <TypeSelector Type="Table" />
+            <StyleSelector Type="ReportItem" StyleName="Normal.TableHeader" />
+          </Selectors>
+        </DescendantSelector>
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style>
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="9pt" />
+      </Style>
+      <Selectors>
+        <DescendantSelector>
+          <Selectors>
+            <TypeSelector Type="Table" />
+            <StyleSelector Type="ReportItem" StyleName="Normal.TableBody" />
+          </Selectors>
+        </DescendantSelector>
+      </Selectors>
+    </StyleRule>
+  </StyleSheet>
+  <PageSettings>
+    <PageSettings PaperKind="Letter" Landscape="False">
+      <Margins>
+        <MarginsU Left="0.2in" Right="0.2in" Top="0.3in" Bottom="0.4in" />
+      </Margins>
+    </PageSettings>
+  </PageSettings>
+  <Groups>
+    <Group Name="group1">
+      <GroupHeader>
+        <GroupHeaderSection PrintOnEveryPage="True" Height="1.10000006357829in" Name="groupHeaderSection">
+          <Items>
+            <Table DataSourceName="Companies" Width="7.98094320297241in" Height="0.899999923980622in" Left="0in" Top="0in" RowHeadersPrintOnEveryPage="False" Name="table2">
+              <Body>
+                <Cells>
+                  <TableCell RowIndex="3" ColumnIndex="1" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="9.61935247798667cm" Height="0.507999998446161cm" Left="6.87916647531921cm" Top="5.58270817804751cm" Value="Fax:{Fields.Fax}" CanGrow="False" Name="textBox40" StyleName="">
+                        <Style TextAlign="Left">
+                          <Font Size="10pt" Bold="False" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="2" ColumnIndex="1" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="9.61935247798667cm" Height="0.508000021044451cm" Left="6.87916647531921cm" Top="5.13291652389202cm" Value="Phone:{Fields.Telephone}" CanGrow="False" Name="textBox29" StyleName="">
+                        <Style TextAlign="Left">
+                          <Font Size="10pt" Bold="False" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="1" ColumnIndex="1" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="9.61935247798667cm" Height="0.508000005895279cm" Left="6.87916647531921cm" Top="4.68312486973654cm" Value="= Fields.Address" CanGrow="False" Name="Text1" StyleName="">
+                        <Style TextAlign="Left">
+                          <Font Size="10pt" Bold="False" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="0" ColumnIndex="1" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="3.78714664487664in" Height="0.200000006625871in" Left="2.70833333333333in" Top="1.52083333333333in" Value="= Fields.NameE" Name="textBox1" StyleName="">
+                        <Style Color="195, 47, 11" TextAlign="Left">
+                          <Font Size="11pt" Bold="False" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="0" ColumnIndex="2" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="2.02648580738075in" Height="0.200000006625871in" Left="6.3000005086263in" Top="0.425000031789144in" Name="textBox4" StyleName="">
+                        <Style Color="64, 0, 0" TextAlign="Left">
+                          <Font Size="12pt" Bold="True" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="3" ColumnIndex="2" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="2.02648580738075in" Height="0.199999999388252in" Left="0in" Top="0in" Name="textBox31" StyleName="">
+                        <Style Color="64, 0, 0">
+                          <Font Size="12pt" Bold="True" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="1" ColumnIndex="2" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="2.02648580738075in" Height="0.200000002320976in" Left="0in" Top="0in" Name="textBox33" StyleName="">
+                        <Style Color="64, 0, 0" TextAlign="Left">
+                          <Font Size="12pt" Bold="True" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="2" ColumnIndex="2" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="2.02648580738075in" Height="0.200000008285217in" Left="0in" Top="0in" Value="Account Statment" Name="textBox2" StyleName="">
+                        <Style Color="64, 0, 0" TextAlign="Left">
+                          <Font Size="12pt" Bold="True" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="4" ColumnIndex="1" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="3.78714664487664in" Height="0.100000005709504in" Left="0in" Top="0in" Name="textBox37" StyleName="">
+                        <Style>
+                          <Font Size="9pt" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="4" ColumnIndex="2" RowSpan="1" ColumnSpan="1">
+                    <ReportItem>
+                      <TextBox Width="2.02648580738075in" Height="0.100000005709504in" Left="0in" Top="0in" Name="textBox39" StyleName="">
+                        <Style Color="64, 0, 0">
+                          <Font Size="12pt" Bold="True" />
+                        </Style>
+                      </TextBox>
+                    </ReportItem>
+                  </TableCell>
+                  <TableCell RowIndex="0" ColumnIndex="0" RowSpan="5" ColumnSpan="1">
+                    <ReportItem>
+                      <PictureBox Url="=Fields.Logo" Width="2.16731075071502in" Height="0.899999944097188in" Left="1.99030526479085in" Top="0in" Sizing="Stretch" MimeType="" Name="pictureBox1" />
+                    </ReportItem>
+                  </TableCell>
+                </Cells>
+                <Columns>
+                  <Column Width="2.16731075071502in" />
+                  <Column Width="3.78714664487664in" />
+                  <Column Width="2.02648580738075in" />
+                </Columns>
+                <Rows>
+                  <Row Height="0.19999998779849in" />
+                  <Row Height="0.19999998779849in" />
+                  <Row Height="0.19999998779849in" />
+                  <Row Height="0.19999998779849in" />
+                  <Row Height="0.100000007310289in" />
+                </Rows>
+              </Body>
+              <Corner />
+              <RowGroups>
+                <TableGroup Name="detailTableGroup">
+                  <ChildGroups>
+                    <TableGroup Name="group2" />
+                    <TableGroup Name="group3" />
+                    <TableGroup Name="group4" />
+                    <TableGroup Name="group5" />
+                    <TableGroup Name="group6" />
+                  </ChildGroups>
+                  <Groupings>
+                    <Grouping />
+                  </Groupings>
+                </TableGroup>
+              </RowGroups>
+              <ColumnGroups>
+                <TableGroup Name="tableGroup" />
+                <TableGroup Name="tableGroup1" />
+                <TableGroup Name="tableGroup2" />
+              </ColumnGroups>
+            </Table>
+            <Shape Width="8.09992122650146in" Height="0.0999999046325684in" Left="0in" Top="1in" Name="shape2">
+              <ShapeType>
+                <LineShape Direction="EW" />
+              </ShapeType>
+            </Shape>
+          </Items>
+        </GroupHeaderSection>
+      </GroupHeader>
+      <GroupFooter>
+        <GroupFooterSection Height="0.052083333333333in" Name="groupFooterSection" />
+      </GroupFooter>
+    </Group>
+  </Groups>
+  <ReportParameters>
+    <ReportParameter Name="CompanyId" Type="Integer" Text="CompanyId">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

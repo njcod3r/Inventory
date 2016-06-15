@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report DataSourceName="AccStatment" Width="8.1in" UnitOfMeasure="Inch" Name="BalanceSheet" xmlns="http://schemas.telerik.com/reporting/2012/3.6">
+  <DataSources>
+    <SqlDataSource ConnectionString="MSDBContext" SelectCommand="--declare @CompanyId int=1&#xD;&#xA;--declare @BranchId int=1&#xD;&#xA;--declare @CurrentYearFirstDate datetime ='1/1/2014'&#xD;&#xA;--declare @CurrentYearEndDate datetime ='12/31/2014'&#xD;&#xA;--declare @CompareYearFirstDate  datetime = '1/1/2013'&#xD;&#xA;--declare @CompareYearEndDate  datetime = '12/31/2013'&#xD;&#xA;--declare @Kind  int      = 0  --0 General  &lt;0 Levels&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;------------- General View-----------------------------------&#xD;&#xA;if @Kind=0&#xD;&#xA;&#xD;&#xA;begin&#xD;&#xA;&#xD;&#xA;select AccountCode,AccSort,NameA,NameE,Parent1,Parent1NameA,Parent1NameE,Parent2,Parent2NameA,Parent2NameE,sum(CurrentYearValue) as CurrentYearValue, sum(PreviousYearValue) as PreviousYearValue from(&#xD;&#xA;-------------Current Year&#xD;&#xA;select  AccountCode,AccSort,NameA,NameE,Parent1,Parent1NameA,Parent1NameE,Parent2,Parent2NameA,Parent2NameE,Value as CurrentYearValue, 0 as PreviousYearValue from (&#xD;&#xA;--Assets&#xD;&#xA;select case when Parent3=0 then Code else parent3 end as AccountCode,SUBSTRING (case when Parent3=0 then Code else parent3 end , 1, 1) as AccSort ,&#xD;&#xA; case when Parent3=0 then NameA else  Parent3NameA end as NameA, case when Parent3=0 then NameE else  Parent3NameE end as NameE,&#xD;&#xA;  case when Parent1=0 then Code else Parent1 end as Parent1, case when Parent1=0 then NameA else Parent1NameA end  as Parent1NameA,case when Parent1=0 then NameE else Parent1NameE end  as Parent1NameE,&#xD;&#xA;   case when Parent2=0 then Code else Parent2 end as Parent2,case when Parent2=0 then NameA else Parent2NameA end as Parent2NameA,case when Parent2=0 then NameE else Parent2NameE end as Parent2NameE  ,sum(Value) as Value from(&#xD;&#xA;&#xD;&#xA;SELECT                         GLView_ChartOfAccounts.Id, GLView_ChartOfAccounts.Code, GLView_ChartOfAccounts.NameA, GLView_ChartOfAccounts.NameE, Value,&#xD;&#xA;                         GLView_ChartOfAccounts.Parent1, GLView_ChartOfAccounts.Parent1NameA, GLView_ChartOfAccounts.Parent1NameE, GLView_ChartOfAccounts.Parent2, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent2NameA, GLView_ChartOfAccounts.Parent2NameE,GLView_ChartOfAccounts.Parent3, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent3NameA, GLView_ChartOfAccounts.Parent3NameE&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; &#xD;&#xA;FROM            (SELECT        GL_DailyVoucher_DTL.AccountId,ISNULL( SUM(ISNULL(GL_DailyVoucher_DTL.DebitLocal, 0))-SUM(ISNULL(GL_DailyVoucher_DTL.CreditLocal, 0)),0) AS Value&#xD;&#xA;                           FROM            GL_DailyVoucher INNER JOIN&#xD;&#xA;                                                    GL_DailyVoucher_DTL ON GL_DailyVoucher.Id = GL_DailyVoucher_DTL.DailyVoucherId&#xD;&#xA;                           WHERE       (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) between @CurrentYearFirstDate and  @CurrentYearEndDate) and  GL_DailyVoucher.Source&lt;&gt;22&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    or   (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) &lt; @CurrentYearFirstDate) &#xD;&#xA;                           GROUP BY GL_DailyVoucher_DTL.AccountId) AS DailyVoucher inner JOIN&#xD;&#xA;                         GLView_ChartOfAccounts ON DailyVoucher.AccountId = GLView_ChartOfAccounts.Id where GLView_ChartOfAccounts.CompanyId in (@CompanyId)  and isnull(GLView_ChartOfAccounts.Deleted,0)=0 and Parent1 in  (SELECT Value FROM fn_Split((select distinct AssetsAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(AssetsAccountIds,'')&lt;&gt;''), ','))&#xD;&#xA;&#xD;&#xA;) as TBL1 &#xD;&#xA;&#xD;&#xA;group by case when Parent3=0 then Code else parent3 end ,case when Parent3=0 then NameA else  Parent3NameA end ,case when Parent3=0 then NameE else  Parent3NameE end ,&#xD;&#xA;case when Parent2=0 then Code else parent2 end ,case when Parent2=0 then NameA else  Parent2NameA end ,case when Parent2=0 then NameE else  Parent2NameE end ,&#xD;&#xA;case when Parent1=0 then Code else parent1 end ,case when Parent1=0 then NameA else  Parent1NameA end ,case when Parent1=0 then NameE else  Parent1NameE end &#xD;&#xA;&#xD;&#xA;union all&#xD;&#xA;&#xD;&#xA;--Liabilities&#xD;&#xA;&#xD;&#xA;select case when Parent3=0 then Code else parent3 end as AccountCode,SUBSTRING (case when Parent3=0 then Code else parent3 end , 1, 1) as AccSort ,&#xD;&#xA; case when Parent3=0 then NameA else  Parent3NameA end as NameA, case when Parent3=0 then NameE else  Parent3NameE end as NameE,&#xD;&#xA;  case when Parent1=0 then Code else Parent1 end as Parent1, case when Parent1=0 then NameA else Parent1NameA end  as Parent1NameA,case when Parent1=0 then NameE else Parent1NameE end  as Parent1NameE,&#xD;&#xA;   case when Parent2=0 then Code else Parent2 end as Parent2,case when Parent2=0 then NameA else Parent2NameA end as Parent2NameA,case when Parent2=0 then NameE else Parent2NameE end as Parent2NameE  ,sum(Value) as Value from(&#xD;&#xA;&#xD;&#xA;SELECT                         GLView_ChartOfAccounts.Id, GLView_ChartOfAccounts.Code, GLView_ChartOfAccounts.NameA, GLView_ChartOfAccounts.NameE, Value,&#xD;&#xA;                         GLView_ChartOfAccounts.Parent1, GLView_ChartOfAccounts.Parent1NameA, GLView_ChartOfAccounts.Parent1NameE, GLView_ChartOfAccounts.Parent2, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent2NameA, GLView_ChartOfAccounts.Parent2NameE,GLView_ChartOfAccounts.Parent3, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent3NameA, GLView_ChartOfAccounts.Parent3NameE&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; &#xD;&#xA;FROM            (SELECT        GL_DailyVoucher_DTL.AccountId,ISNULL( SUM(ISNULL(GL_DailyVoucher_DTL.CreditLocal, 0))-SUM(ISNULL(GL_DailyVoucher_DTL.DebitLocal, 0)),0) AS Value&#xD;&#xA;                           FROM            GL_DailyVoucher INNER JOIN&#xD;&#xA;                                                    GL_DailyVoucher_DTL ON GL_DailyVoucher.Id = GL_DailyVoucher_DTL.DailyVoucherId&#xD;&#xA;                                               WHERE       (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) between @CurrentYearFirstDate and  @CurrentYearEndDate) and  GL_DailyVoucher.Source&lt;&gt;22&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    or   (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) &lt; @CurrentYearFirstDate) &#xD;&#xA;                           GROUP BY GL_DailyVoucher_DTL.AccountId) AS DailyVoucher inner JOIN&#xD;&#xA;                         GLView_ChartOfAccounts ON DailyVoucher.AccountId = GLView_ChartOfAccounts.Id where GLView_ChartOfAccounts.CompanyId in (@CompanyId)  and isnull(GLView_ChartOfAccounts.Deleted,0)=0 and Parent1 in  (SELECT Value FROM fn_Split((select distinct LiabilitiesAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(LiabilitiesAccountIds,'')&lt;&gt;''), ','))&#xD;&#xA;&#xD;&#xA;) as TBL1 &#xD;&#xA;&#xD;&#xA;group by case when Parent3=0 then Code else parent3 end ,case when Parent3=0 then NameA else  Parent3NameA end ,case when Parent3=0 then NameE else  Parent3NameE end ,&#xD;&#xA;case when Parent2=0 then Code else parent2 end ,case when Parent2=0 then NameA else  Parent2NameA end ,case when Parent2=0 then NameE else  Parent2NameE end ,&#xD;&#xA;case when Parent1=0 then Code else parent1 end ,case when Parent1=0 then NameA else  Parent1NameA end ,case when Parent1=0 then NameE else  Parent1NameE end &#xD;&#xA;&#xD;&#xA;union all &#xD;&#xA;select '999999999999999' ,9,'صافى ربح خسارة الفترة','Period Net Loss &amp; Profit',&#xD;&#xA;(select max(Value) from(&#xD;&#xA;SELECT Value FROM fn_Split((select distinct LiabilitiesAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId&#xD;&#xA;and isnull(LiabilitiesAccountIds,'')&lt;&gt;''), ',')) as t) &#xD;&#xA;,'','','','','',sum(Value)&#xD;&#xA;&#xD;&#xA;FROM            (SELECT        GL_DailyVoucher_DTL.AccountId,ISNULL( SUM(ISNULL(GL_DailyVoucher_DTL.DebitLocal, 0))-SUM(ISNULL(GL_DailyVoucher_DTL.CreditLocal, 0)),0) AS Value&#xD;&#xA;                           FROM            GL_DailyVoucher INNER JOIN&#xD;&#xA;                                                    GL_DailyVoucher_DTL ON GL_DailyVoucher.Id = GL_DailyVoucher_DTL.DailyVoucherId&#xD;&#xA;                                                 WHERE       (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) between @CurrentYearFirstDate and  @CurrentYearEndDate) and  GL_DailyVoucher.Source&lt;&gt;22&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    or   (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) &lt; @CurrentYearFirstDate) &#xD;&#xA;                           GROUP BY GL_DailyVoucher_DTL.AccountId) AS DailyVoucher inner JOIN&#xD;&#xA;                         GLView_ChartOfAccounts ON DailyVoucher.AccountId = GLView_ChartOfAccounts.Id where GLView_ChartOfAccounts.CompanyId in (@CompanyId)  and isnull(GLView_ChartOfAccounts.Deleted,0)=0&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; and  GLView_ChartOfAccounts.Parent1 in  (&#xD;&#xA;                         SELECT Value FROM fn_Split((select distinct AssetsAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(AssetsAccountIds,'')&lt;&gt;''), ',')&#xD;&#xA;                         union all&#xD;&#xA;                         SELECT Value FROM fn_Split((select distinct LiabilitiesAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(LiabilitiesAccountIds,'')&lt;&gt;''), ',')&#xD;&#xA;                           )&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;) as CurrentYear&#xD;&#xA;&#xD;&#xA;-------------End Current Year-----------------&#xD;&#xA;union all&#xD;&#xA;-------------Previous Year--------------------&#xD;&#xA;select AccountCode,AccSort,NameA,NameE,Parent1,Parent1NameA,Parent1NameE,Parent2,Parent2NameA,Parent2NameE,0 as CurrentYearValue,Value as PreviousYearValue from (&#xD;&#xA;--Assets&#xD;&#xA;select case when Parent3=0 then Code else parent3 end as AccountCode,SUBSTRING (case when Parent3=0 then Code else parent3 end , 1, 1) as AccSort ,&#xD;&#xA; case when Parent3=0 then NameA else  Parent3NameA end as NameA, case when Parent3=0 then NameE else  Parent3NameE end as NameE,&#xD;&#xA;  case when Parent1=0 then Code else Parent1 end as Parent1, case when Parent1=0 then NameA else Parent1NameA end  as Parent1NameA,case when Parent1=0 then NameE else Parent1NameE end  as Parent1NameE,&#xD;&#xA;   case when Parent2=0 then Code else Parent2 end as Parent2,case when Parent2=0 then NameA else Parent2NameA end as Parent2NameA,case when Parent2=0 then NameE else Parent2NameE end as Parent2NameE  ,sum(Value) as Value from(&#xD;&#xA;&#xD;&#xA;SELECT                         GLView_ChartOfAccounts.Id, GLView_ChartOfAccounts.Code, GLView_ChartOfAccounts.NameA, GLView_ChartOfAccounts.NameE, Value,&#xD;&#xA;                         GLView_ChartOfAccounts.Parent1, GLView_ChartOfAccounts.Parent1NameA, GLView_ChartOfAccounts.Parent1NameE, GLView_ChartOfAccounts.Parent2, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent2NameA, GLView_ChartOfAccounts.Parent2NameE,GLView_ChartOfAccounts.Parent3, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent3NameA, GLView_ChartOfAccounts.Parent3NameE&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; &#xD;&#xA;FROM            (SELECT        GL_DailyVoucher_DTL.AccountId,ISNULL( SUM(ISNULL(GL_DailyVoucher_DTL.DebitLocal, 0))-SUM(ISNULL(GL_DailyVoucher_DTL.CreditLocal, 0)),0) AS Value&#xD;&#xA;                           FROM            GL_DailyVoucher INNER JOIN&#xD;&#xA;                                                    GL_DailyVoucher_DTL ON GL_DailyVoucher.Id = GL_DailyVoucher_DTL.DailyVoucherId&#xD;&#xA;                                                    WHERE       (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) between @CompareYearFirstDate and  @CompareYearEndDate) and  GL_DailyVoucher.Source&lt;&gt;22&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    or   (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) &lt; @CompareYearFirstDate) &#xD;&#xA;                           GROUP BY GL_DailyVoucher_DTL.AccountId) AS DailyVoucher inner JOIN&#xD;&#xA;                         GLView_ChartOfAccounts ON DailyVoucher.AccountId = GLView_ChartOfAccounts.Id where GLView_ChartOfAccounts.CompanyId in (@CompanyId)  and isnull(GLView_ChartOfAccounts.Deleted,0)=0 and Parent1 in  (SELECT Value FROM fn_Split((select distinct AssetsAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(AssetsAccountIds,'')&lt;&gt;''), ','))&#xD;&#xA;&#xD;&#xA;) as TBL1 &#xD;&#xA;&#xD;&#xA;group by case when Parent3=0 then Code else parent3 end ,case when Parent3=0 then NameA else  Parent3NameA end ,case when Parent3=0 then NameE else  Parent3NameE end ,&#xD;&#xA;case when Parent2=0 then Code else parent2 end ,case when Parent2=0 then NameA else  Parent2NameA end ,case when Parent2=0 then NameE else  Parent2NameE end ,&#xD;&#xA;case when Parent1=0 then Code else parent1 end ,case when Parent1=0 then NameA else  Parent1NameA end ,case when Parent1=0 then NameE else  Parent1NameE end &#xD;&#xA;&#xD;&#xA;union all&#xD;&#xA;&#xD;&#xA;--Liabilities&#xD;&#xA;&#xD;&#xA;select case when Parent3=0 then Code else parent3 end as AccountCode,SUBSTRING (case when Parent3=0 then Code else parent3 end , 1, 1) as AccSort ,&#xD;&#xA; case when Parent3=0 then NameA else  Parent3NameA end as NameA, case when Parent3=0 then NameE else  Parent3NameE end as NameE,&#xD;&#xA;  case when Parent1=0 then Code else Parent1 end as Parent1, case when Parent1=0 then NameA else Parent1NameA end  as Parent1NameA,case when Parent1=0 then NameE else Parent1NameE end  as Parent1NameE,&#xD;&#xA;   case when Parent2=0 then Code else Parent2 end as Parent2,case when Parent2=0 then NameA else Parent2NameA end as Parent2NameA,case when Parent2=0 then NameE else Parent2NameE end as Parent2NameE  ,sum(Value) as Value from(&#xD;&#xA;&#xD;&#xA;SELECT                         GLView_ChartOfAccounts.Id, GLView_ChartOfAccounts.Code, GLView_ChartOfAccounts.NameA, GLView_ChartOfAccounts.NameE, Value,&#xD;&#xA;                         GLView_ChartOfAccounts.Parent1, GLView_ChartOfAccounts.Parent1NameA, GLView_ChartOfAccounts.Parent1NameE, GLView_ChartOfAccounts.Parent2, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent2NameA, GLView_ChartOfAccounts.Parent2NameE,GLView_ChartOfAccounts.Parent3, &#xD;&#xA;                         GLView_ChartOfAccounts.Parent3NameA, GLView_ChartOfAccounts.Parent3NameE&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; &#xD;&#xA;FROM            (SELECT        GL_DailyVoucher_DTL.AccountId,ISNULL( SUM(ISNULL(GL_DailyVoucher_DTL.CreditLocal, 0))-SUM(ISNULL(GL_DailyVoucher_DTL.DebitLocal, 0)),0) AS Value&#xD;&#xA;                           FROM            GL_DailyVoucher INNER JOIN&#xD;&#xA;                                                    GL_DailyVoucher_DTL ON GL_DailyVoucher.Id = GL_DailyVoucher_DTL.DailyVoucherId&#xD;&#xA;                                                    WHERE       (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) between @CompareYearFirstDate and  @CompareYearEndDate) and  GL_DailyVoucher.Source&lt;&gt;22&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    or   (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) &lt; @CompareYearFirstDate) &#xD;&#xA;                           GROUP BY GL_DailyVoucher_DTL.AccountId) AS DailyVoucher inner JOIN&#xD;&#xA;                         GLView_ChartOfAccounts ON DailyVoucher.AccountId = GLView_ChartOfAccounts.Id where GLView_ChartOfAccounts.CompanyId in (@CompanyId)  and isnull(GLView_ChartOfAccounts.Deleted,0)=0 and Parent1 in  (SELECT Value FROM fn_Split((select distinct LiabilitiesAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(LiabilitiesAccountIds,'')&lt;&gt;''), ','))&#xD;&#xA;&#xD;&#xA;) as TBL1 &#xD;&#xA;&#xD;&#xA;group by case when Parent3=0 then Code else parent3 end ,case when Parent3=0 then NameA else  Parent3NameA end ,case when Parent3=0 then NameE else  Parent3NameE end ,&#xD;&#xA;case when Parent2=0 then Code else parent2 end ,case when Parent2=0 then NameA else  Parent2NameA end ,case when Parent2=0 then NameE else  Parent2NameE end ,&#xD;&#xA;case when Parent1=0 then Code else parent1 end ,case when Parent1=0 then NameA else  Parent1NameA end ,case when Parent1=0 then NameE else  Parent1NameE end &#xD;&#xA;&#xD;&#xA;union all &#xD;&#xA;select '999999999999999' ,9,'صافى ربح خسارة الفترة','Period Net Loss &amp; Profit',&#xD;&#xA;(select max(Value) from(&#xD;&#xA;SELECT Value FROM fn_Split((select distinct LiabilitiesAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId&#xD;&#xA;and isnull(LiabilitiesAccountIds,'')&lt;&gt;''), ',')) as t) &#xD;&#xA;,'','','','','',sum(Value)&#xD;&#xA;&#xD;&#xA;FROM            (SELECT        GL_DailyVoucher_DTL.AccountId,ISNULL( SUM(ISNULL(GL_DailyVoucher_DTL.DebitLocal, 0))-SUM(ISNULL(GL_DailyVoucher_DTL.CreditLocal, 0)),0) AS Value&#xD;&#xA;                           FROM            GL_DailyVoucher INNER JOIN&#xD;&#xA;                                                    GL_DailyVoucher_DTL ON GL_DailyVoucher.Id = GL_DailyVoucher_DTL.DailyVoucherId&#xD;&#xA;                                                    WHERE       (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) between @CompareYearFirstDate and  @CompareYearEndDate) and  GL_DailyVoucher.Source&lt;&gt;22&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    or   (GL_DailyVoucher.CompanyId IN (@CompanyId)) AND (GL_DailyVoucher.BranchId IN (@BranchId)) AND (CAST(GL_DailyVoucher_DTL.TransactDate_Gregi AS date) &lt; @CompareYearFirstDate) &#xD;&#xA;                           GROUP BY GL_DailyVoucher_DTL.AccountId) AS DailyVoucher inner JOIN&#xD;&#xA;                         GLView_ChartOfAccounts ON DailyVoucher.AccountId = GLView_ChartOfAccounts.Id where GLView_ChartOfAccounts.CompanyId in (@CompanyId)  and isnull(GLView_ChartOfAccounts.Deleted,0)=0&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; and  GLView_ChartOfAccounts.Parent1 in  (&#xD;&#xA;                         SELECT Value FROM fn_Split((select distinct AssetsAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(AssetsAccountIds,'')&lt;&gt;''), ',')&#xD;&#xA;                         union all&#xD;&#xA;                         SELECT Value FROM fn_Split((select distinct LiabilitiesAccountIds from GL_Setting_Defaults where CompanyId=@CompanyId and isnull(LiabilitiesAccountIds,'')&lt;&gt;''), ',')&#xD;&#xA;                           )&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;) as PreviousYear&#xD;&#xA;------------- End of Previous Year-------------&#xD;&#xA;) as finalTbl&#xD;&#xA;group by  AccountCode,AccSort,NameA,NameE,Parent1,Parent1NameA,Parent1NameE,Parent2,Parent2NameA,Parent2NameE&#xD;&#xA;order by AccSort,AccountCode&#xD;&#xA;end&#xD;&#xA;------------- End of General View-------------" Name="AccStatment" ParameterValues="{@CompanyId:1},{@BranchId:1},{@CurrentYearFirstDate:1/1/2014},{@CurrentYearEndDate:12/31/2014},{@CompareYearFirstDate:1/1/2013},{@CompareYearEndDate:12/31/2013},{@Kind:0}">
+      <Parameters>
+        <SqlDataSourceParameter DbType="Int32" Name="@CompanyId">
+          <Value>
+            <String>=Parameters.CompanyId.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="Int32" Name="@BranchId">
+          <Value>
+            <String>=Parameters.BranchId.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="DateTime" Name="@CurrentYearFirstDate">
+          <Value>
+            <String>=Parameters.CurrentYearFirstDate.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="DateTime" Name="@CurrentYearEndDate">
+          <Value>
+            <String>=Parameters.CurrentYearEndDate.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="DateTime" Name="@CompareYearFirstDate">
+          <Value>
+            <String>=Parameters.CompareYearFirstDate.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="DateTime" Name="@CompareYearEndDate">
+          <Value>
+            <String>=Parameters.CompareYearEndDate.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="Int16" Name="@Kind">
+          <Value>
+            <String>=Parameters.Kind.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+      </Parameters>
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <DetailSection Height="0.230078856150309in" Name="detailSection1">
+      <Style>
+        <BorderStyle Top="None" Bottom="None" Left="None" Right="None" />
+        <BorderColor Top="Black" Bottom="Black" Left="Black" Right="Black" />
+        <BorderWidth Top="1pt" Bottom="1pt" Left="1pt" Right="1pt" />
+      </Style>
+      <Items>
+        <TextBox Width="1.20000004768372in" Height="0.23in" Left="2.4999213218689in" Top="0in" Value="= IIf(Fields.AccountCode=999999999999999,&quot;&quot;,Fields.AccountCode)" Name="textBox5">
+          <Style>
+            <Font Bold="True" />
+          </Style>
+        </TextBox>
+        <TextBox Width="1.90007909138997in" Height="0.23in" Left="3.79992167154948in" Top="0in" Value="=Fields.NameE" Name="textBox6">
+          <Style>
+            <Font Bold="True" />
+          </Style>
+        </TextBox>
+        <TextBox Width="1.20000012715658in" Height="0.23in" Left="5.70000076293945in" Top="0in" Value="= Fields.CurrentYearValue" Format="{0:N2}" Name="textBox10">
+          <Style>
+            <Font Bold="True" />
+          </Style>
+        </TextBox>
+        <TextBox Width="1.08086335659027in" Height="0.230000004172325in" Left="6.90007972717285in" Top="0in" Value="= Fields.PreviousYearValue" Format="{0:N2}" Name="textBox11">
+          <Style>
+            <Font Bold="True" />
+          </Style>
+        </TextBox>
+      </Items>
+    </DetailSection>
+    <PageFooterSection Height="0.500000000000001in" Name="pageFooterSection1">
+      <Items>
+        <TextBox Width="1.20000012715658in" Height="0.199999809265137in" Left="6.78094291687012in" Top="0.200000127156576in" Value="= 'Page ' + PageNumber + ' of ' + PageCount" Name="textBox7" />
+        <TextBox Width="2.60000006357829in" Height="0.199999809265137in" Left="3.29999987284342in" Top="0.200000127156576in" Value="='Print date: ' + Now()" Name="textBox8" />
+        <TextBox Width="2.60000014305115in" Height="0.199999809265137in" Left="0.100000023841858in" Top="0.200000127156576in" Value="='User: ' + Parameters.UserName.Value" Name="textBox9" />
+      </Items>
+    </PageFooterSection>
+  </Items>
+  <StyleSheet>
+    <StyleRule>
+      <Style>
+        <Padding Left="2pt" Right="2pt" />
+      </Style>
+      <Selectors>
+        <TypeSelector Type="TextItemBase" />
+        <TypeSelector Type="HtmlTextBox" />
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style Color="Black">
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="9pt" />
+      </Style>
+      <Selectors>
+        <StyleSelector Type="Table" StyleName="Normal.TableNormal" />
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style VerticalAlign="Middle">
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="10pt" />
+      </Style>
+      <Selectors>
+        <DescendantSelector>
+          <Selectors>
+            <TypeSelector Type="Table" />
+            <StyleSelector Type="ReportItem" StyleName="Normal.TableHeader" />
+          </Selectors>
+        </DescendantSelector>
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style>
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="9pt" />
+      </Style>
+      <Selectors>
+        <DescendantSelector>
+          <Selectors>
+            <TypeSelector Type="Table" />
+            <StyleSelector Type="ReportItem" StyleName="Normal.TableBody" />
+          </Selectors>
+        </DescendantSelector>
+      </Selectors>
+    </StyleRule>
+  </StyleSheet>
+  <PageSettings>
+    <PageSettings PaperKind="Letter" Landscape="False">
+      <Margins>
+        <MarginsU Left="0.2in" Right="0.2in" Top="0.3in" Bottom="0.4in" />
+      </Margins>
+    </PageSettings>
+  </PageSettings>
+  <Groups>
+    <Group Name="group1">
+      <GroupHeader>
+        <GroupHeaderSection PrintOnEveryPage="True" Height="0.829999963442486in" Name="groupHeaderSection">
+          <Style>
+            <BorderStyle Bottom="Solid" />
+          </Style>
+          <Items>
+            <SubReport Width="8.09988149007162in" Height="0.300000190734863in" Left="0.00003941853841146in" Top="0in" Name="subReportHeadr">
+              <ReportSource>
+                <UriReportSource Uri="../Header.trdx">
+                  <Parameters>
+                    <Parameter Name="CompanyId">
+                      <Value>
+                        <String>=Parameters.CompanyId.Value</String>
+                      </Value>
+                    </Parameter>
+                    <Parameter Name="Title">
+                      <Value>
+                        <String>=Parameters.Title.Value</String>
+                      </Value>
+                    </Parameter>
+                  </Parameters>
+                </UriReportSource>
+              </ReportSource>
+            </SubReport>
+            <TextBox Width="1.20000012715658in" Height="0.23in" Left="5.70000076293945in" Top="0.599999984105428in" Value="= Parameters.CurrentYear.Value" Format="" Name="textBox12">
+              <Style>
+                <Font Size="12pt" Bold="True" Underline="False" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.08086335659027in" Height="0.230000004172325in" Left="6.90007972717285in" Top="0.599999984105428in" Value="= Parameters.CompareYear.Value" Format="" Name="textBox13">
+              <Style>
+                <Font Size="12pt" Bold="True" Underline="False" />
+              </Style>
+            </TextBox>
+          </Items>
+        </GroupHeaderSection>
+      </GroupHeader>
+      <GroupFooter>
+        <GroupFooterSection Height="0.0520833333333328in" Name="groupFooterSection" />
+      </GroupFooter>
+    </Group>
+    <Group Name="group">
+      <GroupHeader>
+        <GroupHeaderSection Height="0.370000044504801in" Name="groupHeaderSection1">
+          <Items>
+            <TextBox Width="0.900000127156575in" Height="0.269960543314616in" Left="0.0999999841054281in" Top="0.0700000127156575in" Value="=Fields.Parent1" Name="textBox1">
+              <Style>
+                <Font Size="13pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="3.99992148081462in" Height="0.269960543314616in" Left="1in" Top="0.0700000127156575in" Value="=Fields.Parent1NameE" Name="textBox2">
+              <Style>
+                <Font Size="13pt" Bold="True" />
+              </Style>
+            </TextBox>
+          </Items>
+        </GroupHeaderSection>
+      </GroupHeader>
+      <GroupFooter>
+        <GroupFooterSection Height="0.399999777475993in" Name="groupFooterSection1">
+          <Style>
+            <BorderStyle Top="Solid" Bottom="Solid" />
+          </Style>
+          <Items>
+            <TextBox Width="1.20000016689301in" Height="0.269960552453995in" Left="5.70000076293945in" Top="0.099999745686849in" Value="= IIf(Fields.AccountCode=&quot;&quot;,&quot;&quot;,sum(Fields.CurrentYearValue))" Format="{0:N2}" Name="textBox14">
+              <Style>
+                <Font Size="12pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="3.20000052452087in" Height="0.269960552453995in" Left="2.49992116292318in" Top="0.099999745686849in" Value="= IIf(Fields.AccountCode=&quot;&quot;,&quot;&quot;,&quot;Total &quot; + Fields.Parent1NameE)" Name="textBox16">
+              <Style>
+                <Font Size="13pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.1998412211736in" Height="0.269960552453995in" Left="6.90007972717285in" Top="0.099999745686849in" Value="= IIf(Fields.AccountCode=&quot;&quot;,&quot;&quot;,sum(Fields.PreviousYearValue))" Format="{0:N2}" Name="textBox19">
+              <Style>
+                <Font Size="12pt" Bold="True" />
+              </Style>
+            </TextBox>
+          </Items>
+        </GroupFooterSection>
+      </GroupFooter>
+      <Groupings>
+        <Grouping Expression="=Fields.Parent1" />
+      </Groupings>
+    </Group>
+    <Group Name="group2">
+      <GroupHeader>
+        <GroupHeaderSection Height="0.299999713897705in" Name="groupHeaderSection2">
+          <Items>
+            <TextBox Width="1.39992125829061in" Height="0.23in" Left="1in" Top="0in" Value="=Fields.Parent2" Name="textBox3">
+              <Style VerticalAlign="Middle">
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="2.90000089009603in" Height="0.23in" Left="2.4999213218689in" Top="0in" Value="=Fields.Parent2NameE" Name="textBox4">
+              <Style VerticalAlign="Middle">
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+          </Items>
+        </GroupHeaderSection>
+      </GroupHeader>
+      <GroupFooter>
+        <GroupFooterSection Height="0.299842327833176in" Name="groupFooterSection2">
+          <Style>
+            <BorderStyle Top="Solid" Bottom="Solid" />
+          </Style>
+          <Items>
+            <TextBox Width="3.20007952054342in" Height="0.230000004172325in" Left="2.49992116292318in" Top="0in" Value="=IIf(Fields.AccountCode=999999999999999,&quot;&quot;,&quot;Total &quot;+Fields.Parent2NameE)" Name="textBox15">
+              <Style VerticalAlign="Middle">
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.20000016689301in" Height="0.230000004172325in" Left="5.70000076293945in" Top="0in" Value="= IIf(Fields.AccountCode=999999999999999,&quot;&quot;,sum(Fields.CurrentYearValue))" Format="{0:N2}" Name="textBox17">
+              <Style VerticalAlign="Middle">
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.08086335659027in" Height="0.230000004172325in" Left="6.90007972717285in" Top="0in" Value="= IIf(Fields.AccountCode=999999999999999,&quot;&quot;,sum(Fields.PreviousYearValue))" Format="{0:N2}" Name="textBox18">
+              <Style VerticalAlign="Middle">
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+          </Items>
+        </GroupFooterSection>
+      </GroupFooter>
+      <Groupings>
+        <Grouping Expression="=Fields.Parent2" />
+      </Groupings>
+    </Group>
+  </Groups>
+  <ReportParameters>
+    <ReportParameter Name="CompanyId" Type="Integer" Text="CompanyId">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="BranchId" Type="Integer" Text="BranchId" MultiValue="True">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="UserName">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="Title" Text=" ">
+      <Value>
+        <String>Balance Sheet</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="CurrentYearEndDate" Type="DateTime" Text="CurrentYearEndDate">
+      <Value>
+        <String>12/31/2014</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="CompareYearEndDate" Type="DateTime" Text="CompareYearEndDate">
+      <Value>
+        <String>12/31/2013</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="Kind" Type="Integer" Text="Kind">
+      <Value>
+        <String>0</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="CurrentYear" />
+    <ReportParameter Name="CompareYear" />
+    <ReportParameter Name="CurrentYearFirstDate" Type="DateTime" Text="CurrentYearFirstDate">
+      <Value>
+        <String>1/1/2014</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="CompareYearFirstDate" Type="DateTime" Text="CompareYearFirstDate">
+      <Value>
+        <String>1/1/2013</String>
+      </Value>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

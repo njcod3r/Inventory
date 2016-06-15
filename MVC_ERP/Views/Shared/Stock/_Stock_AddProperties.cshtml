@@ -1,0 +1,131 @@
+﻿@(Html.Kendo().TabStrip()
+                .Name("tabstrip")
+                
+                .Items(tabstrip =>
+                    
+                {
+                    
+                    tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "تفاصيل التخزين" : "Storage Detail")
+                   .Selected(true)
+                   .Content(@<text>
+
+                  <br />
+                  @(Html.Kendo().Grid<MVC_ERP.Models.Stock_AddProperties_Location>()
+                                      .Name("LocationGrid")
+
+                                      .Columns(columns =>
+                                      {
+
+                                          columns.Bound(c => c.Id).Hidden();
+                                          columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('LocationGrid') #").Width(50);
+                                          columns.Bound(c => c.ShelveId).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "شيلف" : "Shelve").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillShelves" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= ShelveName #");
+                                          columns.Bound(c => c.RackId).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "راك" : "Rack").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillRacks" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= RackName #");
+                                          columns.Bound(c => c.RowId).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "صف" : "Row").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillRackRows" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= RowName #");
+                                          columns.Bound(c => c.CaseId).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "درج" : "Case").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillRackCases" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= CaseName #");
+                                          columns.Bound(c => c.ValidDate).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "تاريخ الصلاحية" : "Valid Date").ClientTemplate("#= (ValidDate == null) ? ' ' : kendo.toString(ValidDate, 'dd/MM/yyyy') #");
+                                          columns.Bound(c => c.ColorId).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "اللون" : "Color").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillColors" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= ColorName #");
+                                          columns.Bound(c => c.Quantity).Width(80).Title((Request.Cookies["Language"].Value == "Arabic") ? "الكمية" : "Quantity");
+
+
+
+
+                                      })
+                    .Selectable()
+                    .Scrollable(scrolling => scrolling.Height(200))
+                    .Sortable()
+                                .ToolBar(toolBar =>
+                                                                     {
+
+                                                                         toolBar.Create().Text("Add record").HtmlAttributes(new { style = "color: #562727" });
+                                                                         toolBar.Custom().Text("Remove record").HtmlAttributes(new { id = "BtnRemoveCostCenter", style = "color: #562727" });
+
+
+                                                                     })
+
+           .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                 .Model(model =>
+                       {
+                           model.Id(p => p.Id);
+                           model.Field(p => p.ShelveId);
+                       })
+                .PageSize(100)
+                               .Read(read => read.Action("LoadLocationGrid", "Stock_OpeningBalance").Data("SetLocationRowId"))
+
+                                                       .ServerOperation(false)
+
+
+
+            )
+                  
+              
+
+                                                          .Events(ev => ev.DataBound("GridDataBound"))
+                                                          .Events(ev => ev.Edit("GridEdit"))
+
+            
+
+)
+
+                    </text>);
+
+                 
+    
+       tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "السريال" : "Serial")
+
+                    .Content(@<text>
+               <br />
+               @(Html.Kendo().Grid<MVC_ERP.Models.Stock_AddProperties_Serial>()
+                                      .Name("SerialGrid")
+
+                                      .Columns(columns =>
+                                      {
+
+
+                                          columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('SerialGrid') #").Width(50);
+                                          columns.Bound(c => c.Serial).Width(200).Title((Request.Cookies["Language"].Value == "Arabic") ? "السريال" : "Serial");
+
+
+
+
+                                      })
+
+           .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                 .Model(model =>
+                       {
+                           model.Id(p => p.Id);
+                       })
+                .PageSize(100)
+                        .Read(read => read.Action("LoadSerialGrid", "Stock_OpeningBalance").Data("SetSerialRowId"))
+
+                                                       .ServerOperation(false)
+
+
+
+            )
+                  .ToolBar(toolBar =>
+                                                             {
+
+                                                                 toolBar.Create().Text("Add record").HtmlAttributes(new { style = "color: #562727" });
+                                                                 toolBar.Custom().Text("Remove record").HtmlAttributes(new { id = "BtnRemoveCostCenter", style = "color: #562727" });
+
+
+                                                             })
+
+                                                          .Events(ev => ev.DataBound("GridDataBound"))
+                                                          .Events(ev => ev.Edit("GridEdit"))
+
+            .Selectable()
+                      .Scrollable(scrolling => scrolling.Height(200))
+            .Sortable()
+
+)
+                    </text>);
+    
+   
+
+                })
+)

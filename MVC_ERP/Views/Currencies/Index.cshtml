@@ -1,0 +1,372 @@
+﻿@model  MVC_ERP.Models.Sys_Currencies
+
+
+    @{
+        ViewBag.Title = "Currencies";
+         
+        <script>
+            document.getElementById("LBLFormHDR").innerText = "Currencies";
+        </script>
+
+    }
+
+    <div style="margin-left:10px;margin-right:10px">
+        <div class="row">
+            <br />
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false)
+            @* Hidden Fields *@
+            @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+            @* End Of Hidden Fields *@
+
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Code")
+            </div>
+            <div class="col-xs-12 col-sm-10" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @placeholder = "Leave empty to generate auto code" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("English name")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.NameE, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Arabic name")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.NameA, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("English symbol")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.SymbolE, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Arabic symbol")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.SymbolA, new { @class = "form-control" })
+            </div>
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Base currency")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.CheckBoxFor(model => model.BaseCurrency, new { @class = "", @type = "checkbox" })
+            </div>
+
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Beginning rate")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.Kendo().NumericTextBoxFor(model => model.Rate).HtmlAttributes(new { style = "width:100%; max-width:280px;left:0;margin:0;text-align:left" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Notes")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Notes, new { @class = "form-control" })
+            </div>
+         
+
+        </div>
+    </div>
+
+<form>
+    <div style="margin-left:10px;margin-right:10px">
+        <br />
+
+        @{
+         int counter = 0;
+        }
+        @(Html.Kendo().Grid(Model.Sys_Currencies_Rates)
+                     .Name("DetailGrid")
+                    
+
+                     .Columns(columns =>
+                     {
+                         @*columns.Template(@<text>  counter++ </text>).Title("#");*@
+                         columns.Bound(c => c.Id).Hidden().ClientTemplate("#= Id #" + "<input type='hidden' name='Sys_Currencies_Rates[#= index(data)#].Id' value='#= Id #' />");
+                         columns.Bound(c => c.CurrencyId).Hidden().ClientTemplate("#= CurrencyId #" + "<input type='hidden' name='Sys_Currencies_Rates[#= index(data)#].CurrencyId' value='#= CurrencyId #' />");
+                         columns.Bound(c => c.ChangeDate).ClientTemplate("#= kendo.toString(ChangeDate, \"MM/dd/yyyy\")  #" + "<input type='hidden' name='Sys_Currencies_Rates[#= index(data)#].ChangeDate' value='#= kendo.toString(ChangeDate, \"MM/dd/yyyy\") #' />").Format("{0:MM/dd/yyyy}");
+                         columns.Bound(c => c.Rate).ClientTemplate("#= Rate #" + "<input type='hidden' name='Sys_Currencies_Rates[#= index(data)#].Rate' value='#= Rate #' />");
+                         columns.Command(command => command.Destroy()).Width(100);
+                     })
+
+         //.AutoBind(true)
+
+                     //.Sortable()
+                             .HtmlAttributes(new { style = "width:100%;min-height:100px;height:100%" })
+                             .Scrollable(scrolling => scrolling.Height(250))
+                     .ToolBar(toolBar =>
+                        {
+                            toolBar.Create();
+                           // toolBar.Save();
+
+                        })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+                                          // .Batch(true)
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+                                           //model.Field(p => p.Id).Editable(false);
+                                       })
+                                                   .PageSize(1000)
+                                                   .Read(read => read.Action("LoadDetailGrid", "Currencies").Data("SetCurrencyId"))
+                              
+                                           .ServerOperation(false)
+
+                                          )
+
+                              //.Selectable()
+                              //.Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                              //.Events(events => events.Change("item_selected"))
+            )
+
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            @* Window *@
+            @(Html.Kendo().Window().Name("window").Title("Search Currencies")
+            .Content(@<text>
+
+                <br />
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="txtSearchValue" type="text" class="form-control" style="max-width:3000px" placeholder="Search">
+                            <span class="input-group-btn">
+                                <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                            </span>
+                        </div><!-- /input-group -->
+                    </div><!-- /.col-lg-6 -->
+                </div><!-- /.row -->
+
+                <br />
+
+                <div style="width:100%; height:300px">
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Sys_Currencies>()
+             .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code);
+                 columns.Bound(c => c.NameE);
+                 columns.Bound(c => c.NameA);
+                 columns.Bound(c => c.BaseCurrency);
+             })
+
+
+                 .Sortable()
+                .HtmlAttributes(new { style = "width:100%;min-height:200px;height:100%" })
+
+                       .Scrollable(scrolling => scrolling.Height(250))
+
+
+                          .DataSource(dataSource => dataSource.Ajax()
+                              //.ServerOperation(true)
+
+                           .PageSize(1000)
+                           .Read(read => read
+                                       .Action("Search", "Currencies").Data("SetSearchValue")
+                            ))
+
+                     .Selectable()
+                      .Filterable()
+                      .EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                    )
+
+                </div>
+
+                <br />
+
+            </text>)
+                                        .Scrollable(false)
+                                        .Visible(false)
+                                         .Modal(true)
+                                         .Actions(actions => actions.Close())
+                                         .Events(ev => ev.Close("onClose"))
+
+
+            )
+
+
+
+
+        </div>
+
+    </div>
+    @* End Window *@
+    @*Close from here don't have Open Open it in Layout page*@
+</form>
+
+
+
+
+
+    @*  Window Events *@
+    <script>
+        function onClose() {
+            //$("#undo").show();
+        }
+
+        function SetCurrencyId() {
+            var info = $("#Id").val();
+            if (info) {
+                return {
+                    Id: info
+                };
+            }
+        }
+        function SetSearchValue() {
+            var info = $("#txtSearchValue").val();
+            if (info) {
+                return {
+                    TxtSearchVal: info
+                };
+            }
+        }
+
+        $(document).ready(function () {
+            $("#BtnSearch").bind("click", function () {
+                $("#window").data("kendoWindow").center().open();
+                $("#SearchGrid").data("kendoGrid").dataSource.read();
+
+            });
+        });
+
+        
+        $("#BtnCloseWindow").click(function (e) {
+            $("#window").data("kendoWindow").close();
+        });
+
+
+        $("#BtnGetSearchResult").click(function () {
+
+            $("#SearchGrid").data("kendoGrid").dataSource.read();
+        })
+
+
+   
+        //Grid
+        //$("#BtnSave").click(function (e) {
+        //    $("#Sys_Currencies_Ratess").data("kendoGrid").refresh();
+        //    alert($("#Sys_Currencies_Ratess").data("kendoGrid"));
+        //});
+
+        function index(dataItem) {
+            var data = $("#DetailGrid").data("kendoGrid").dataSource.data();
+            return data.indexOf(dataItem);
+        }
+
+
+        function item_selected(e) {
+            var grid = $("#SearchGrid").data("kendoGrid");
+            var id;
+
+            grid.select().each(function () {
+                var dataItem = grid.dataItem($(this));
+                id = dataItem.Id;
+            });
+
+            window.location.href = "@Url.Content("~/Currencies/Index/")" + id;
+        }
+
+    </script>
+@*  End Window Events *@
+
+
+
+
+@* General *@
+
+    <script>
+        function Companychange(e) {
+
+        };
+        function Branchchange(e) {
+
+        };
+        $(document).ready(function () {
+            $("#DivCompanies").hide();
+            $("#DivBranches").hide();
+            $("#CmbFinancialYear").data("kendoDropDownList").wrapper.hide();
+        })
+
+        $('#BaseCurrency').click(function () {
+            if ($(this).is(':checked')) {
+                $('#Rate').val(1);
+                $("#Rate").attr("readonly", true);
+            } else {
+                $("#Rate").attr("readonly", false);
+            }
+        });
+
+
+        //$('#BaseCurrency').checked(function () {
+        //    if ($(this).is(':checked')) {
+        //        $('#Rate').val(1);
+        //        $("#Rate").attr("readonly", true);
+        //    } else {
+        //        $("#Rate").attr("readonly", false);
+        //    }
+        //});
+
+
+        $("#BtnCreate").click(function () {
+
+                $(document).ready(function () {
+                $("input.form-control").val('');
+                $("hidden").val('');
+                $("#Id").val('0');
+                $("#MemberShipId").val('0');
+                $('input:checkbox').removeAttr('checked');
+                $("#DetailGrid").data("kendoGrid").dataSource.read();
+             
+            });
+
+        })
+
+        //ComboBox Events
+        function DataBoundEvent() {
+
+        }
+
+        function SelectEvent(e) {
+
+        }
+    </script>
+
+
+@* End General *@
+

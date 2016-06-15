@@ -1,0 +1,22 @@
+﻿
+@(Html.Kendo().ComboBox()
+                                 .Name("UserId")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .Text("Please select")
+                                 .DataValueField("UserId")
+                         .HtmlAttributes(new { style = "width:100%; max-width:600px;left:0;margin:0;text-align:left" })
+                            .Template("<span data-id='${UserId}'>${Name}</span>")
+                          
+                            .DataSource(source =>
+                         { source.Read(read => { read.Action("FillUsers", "GenerlaClasses"); }); })
+                         .Events(e =>
+                         {
+                            // e.Select("onSelect");
+                          //.DataBound("Companychange");
+                         //e.Select("onSelect");
+                         //  .Open("open")
+                        //   .Close("close")
+                       })
+                         
+)

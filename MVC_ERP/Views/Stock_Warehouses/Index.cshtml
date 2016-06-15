@@ -1,0 +1,1706 @@
+﻿@model  MVC_ERP.Models.Stock_Warehouses
+@{
+
+
+    <script>
+        document.getElementById("LBLFormHDR").innerText = ($.cookie('Language') == "English") ? "Warehouses" : "المستودعات";
+    </script>
+
+}
+
+<div style="margin-left:10px;margin-right:10px">
+
+    <div class="row">
+        <br />
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+
+
+        @* Hidden Fields *@
+        @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+        @Html.Hidden("PassedId") @*/*manage open from another form*/*@
+        @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+
+
+        @* End Of Hidden Fields *@
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "كود" : "Code", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @style = "width:100% ;max-width:2000px", @placeholder = "Leave empty to generate auto code" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الأسم بالإنجليزي" : "English Name", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.NameE, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الأسم بالعربي" : "Arabic Name", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.NameA, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "التليفون" : "Telephone", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Tel, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "أمين المستودع" : "Warehouseman", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Warehouseman, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الإرتفاع" : "Height", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Height, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "المساحة" : "Area", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Area, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "العنوان" : "Address", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-10" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Adress, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes", new { style = "font-size:12px;color:#5f3110" })
+        </div>
+        <div class="col-xs-12 col-sm-10" style="margin-bottom: 10px">
+            @Html.TextBoxFor(model => model.Notes, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+    </div>
+
+    <div style="height:auto">
+        <br />
+        @(Html.Kendo().TabStrip()
+                        .HtmlAttributes(new { style = "height:auto" })
+
+          .Name("tabstrip")
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "الشيلف" : "Shelves")
+                  .HtmlAttributes(new { style = "height:auto" })
+                  .Selected(true).Content(@<text>
+                    <br />
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Warehouses_Shelves>()
+                    .Name("ShelvesGrid")
+                    .DataSource(dataSource => dataSource // Configure the grid data source
+                    .Ajax() // Specify that ajax binding is used
+                        // Set the action method which will return the data in JSON format
+                    .Read(read => read.Action("LoadShelvesGrid", "Stock_Warehouses").Data("SetId")))
+                    .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('ShelvesGrid') #").Width(50);
+                         columns.Bound(c => c.ShelveNo).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "كود الشيلف" : "Shelve No");
+                         columns.Bound(c => c.Notes).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+                     }).Selectable()
+                       .Sortable()
+                       .Filterable()
+                       .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:250px;height:auto" })
+                       .Scrollable(scrolling => scrolling.Height(200)).Events(ev => ev.DataBound("GridDataBound"))
+                                                               .Events(ev => ev.Save("GridChang"))
+                                                               .Events(ev => ev.Edit("GridEdit"))
+                                                               .Events(ev => ev.DataBinding("GridDataBinding"))
+
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+                             }).Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+                                           model.Field(p => p.ShelveNo);
+                                           model.Field(p => p.Notes);
+
+
+
+                                       })))
+                </text>);
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "الراك" : "Racks")
+                   .Content(@<text>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الشيلف" : "Shelve")
+
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RSID_GenerlaClasses_FillShelves" }
+                         })
+
+                        </div>
+                        <div class="col-xs-12 col-sm-4" style="margin-top:20px;margin-bottom:20px;">
+                            <input type="button" id="SaveRack" class="btn btn-primary"  value='@(Request.Cookies["Language"].Value == "Arabic" ? "حفظ التغيرات" : "Save Changes")' />
+                         </div>
+                    </div>
+
+                  
+
+    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Warehouses_Racks>()
+                             .Name("RacksGrid")
+                                      .DataSource(dataSource => dataSource // Configure the grid data source
+                            .Ajax() // Specify that ajax binding is used
+                                          // Set the action method which will return the data in JSON format
+                                                    .Read(read => read.Action("LoadRacksGrid", "Stock_Warehouses").Data("SetRackGridParam")))
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('RacksGrid') #").Width(50);
+                         columns.Bound(c => c.RackNo).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "كود الراك" : "Rack No");
+                         columns.Bound(c => c.Notes).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+
+
+                     })
+                         .Selectable()
+                       .Sortable()
+                       .Filterable()
+
+                         .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:250px;height:auto" })
+                                 .Scrollable(scrolling => scrolling.Height(200))
+                                         .Events(ev => ev.DataBound("GridDataBound"))
+                                                               .Events(ev => ev.Save("GridChang"))
+                                                               .Events(ev => ev.Edit("GridEdit"))
+                                                               .Events(ev => ev.DataBinding("GridDataBinding"))
+                             .ToolBar(toolBar =>
+                             {
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+                                           model.Field(p => p.RackNo);
+                                           model.Field(p => p.Notes);
+
+
+                                       })))
+</text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "صفوف الراك" : "Rack Rows")
+                     .Content(@<text>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-3" style="margin-bottom: 5px">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الشيلف" : "Shelve")
+
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RRSID_GenerlaClasses_FillShelves" }
+                         })
+                        </div>
+                            <div class="col-xs-6 col-sm-3" style="margin-bottom: 5px">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الراك" : "Rack")
+
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RRRID_GenerlaClasses_FillRacks" }
+                         })
+                            </div>
+                        <div class="col-xs-4 col-sm-3" style="margin-top:20px;margin-bottom:20px;">
+                            <input type="button" id="SaveRackRow" class="btn btn-primary" value='@(Request.Cookies["Language"].Value == "Arabic" ? "حفظ التغيرات" : "Save Changes")' />
+
+                          </div>
+
+                        </div>
+
+                      
+    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Warehouses_RackRows>()
+                                     .Name("RackRowsGrid")
+                                             .DataSource(dataSource => dataSource // Configure the grid data source
+                            .Ajax() // Specify that ajax binding is used
+                                                 // Set the action method which will return the data in JSON format
+                                            .Read(read => read.Action("LoadRackRowsGrid", "Stock_Warehouses").Data("SetRackRowsGridParam")))
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('RackRowsGrid') #").Width(50);
+                         columns.Bound(c => c.RowNo).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "رقم الصف" : "Row No");
+                         columns.Bound(c => c.Width).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "العرض" : "Width");
+                         columns.Bound(c => c.Height).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "الإرتفاع" : "Height");
+                         columns.Bound(c => c.Depth).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "العمق" : "Depth");
+                         columns.Bound(c => c.Notes).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+
+
+                     })
+                                .Selectable()
+                               .Sortable()
+                               .Filterable()
+                               
+                        .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:250px;height:auto" })
+                                .Events(ev => ev.DataBound("GridDataBound"))
+                                                               .Events(ev => ev.Save("GridChang"))
+                                                               .Events(ev => ev.Edit("GridEdit"))
+                                                               .Events(ev => ev.DataBinding("GridDataBinding"))
+                        .Scrollable(scrolling => scrolling.Height(180))
+                             .ToolBar(toolBar =>
+                             {
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+
+                              .DataSource(dataSource => dataSource.Ajax()
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+                                           model.Field(p => p.RowNo);
+                                           model.Field(p => p.Width);
+                                           model.Field(p => p.Height);
+                                           model.Field(p => p.Depth);
+                                           model.Field(p => p.Notes);
+
+
+
+
+                                       }))
+    )
+
+                           </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "الأدراج" : "Rack Cases")
+                   .Content(@<text>
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-2" style="margin-bottom: 5px">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الشيلف" : "Shelve")
+
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RCSID_GenerlaClasses_FillShelves" }
+                         })
+
+
+                          </div>
+                        <div class="col-xs-4  col-sm-2" style="margin-bottom: 5px">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الراك" : "Rack")
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                                {
+                                    TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RCRID_GenerlaClasses_FillRacks" }
+                                })
+
+                        </div>
+                        <div class="col-xs-4  col-sm-2" style="margin-bottom: 5px">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الصف" : "Rack Row")
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                                {
+                                    TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RCRRID_GenerlaClasses_FillRackRows" }
+                                })
+                        </div>
+                        <div class="col-xs-4 col-sm-2" style="margin-top: 20px; margin-bottom: 20px; ">
+                            <input type="button" id="SaveRackCase" class="btn btn-primary" value='@(Request.Cookies["Language"].Value == "Arabic" ? "حفظ التغيرات" : "Save Changes")' />
+ 
+                           </div>
+                        </div>
+  
+
+            @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Warehouses_RackCases>()
+                     .Name("RackCasesGrid")
+                                         .DataSource(dataSource => dataSource // Configure the grid data source
+                                    .Ajax() // Specify that ajax binding is used
+                                             // Set the action method which will return the data in JSON format
+                                                            .Read(read => read.Action("LoadRackCasesGrid", "Stock_Warehouses").Data("SetRackCaseGridParam")))
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('RackCasesGrid') #").Width(50);
+                         columns.Bound(c => c.CaseNo).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "رقم الدرج" : "Case No");
+                         columns.Bound(c => c.Notes).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+
+
+                     })
+                                .Selectable()
+                                .Sortable()
+                                .Filterable()
+                                .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:250px;height:auto" })
+                                        .Events(ev => ev.DataBound("GridDataBound"))
+                                                               .Events(ev => ev.Save("GridChang"))
+                                                               .Events(ev => ev.Edit("GridEdit"))
+                                                               .Events(ev => ev.DataBinding("GridDataBinding"))
+                                .Scrollable(scrolling => scrolling.Height(180))
+                             .ToolBar(toolBar =>
+                             {
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+                                           model.Field(p => p.CaseNo);
+                                           model.Field(p => p.Notes);
+
+
+                                       })))
+    
+        
+        
+        </text>);
+          }))
+
+
+
+
+
+<div style="height:20px"></div>
+</div>
+
+    <div class="row">
+
+
+        <div class="col-xs-12">
+
+
+
+            @* Window *@
+            @(Html.Kendo().Window().Name("window").Title("Search Form")
+
+                        //.HtmlAttributes(new { style = "overflow:hidden" })
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Actions(actions => actions.Close())
+                                    .Events(ev => ev.Close("onClose"))
+
+            .Content(@<text>
+
+
+
+                                        <br />
+                                        <div style="width:99%;text-align:center">
+                                            <div class=" row">
+
+                                                <div class="col-lg-6">
+                                                    <div class="input-group">
+                                                        <input id="txtSearchValue" type="text" class="form-control" style="width:100%; max-width:initial" placeholder="Search">
+                                                        <span class="input-group-btn">
+                                                            <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                                                        </span>
+                                                    </div><!-- /input-group -->
+                                                </div><!-- /.col-lg-6 -->
+                                            </div><!-- /.row -->
+                                        </div>
+                                        <br />
+
+
+
+
+                                        @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Warehouses>()
+                     .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+
+
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code).Width(150).Title("Account Code");
+                 columns.Bound(c => c.NameE).Width(150).Title("English Name");
+                 columns.Bound(c => c.NameA).Width(150).Title("Arabic Name");
+                 columns.Bound(c => c.Notes).Width(150).Title("Notes");
+             })
+
+
+                 .Sortable()
+
+
+                       .Scrollable(scrolling => scrolling.Height(200))
+                       .DataSource(dataSource => dataSource.Ajax()
+                       .PageSize(1000)
+
+
+
+                           .Read(read => read
+                                   .Action("Search", "Stock_Warehouses").Data("SetSearchValue")
+
+
+                            ))
+
+                      .Selectable()
+
+                      .Filterable()
+                                                //.EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                                        )
+
+                                        @*</div>*@
+
+                                        <br />
+
+            </text>)
+                    //.Scrollable(false)
+
+
+            )
+
+
+
+
+
+
+        </div>
+
+    </div>
+
+</div>
+
+@* End Window *@
+@*Close from here don't have Open Open it in Layout page*@
+    </form>
+
+
+@*  Window Events *@
+<script>
+    $(".RemoveGridRowCSS").kendoButton({
+        icon: "close"
+    });
+
+
+    $(".RemoveGridRowCSS").click(function (e) {
+        e.preventDefault();
+
+        var gridName = $(this).closest('.k-grid').attr('id');
+
+        var grid = $('#' + gridName).data("kendoGrid");
+        var dataItem = grid.dataItem(grid.select());
+        var RowId = dataItem.Id;
+
+        //After remove related cost center of this row we remove it from grid
+        grid.select().each(function () {
+            grid.removeRow($(this));; //just gives alert message
+            //grid.dataSource.remove(dataItem); //removes it actually from the grid
+        });
+    });
+
+
+
+    function Companychange(e) {
+
+
+        Read(0, ReadType.Last)
+
+
+
+    };
+
+    function FilterRSID() {
+
+        return {
+            WarehouseId: $("#Id").val(),
+            text: $("#RSID").data("kendoComboBox").text(),
+            Id: $("#RSID").data("kendoComboBox").value()
+        };
+    }
+
+
+    function FilterRRSID() {
+
+        return {
+            WarehouseId: $("#Id").val(),
+            text: $("#RRSID").data("kendoComboBox").text(),
+            Id: $("#RRSID").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterRRRID() {
+        var id = $('#RRSID').val();
+        if (id == null) {
+            return;
+        }
+        return {
+            ShelveId: id,
+            text: $("#RRRID").data("kendoComboBox").text(),
+            Id: $("#RRRID").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterRCSID() {
+
+        return {
+            WarehouseId: $("#Id").val(),
+            text: $("#RCSID").data("kendoComboBox").text(),
+            Id: $("#RCSID").data("kendoComboBox").value()
+        };
+    }
+
+
+    function FilterRCRID() {
+        var id = $('#RCSID').val();
+        if (id == null) {
+            return;
+        }
+        return {
+            ShelveId: id ,
+            text: $("#RCRID").data("kendoComboBox").text(),
+            Id: $("#RCRID").data("kendoComboBox").value()
+        };
+    }
+
+
+    function FilterRCRRID() {
+        var id = $('#RCRID').val();
+        if (id == null) {
+            return;
+        }
+        return {
+            RackId: id ,
+            text: $("#RCRRID").data("kendoComboBox").text(),
+            Id: $("#RCRRID").data("kendoComboBox").value()
+        };
+    }
+
+    //
+    function DataBoundEvent(e) {
+    }
+
+    function SelectEvent(e) {
+     
+    }
+
+ 
+    
+    
+
+    function ChangeEvent(e) {
+        
+        var ComboBoxName = e.sender.element[0].id //ComboBoxName
+       
+
+        if (ComboBoxName == 'RSID') {
+
+            $("#RacksGrid").data("kendoGrid").dataSource.read();
+        }
+
+        if (ComboBoxName == 'RRSID') {
+            $("#RRRID").data("kendoComboBox").value(0);
+            $("#RRRID").data("kendoComboBox").text("");
+            $("#RRRID").data("kendoComboBox").dataSource.read();
+            $("#RackRowsGrid").data("kendoGrid").dataSource.read();
+        }
+
+        if (ComboBoxName == 'RRRID') {
+            $("#RackRowsGrid").data("kendoGrid").dataSource.read();
+        }
+
+        if (ComboBoxName == 'RCSID') {
+           
+            $("#RCRID").data("kendoComboBox").value(0);
+            $("#RCRID").data("kendoComboBox").text("");
+            $("#RCRID").data("kendoComboBox").dataSource.read();
+            $("#RCRRID").data("kendoComboBox").value(0);
+            $("#RCRRID").data("kendoComboBox").text("");
+            $("#RCRRID").data("kendoComboBox").dataSource.read();
+            $("#RackCasesGrid").data("kendoGrid").dataSource.read();
+        }
+        if (ComboBoxName == 'RCRID') {
+            $("#RCRRID").data("kendoComboBox").value(0);
+            $("#RCRRID").data("kendoComboBox").text("");
+            $("#RCRRID").data("kendoComboBox").dataSource.read();
+            $("#RackCasesGrid").data("kendoGrid").dataSource.read();
+        }
+        if (ComboBoxName == 'RCRRID') {
+            $("#RackCasesGrid").data("kendoGrid").dataSource.read();
+        }
+    }
+
+
+
+    function item_selected(e) {
+
+        var grid = $("#SearchGrid").data("kendoGrid");
+        var id;
+
+        grid.select().each(function () {
+            var dataItem = grid.dataItem($(this));
+            id = dataItem.Id;
+        });
+
+        Read(id, ReadType.Current);
+
+    }
+
+
+
+    function Branchchange(e) {
+
+    };
+
+    function getCurrentEditedModel(GridName) {
+        var grid = $("#" + GridName).data("kendoGrid");
+        var editRow = grid.tbody.find("tr:has(.k-edit-cell)");
+        return grid.dataItem(editRow);
+    }
+
+
+    var rowNumberShelvesGrid = 0;
+    var rowNumberRacksGrid = 0;
+    var rowNumberRackRowsGrid = 0;
+    var rowNumberRackCasesGrid = 0;
+
+
+    function renderNumber(data) {
+        if (data == 'ShelvesGrid') {
+            return ++rowNumberShelvesGrid;
+
+        }
+        if (data == 'RacksGrid') {
+            return ++rowNumberRacksGrid;
+        }
+        if (data == 'RackRowsGrid') {
+            return ++rowNumberRackRowsGrid;
+        }
+        if (data == 'RackCasesGrid') {
+            return ++rowNumberRackCasesGrid;
+        }
+
+
+    }
+
+    function GridDataBound(data) {
+
+        if (data.sender.element[0].id == 'ShelvesGrid') {
+            rowNumberShelvesGrid = 0;
+        }
+        if (data.sender.element[0].id == 'RacksGrid') {
+            rowNumberRacksGrid = 0;
+        }
+        if (data.sender.element[0].id == 'RackRowsGrid') {
+            rowNumberRackRowsGrid = 0;
+        }
+        if (data.sender.element[0].id == 'RackCasesGrid') {
+            rowNumberRackCasesGrid = 0;
+        }
+
+    }
+
+
+    function GridChang(data) {
+
+        // event of change column value
+        if (data.sender.element[0].id == 'ShelvesGrid') {
+            if (data.values.UnitId) {
+
+                data.model.set("ShelveNo", "")
+            }
+        }
+
+
+    }
+
+
+    function GridDataBinding(e) {
+        if (e.sender.element[0].id == 'ShelvesGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].ShelveNo) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+
+
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+        if (e.sender.element[0].id == 'RacksGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].RackNo) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+        if (e.sender.element[0].id == 'RackRowsGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].RowNo) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+                       
+
+
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+        if (e.sender.element[0].id == 'RackCasesGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].CaseNo) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+
+    };
+
+
+
+    function GridEdit(e) {
+        //Default values for new row
+        // Column Code
+
+        if (e.sender.element[0].id == 'ShelvesGrid') {
+            if (e.model.isNew() && e.model.Id == 0) {
+             
+            }
+
+
+        }
+
+
+    }
+
+
+
+
+    $(document).ready(function () {
+        $("#DivBranches").hide();
+
+        $("#CmbFinancialYear").data("kendoDropDownList").wrapper.hide();
+        $("#CompanyLists").parent().css('width', "100%");
+
+        Read(0, ReadType.First);
+
+
+    })
+
+
+    function onClose() {
+        //$("#undo").show();
+    }
+
+
+
+    function SetSearchValue() {
+        var info = $("#txtSearchValue").val();
+        var CompInfo = $("#CompanyLists").val();
+        return {
+
+            CompanyId: CompInfo,
+            TxtSearchVal: info
+        };
+    }
+
+
+    $("#BtnSearch").bind("click", function () {
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 9,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    $("#window").parent().css('width', "85%");
+                    $("#window").parent().css('height', "350px");
+
+                    $("#window").data("kendoWindow").center().open();
+                    $("#SearchGrid").data("kendoGrid").dataSource.read();
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+
+    });
+
+
+    $("#BtnPrint").click(function (event) {
+
+
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 10,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+                    var report = "GL/DailyVoucher.trdx";
+                    var parameters = "Title:Daily Voucher,Id:" + $("#Id").val();
+
+                    window.open('@Url.Action("Index", "Report")' + '?report=' + report + '&parameters=' + parameters, '_blank');
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+    });
+
+
+
+    $("#BtnCloseWindow").click(function (e) {
+        $("#window").data("kendoWindow").close();
+    });
+
+
+    $("#BtnGetSearchResult").click(function () {
+
+        var cc = $("#CompanyList").val();
+        $("#SearchGrid").data("kendoGrid").dataSource.read({ "CompanySearchId": cc });
+    })
+
+
+
+    //Grid
+
+
+
+</script>
+@*  End Window Events *@
+
+
+
+@* Combo Box Events *@
+<script>
+
+    function SentCompanyId() {
+        var CompInfo = $("#CompanyLists").val();
+        if (CompInfo) {
+            return {
+                CompanyId: CompInfo,
+            };
+        }
+    }
+
+    function onSelect(e) {
+
+    };
+
+    var ReadType = {
+        Empty: 0,
+        First: 1,
+        Next: 2,
+        Current: 3,
+        Previous: 4,
+        Last: 5
+    }
+
+
+    //Read Function
+    function Read(Id, ReadType) {
+
+
+        if (Id == 0) {
+            Id = $("#Id").val()
+
+        }
+
+        //Fill Controls
+
+        $.post("@Url.Action("Read", "Stock_Warehouses")", {
+            Id: Id,
+            CompanyId: $('#CompanyLists').val(),
+            ReadType: ReadType
+        },
+        function (data) {
+
+            //Set All Model fields to avoid refreshing
+
+
+            $("#Id").val(data.TBL.Id);
+            $("#Code").val(data.TBL.Code);
+            $("#NameE").val(data.TBL.NameE);
+            $("#NameA").val(data.TBL.NameA);
+            $("#Adress").val(data.TBL.Adress);
+            $("#Tel").val(data.TBL.Tel);
+            $("#Warehouseman").val(data.TBL.Warehouseman);
+            $("#Notes").val(data.TBL.Notes);
+            $("#Height").val(data.TBL.Height);
+            $("#Area").val(data.TBL.Area);
+            $('#Post').val(data.TBL.Post);
+
+
+            if (data.TBL.Post == true) {
+                $("#BtnPost span").text(GetMessage(MessageType.PostButtonTxt));
+            }
+            else {
+
+                $("#BtnPost span").text(GetMessage(MessageType.UnPostButtonTxt));
+            }
+
+            $('#ShelvesGrid').data("kendoGrid").dataSource.read();
+
+
+            //Racks Tab
+            $("#RSID").data("kendoComboBox").value(0)
+            $("#RSID").data("kendoComboBox").text("")
+            $("#RSID").data("kendoComboBox").dataSource.read()
+            $('#RacksGrid').data("kendoGrid").dataSource.read();
+
+            //Rows Tab
+            $("#RRSID").data("kendoComboBox").value(0)
+            $("#RRSID").data("kendoComboBox").text("")
+            $("#RRSID").data("kendoComboBox").dataSource.read()
+            $("#RRRID").data("kendoComboBox").value(0)
+            $("#RRRID").data("kendoComboBox").text("")
+            $("#RRRID").data("kendoComboBox").dataSource.read()
+            $('#RackRowsGrid').data("kendoGrid").dataSource.read();
+
+            //Case Tab
+            $("#RCSID").data("kendoComboBox").value(0)
+            $("#RCSID").data("kendoComboBox").text("")
+            $("#RCSID").data("kendoComboBox").dataSource.read()
+            $("#RCRID").data("kendoComboBox").value(0)
+            $("#RCRID").data("kendoComboBox").text("")
+            $("#RCRID").data("kendoComboBox").dataSource.read()
+            $("#RCRRID").data("kendoComboBox").value(0)
+            $("#RCRRID").data("kendoComboBox").text("")
+            $("#RCRRID").data("kendoComboBox").dataSource.read()
+            $('#RackCasesGrid').data("kendoGrid").dataSource.read();
+
+
+
+
+        });
+
+
+
+        $("#window").data("kendoWindow").close();
+    }
+
+</script>
+
+@* End Combo Box Events *@
+
+
+
+@* General *@
+
+<script>
+
+    function getDateFromAspString(aspString) {
+        if (aspString == null) { return new Date(Date.now()) }
+        var epochMilliseconds = aspString.replace(
+            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+            '$1');
+        if (epochMilliseconds != aspString) {
+            var d = new Date(parseInt(epochMilliseconds));
+            return d;
+        }
+    }
+
+
+
+    function SetId() {
+        var info = $("#Id").val();
+     
+            return {
+                Id: info
+            };
+      
+    }
+
+
+
+    function SetRackGridParam() {
+        
+
+        return {
+            sId: $("#RSID").val()
+        };
+
+    }
+
+    function SetRackRowsGridParam() {
+
+
+        return {
+
+            rId: $("#RRRID").val(),
+            sId: $("#RRSID").val(),
+            wId: $("#Id").val()
+        };
+
+    }
+
+    function SetRackCaseGridParam() {
+
+
+        return {
+
+            rowId: $("#RCRRID").val(),
+            rId: $("#RCRID").val(),
+            sId: $("#RCSID").val(),
+            wId: $("#Id").val()
+        };
+
+    }
+
+
+    
+
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#BtnSave").attr('type', 'button');
+        $("#BtnDiscard").attr('type', 'button');
+
+        $("#BtnReuse").removeAttr("data-toggle");
+        $("#BtnReuse").removeAttr("data-target");
+        $("#BtnReuse").removeAttr("data-action");
+
+        $("#BtnDelete").removeAttr("data-toggle");
+        $("#BtnDelete").removeAttr("data-target");
+        $("#BtnDelete").removeAttr("data-action");
+
+        $("#BtnPost").removeAttr("data-toggle");
+        $("#BtnPost").removeAttr("data-target");
+        $("#BtnPost").removeAttr("data-action");
+
+
+
+    })
+
+
+
+
+    $("#BtnCreate").click(function () {
+
+
+
+
+        $(document).ready(function () {
+
+
+
+            $("input.form-control").val('');
+            $("hidden").val('');
+            $("#Id").val('0');
+            $("#MemberShipId").val('0');
+
+
+        });
+
+    })
+
+    $("#SaveRackCase").click(function () {
+
+        //Validation
+        if ($('#Id').val() == null || $('#Id').val() == '' || $('#Id').val() == 0) {
+            alert('You must selet warehouse first')
+            return;
+        }
+
+        if ($('#RCSID').val() == null || $('#RCSID').val() == '' || $('#RCSID').val() == 0) {
+            alert('You must selet Shelve')
+            return;
+        }
+
+        if ($('#RCRID').val() == null || $('#RCRID').val() == '' || $('#RCRID').val() == 0) {
+            alert('You must selet Rack')
+            return;
+        }
+
+        if ($('#RCRRID').val() == null || $('#RCRRID').val() == '' || $('#RCRRID').val() == 0) {
+            alert('You must selet Row')
+            return;
+        }
+
+
+       
+        var xmlRackCasesGrid = $("#RackCasesGrid").data("kendoGrid").dataSource.data();
+       
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Warehouses/SaveRackCase")",
+            type: 'POST',
+            data: {
+
+        
+                xmlRackCasesGrid: JSON.stringify(xmlRackCasesGrid),
+
+                wId: $('#Id').val(),
+                sId: $('#RCSID').val(),
+                rId: $('#RCRID').val(),
+                rowId: $('#RCRRID').val()
+
+        },
+        dataType: 'json',
+        success: function (result) {
+
+
+            if (result.MessageType == 'success') {
+                alert(result.ReturnMessage)
+                $('#RackCasesGrid').data("kendoGrid").dataSource.read();
+            }
+
+        },
+        error: function (result) {
+            //Responsible for reload login page if if user not authenticate
+            window.location.href = window.location.href;
+        },
+        });
+
+    });
+
+    $("#SaveRackRow").click(function () {
+
+
+
+        //Validation
+        if ($('#Id').val() == null || $('#Id').val() == '' || $('#Id').val() == 0) {
+            alert('You must selet warehouse first')
+            return;
+        }
+
+        if ($('#RRSID').val() == null || $('#RRSID').val() == '' || $('#RRSID').val() == 0) {
+            alert('You must selet Shelve')
+            return;
+        }
+
+        if ($('#RRRID').val() == null || $('#RRRID').val() == '' || $('#RRRID').val() == 0) {
+            alert('You must selet Rack')
+            return;
+        }
+      
+
+       
+
+       
+        var xmlRackRowsGrid = $("#RackRowsGrid").data("kendoGrid").dataSource.data();
+       
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Warehouses/SaveRackRow")",
+            type: 'POST',
+        data: {
+
+        
+            xmlRackRowsGrid: JSON.stringify(xmlRackRowsGrid),
+
+            wId: $('#Id').val(),
+            sId: $('#RRSID').val(),
+            rId : $('#RRRID').val()
+
+        },
+        dataType: 'json',
+        success: function (result) {
+
+
+            if (result.MessageType == 'success') {
+                alert(result.ReturnMessage)
+                $('#RackRowsGrid').data("kendoGrid").dataSource.read();
+            }
+
+        },
+        error: function (result) {
+            //Responsible for reload login page if if user not authenticate
+            window.location.href = window.location.href;
+        },
+        });
+
+    });
+    
+    $("#SaveRack").click(function () {
+
+
+        //Validation
+        if ($('#Id').val() == null || $('#Id').val() == '' || $('#Id').val() == 0) {
+            alert('You must selet warehouse first')
+            return;
+        }
+
+      
+        if ($('#RSID').val() == null || $('#RSID').val() == '' || $('#RSID').val() == 0) {
+            alert('You must selet Shelve')
+            return;
+        }
+
+
+      
+
+       
+        var xmlRacksGrid = $("#RacksGrid").data("kendoGrid").dataSource.data();
+       
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Warehouses/SaveRack")",
+            type: 'POST',
+        data: {
+
+        
+            xmlRacksGrid: JSON.stringify(xmlRacksGrid),
+
+            wId: $('#Id').val(),
+            sId: $('#RSID').val()
+
+            },
+        dataType: 'json',
+        success: function (result) {
+
+
+            if (result.MessageType == 'success')
+            {
+                alert(result.ReturnMessage)
+                $('#RacksGrid').data("kendoGrid").dataSource.read();
+            }
+
+        },
+        error: function (result) {
+            //Responsible for reload login page if if user not authenticate
+            //window.location.href = window.location.href;
+        },
+        });
+
+    });
+
+    $("#BtnSave").click(function () {
+
+
+        if ($('#Id').val() == null || $('#Id').val() == '') {
+            $('#Id').val('0') //et id to 0 for save furst record in table without click create
+        }
+
+
+        //Validation
+        if ($('#NameA').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+        var xmlShelvesGrid = $("#ShelvesGrid").data("kendoGrid").dataSource.data();
+     
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Warehouses/Insert")",
+            type: 'POST',
+            data: {
+
+                xmlShelvesGrid: JSON.stringify(xmlShelvesGrid),
+
+                Id: $('#Id').val(),
+                CompanyId: $('#CompanyLists').val(),
+                Code: $('#Code').val(),
+                NameA: $('#NameA').val(),
+                NameE: $('#NameE').val(),
+                Adress: $("#Adress").val(),
+                Tel: $("#Tel").val(),
+                Warehouseman: $("#Warehouseman").val(),
+                Height: $("#Height").val(),
+                Area: $("#Area").val(),
+                Notes: $('#Notes').val(),
+
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+
+                if (result.MessageType == 'success')
+
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    });
+
+
+    $("#BtnDiscard").click(function () {
+
+        var Id
+
+        if ($('#Id').val() == '' || $('#Id').val() == 0) {
+            Id = 0;
+            return Read('@Model.Id', ReadType.First);
+        }
+        else {
+            Id = $('#Id').val();
+            return Read(Id, ReadType.Current);
+        }
+
+
+
+    });
+
+
+    $("#BtnReuse").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 5,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    // Show confirmation and if ok execute Reuse function
+                    ShowConfirmMessage(GetMessage(MessageType.ReuseConfirmHDR), GetMessage(MessageType.ReuseConfirm), 'Reuse');
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+
+    function Reuse() {
+
+        //Validation
+        if ($('#id').val() == '') {
+            showAndDismissAlert('danger', 'No data to reuse')
+            return;
+        }
+
+        if ($('#NameA').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+
+
+
+
+
+
+        $(document).ready(function () {
+
+            var xmlShelvesGrid = $("#ShelvesGrid").data("kendoGrid").dataSource.data();
+             
+            $.ajax({
+                url: "@Url.Content("~/Stock_Warehouses/Reuse")",
+                type: 'POST',
+                data: {
+
+                    xmlShelvesGrid: JSON.stringify(xmlShelvesGrid),
+
+                    Id: $('#Id').val(),
+                    CompanyId: $('#CompanyLists').val(),
+                    Code: $('#Code').val(),
+                    NameA: $('#NameA').val(),
+                    NameE: $('#NameE').val(),
+                    Adress: $("#Adress").val(),
+                    Tel: $("#Tel").val(),
+                    Warehouseman: $("#Warehouseman").val(),
+                    Height: $("#Height").val(),
+                    Area: $("#Area").val(),
+                    Notes: $('#Notes').val()
+
+                },
+                dataType: 'json',
+                success: function (result) {
+
+                    if (result.MessageType == 'success')
+
+
+                    { Read(result.Id, ReadType.Current); }
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+                },
+                error: function (result) {
+                    //Responsible for reload login page if if user not authenticate
+                    window.location.href = window.location.href;
+                },
+            });
+        });
+    }
+
+    $("#BtnDelete").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 4,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+                    if ($('#Post').val() == 'true') {
+                        showAndDismissAlert('info', GetMessage(MessageType.RefuseDeletePosting))
+                        return;
+                    }
+
+                    // Show confirmation and if ok execute Delete function
+                    ShowConfirmMessage(GetMessage(MessageType.DeleteConfirmHDR), GetMessage(MessageType.DeleteConfirm), 'Delete');
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+    function Delete() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Warehouses/Delete")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Last); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    }
+
+    $("#BtnPost").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: ($('#Post').val() == 'true') ? 7 : 6,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    // Show confirmation and if ok execute Delete function
+                    if ($('#Post').val() == 'true') {
+                        ShowConfirmMessage(GetMessage(MessageType.UnPostConfirmHDR), GetMessage(MessageType.UnPostConfirm), 'Post');
+                    }
+                    else {
+                        ShowConfirmMessage(GetMessage(MessageType.PostConfirmHDR), GetMessage(MessageType.PostConfirm), 'Post');
+                    }
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+
+    function Post() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Warehouses/Post")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    }
+
+</script>
+
+@* End General *@
+

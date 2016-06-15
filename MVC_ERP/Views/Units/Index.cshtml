@@ -1,0 +1,89 @@
+﻿@model IEnumerable<MVC_ERP.Models.File_Unit>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+        <p>
+            @Html.ActionLink("Create New", "Create")
+        </p>
+        <div class="row">
+            <div class="col-xs-12">
+
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Counter)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.NameA)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.NameE)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ShrtNameA)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ShortNameE)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Rate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.IsEqual)
+                        </th>
+
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Counter)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NameA)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NameE)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ShrtNameA)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ShortNameE)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Rate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IsEqual)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreatedBy)
+                            </td>
+
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Code }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.Code }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Code })
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+
+        </div>
+
+</body>
+</html>

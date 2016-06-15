@@ -1,0 +1,94 @@
+﻿  @model  MVC_ERP.Models.UserControl_GHDate
+
+  @*<script src="@Url.Content("~/Scripts/jquery.globalize/globalize.js")" type="text/javascript"></script>
+  <script src="@Url.Content("~/Scripts/jquery.globalize/cultures/globalize.culture.ar-SA.js")" type="text/javascript"></script>
+  <script src="@Url.Content("~/Scripts/jquery.globalize/cultures/globalize.culture.en-US.js")" type="text/javascript"></script>
+  <script src="@Url.Content("~/Scripts/kendo/cultures/kendo.culture.ar-SA.min.js")"></script>*@
+  
+
+
+
+<link type="text/css" href="~/Scripts/datepicker/ui.core.css" rel="stylesheet" />
+@*<link type="text/css" href="~/Scripts/datepicker/ui.theme.css" rel="stylesheet" />*@
+<link type="text/css" href="~/Scripts/datepicker/ui.datepicker.css" rel="stylesheet" />
+
+<script type="text/javascript" src="~/Scripts/datepicker/ui.core.min.js"></script>
+<script type="text/javascript" src="~/Scripts/datepicker/ui.datepicker-cc.min.js"></script>
+<script type="text/javascript" src="~/Scripts/datepicker/calendar.min.js"></script>
+<script type="text/javascript" src="~/Scripts/datepicker/ui.datepicker-cc-ar.js"></script>
+
+<input style="display:inline-block"
+
+   @Html.Kendo().DatePickerFor(model => model.Gregi).Format("dd/MM/yyyy").Culture("en-US").HtmlAttributes(new { @class = "kendo", @style = "width:48%; max-width:140px" }).Events(e => e.Change("GregiChange"))
+   @Html.TextBoxFor(model => model.Hijri, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker", @style = "width:48%;height:28px;float:right; max-width:140px" })
+
+<script>
+       $(function () {
+           $('.datepicker').datepicker({
+               regional: 'ar',
+               changeMonth: true,
+               changeYear: true,
+               onSelect: function (dateText, inst) {
+                 
+                   var HijId =this.id;
+                   var arr = HijId.split('_');
+                   var GregId = arr[0] + '_Gregi';
+
+                   if ($('#' + HijId).val() == '') {
+                       $('#' + GregId).data('kendoDatePicker').value(null)
+                       return
+                   }
+
+                   var u = $('#' + HijId).val().split('/');
+
+              
+
+                   iDay = parseInt(u[0], 10);
+                   iMonth = parseInt(u[1], 10);
+                   iYear = parseInt(u[2], 10);
+
+
+                   var args1 = jd_to_gregorian(islamic_to_jd(iYear, iMonth, iDay));
+                   var z = args1[2] + "/" + args1[1] + "/" + args1[0];
+                  
+                   $('#' + GregId).data('kendoDatePicker').value(z)
+
+
+               }
+
+           });
+
+    });
+
+  
+
+
+    function GregiChange(e) {
+        //alert(this.Name())
+        var GregId = this.element.prop("id");
+        var arr = GregId.split('_');
+        var HijId = arr[0] + '_Hijri';
+
+        if ($('#' + GregId).data('kendoDatePicker').value() == null)
+        {
+            $('#' + HijId).val('')
+            return
+        }
+        var d = new Date($('#' + GregId).data('kendoDatePicker').value())
+
+        iDay = parseInt(d.getDate(), 10);
+        iMonth = parseInt(d.getMonth() + 1, 10);
+        iYear = parseInt(d.getFullYear(), 10);
+
+        var args1 = jd_to_islamic(gregorian_to_jd(iYear, iMonth, iDay));
+
+        var z = args1[2] + "/" + args1[1] + "/" + args1[0];
+
+      
+        $('#' + HijId).val(z)
+
+      
+    }
+
+  
+</script>

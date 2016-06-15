@@ -1,0 +1,972 @@
+﻿@model  MVC_ERP.Models.Stock_ProductGroups
+    @{
+       
+
+        <script>
+            document.getElementById("LBLFormHDR").innerText = ($.cookie('Language') == "English") ? "Product Groups" : "مجموعات المنتجات";
+        </script>
+
+    }
+
+    <div style="margin-left:10px;margin-right:10px">
+        <div class="row">
+            <br />
+
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false)
+
+            @* Hidden Fields *@
+            @Html.Hidden("NodePath")
+            @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+            @* End Of Hidden Fields *@
+
+           
+            <div class=" col-xs-12" style="width:50%; margin-left:5px;  text-align: center; height: 0px; background: #ffffff; overflow: hidden; margin-bottom: 0px; "></div>
+            <div class="col-xs-12" style="color: #308b09">
+                @Html.Label("Groups")
+            </div>
+            <div class="col-xs-12 col-sm-6" style="margin-bottom: 20px; height: auto">
+
+                <div class="demo-section" style="background-color: #e9f6c8; color: white;  height: 100%; scrollbar-arrow-color: red ">
+                    <br /> 
+
+                    @(Html.Kendo().TreeView()
+               .Name("treeview")
+               .HtmlAttributes(new { @class = "demo-section", style = "margin-left:10px; width:94% ;height:400px" })
+               .DataTextField("Name")
+               .LoadOnDemand(true)
+               .HighlightPath(true)
+               .ExpandAll(true)
+               
+               .DataSource(dataSource => dataSource
+               .Read(read => read
+                                       .Action("LoadProductGroups", "Stock_Groups").Data("SentCompanyId")
+               
+                 )
+                 )
+                  .Events(events => events
+                            .Select("treeviewonSelect")
+                            .DataBound("treeviewonDataBound")
+                    
+                    )
+
+                    )
+
+                </div>
+
+            </div>
+
+            <div class=" col-xs-12" style="width:20%; margin-left:50px;  text-align: center; height: 10px; background: #ffffff; overflow: hidden; margin-bottom: 15px; "></div>
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Parent")
+            </div>
+
+            <div class="col-xs-12 col-sm-4" style=" margin-bottom: 5px">
+                @(Html.Kendo().ComboBoxFor(model => model.ParentId)
+                        .HtmlAttributes(new { style = "width:100%; max-width:280px" })
+                        .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .Placeholder("First level (No parent)")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                                 .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("FillProductGroupParent", "GenerlaClasses").Data("SentCompanyId");
+                                      });
+                                  })
+                )
+            </div>
+
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Code")
+            </div>
+
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @placeholder = "Leave empty to generate auto code" })
+            </div>
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("English name")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.NameE, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Arabic name")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.NameA, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Level")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Levels, new { @class = "form-control" ,@readonly=""})
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Has children")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 10px">
+
+                @Html.CheckBoxFor(model => model.HasChildren, new {  @Style = "" })
+
+            </div>
+            
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Notes")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+
+                @Html.TextBoxFor(model => model.Notes, new { @class = "form-control" })
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+       
+
+        <div class="col-xs-12">
+
+
+
+            @* Window *@
+            @(Html.Kendo().Window().Name("window").Title("Search Form")
+
+                        //.HtmlAttributes(new { style = "overflow:hidden" })
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Actions(actions => actions.Close())
+                                    .Events(ev => ev.Close("onClose"))
+
+            .Content(@<text>
+
+
+
+                                        <br />
+                                        <div style="width:99%;text-align:center">
+                                            <div class=" row">
+
+                                                <div class="col-lg-6">
+                                                    <div class="input-group">
+                                                        <input id="txtSearchValue" type="text" class="form-control" style="width:100%; max-width:initial" placeholder="Search">
+                                                        <span class="input-group-btn">
+                                                            <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                                                        </span>
+                                                    </div><!-- /input-group -->
+                                                </div><!-- /.col-lg-6 -->
+                                            </div><!-- /.row -->
+                                        </div>
+                                        <br />
+
+
+
+
+                                        @(Html.Kendo().Grid<MVC_ERP.Models.Stock_ProductGroups>()
+                     .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+
+
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code).Width(150).Title("Account Code");
+                 columns.Bound(c => c.NameE).Width(150).Title("English Name");
+                 columns.Bound(c => c.NameA).Width(150).Title("Arabic Name");
+                 columns.Bound(c => c.Notes).Width(150).Title("Notes");
+             })
+
+
+                 .Sortable()
+
+
+                       .Scrollable(scrolling => scrolling.Height(350))
+                       .DataSource(dataSource => dataSource.Ajax()
+                       .PageSize(1000)
+
+
+
+                           .Read(read => read
+                                           .Action("Search", "Stock_Groups").Data("SetSearchValue")
+
+
+                            ))
+
+                      .Selectable()
+
+                      .Filterable()
+                                                //.EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                                        )
+
+                                        @*</div>*@
+
+                                        <br />
+
+            </text>)
+                    //.Scrollable(false)
+
+
+            )
+
+
+
+
+
+
+        </div>
+
+    </div>
+     @* End Window *@
+     @*Close from here don't have Open Open it in Layout page*@
+    </form>
+
+
+    @*  Window Events *@
+    <script>
+
+        function Companychange(e) {
+
+            $("#ParentId").data("kendoComboBox").dataSource.read();
+            Read(0, ReadType.First)
+
+      
+        
+        };
+
+        function Branchchange(e) {
+
+        };
+        $(document).ready(function () {
+            $("#DivBranches").hide();
+            $("#DivNavigation").hide();
+            $("#CmbFinancialYear").data("kendoDropDownList").wrapper.hide();
+            $("#CompanyLists").parent().css('width', "100%");
+          
+            Read(0, ReadType.First);
+
+        })
+
+
+        function onClose() {
+            //$("#undo").show();
+        }
+
+
+
+        function SetSearchValue() {
+            var info = $("#txtSearchValue").val();
+            var CompInfo = $("#CompanyLists").val();
+                return {
+
+                    CompanyId: CompInfo,
+                    TxtSearchVal: info
+                };
+        }
+
+        $("#BtnSearch").bind("click", function () {
+
+            $.ajax({
+                url: "@Url.Content("~/Base/CheckPermission")",
+                type: 'POST',
+            data: {
+                PerType:9,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    $("#window").parent().css('width', "85%");
+                    $("#window").parent().css('height', "500px");
+
+                    $("#window").data("kendoWindow").center().open();
+                    $("#SearchGrid").data("kendoGrid").dataSource.read();
+                }
+
+                else
+                {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+            });
+
+
+        });
+
+        $("#BtnPrint").click(function (event) {
+
+
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            $.ajax({
+                url: "@Url.Content("~/Base/CheckPermission")",
+                type: 'POST',
+            data: {
+                PerType: 10,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+                    var report = "GL/DailyVoucher.trdx";
+                    var parameters = "Title:Daily Voucher,Id:" + $("#Id").val();
+
+                    window.open('@Url.Action("Index", "Report")' + '?report=' + report + '&parameters=' + parameters, '_blank');
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+            });
+        });
+
+
+
+        $("#BtnCloseWindow").click(function (e) {
+            $("#window").data("kendoWindow").close();
+        });
+
+
+        $("#BtnGetSearchResult").click(function () {
+
+            var cc = $("#CompanyList").val();
+            $("#SearchGrid").data("kendoGrid").dataSource.read({ "CompanySearchId": cc });
+        })
+
+
+
+        //Grid
+
+        function item_selected(e) {
+            var grid = $("#SearchGrid").data("kendoGrid");
+            var id;
+
+            grid.select().each(function () {
+                var dataItem = grid.dataItem($(this));
+                id = dataItem.Id;
+            });
+
+            Read(id, ReadType.Current);
+        }
+
+
+        function treeviewonDataBound() {
+            var Id = $('#Id').val()
+
+            setTimeout(function () {
+
+                if (Id != 0 && Id != '') {
+                    //alert($("#NodePath").val())
+                    var treeview = $('#treeview').data('kendoTreeView');
+                    treeview.setOptions({ animation: false });
+                    if (treeview.element.find(".k-item").length) {
+                        openPath(treeview, eval($("#NodePath").val()));
+                        treeview.setOptions({ animation: kendo.ui.TreeView.fn.options.animation });
+                    } else {
+                        treeview.one("dataBound", arguments.callee)
+                    }
+                }
+                else {
+                    $("#treeview").data("kendoTreeView").select(".k-item:first");
+
+
+                }
+            }, 500);
+        }
+
+        function openPath(treeview, path) {
+
+            var ds = treeview.dataSource;
+            var node = ds.get(path[0])
+
+            // skip already expanded and loaded nodes
+            while (path.length > 1 && (node.expanded || node.loaded())) {
+                node.set("expanded", true);
+                path.shift();
+                node = ds.get(path[0]);
+            }
+
+            // if there are levels to expand, expand them
+            if (path.length > 1) {
+
+                // listen to the change event to know when the node has been loaded
+                ds.bind("change", function expandLevel(e) {
+                    var id = e.node && e.node.id;
+
+                    // proceed if the change is caused by the last fetching
+                    if (id == path[0]) {
+                        path.shift();
+                        ds.unbind("change", expandLevel);
+
+                        openPath(treeview, path);
+                    }
+                });
+
+                ds.get(path[0]).set("expanded", true);
+            } else {
+                // otherwise select
+                node = treeview.findByUid(ds.get(path[0]).uid);
+                treeview.select(node);
+                treeview.trigger("select", { node: node });
+            }
+        }
+    </script>
+@*  End Window Events *@
+
+
+
+@* Combo Box Events *@
+<script>
+
+    function SentCompanyId() {
+        var CompInfo = $("#CompanyLists").val();
+        if (CompInfo) {
+            return {
+                CompanyId: CompInfo,
+            };
+        }
+    }
+
+    function onSelect(e) {
+
+    };
+
+    var ReadType = {
+        Empty: 0,
+        First: 1,
+        Next: 2,
+        Current: 3,
+        Previous: 4,
+        Last: 5
+    }
+
+
+    //Read Function
+    function Read(Id, ReadType) {
+      
+     
+        if (Id == 0) {
+            Id = $("#Id").val()
+        }
+        //Fill Controls
+              
+        $.post("@Url.Action("Read", "Stock_Groups")", {
+            Id: Id,
+            CompanyId: $('#CompanyLists').val(),
+            ReadType: ReadType
+        },
+        function (data) {
+        
+        //Set All Model fields to avoid refreshing
+
+            $("#Id").val(data.TBL.Id);
+            $("#ParentId").val(data.TBL.ParentId);
+            $('#HasChildren').prop('checked', data.TBL.HasChildren); // if you want to appear checkbox 
+            $("#ParentId").data("kendoComboBox").value(data.TBL.ParentId);
+            $("#Code").val(data.TBL.Code);
+            $("#NameE").val(data.TBL.NameE);
+            $("#NameA").val(data.TBL.NameA);
+            $("#Levels").val(data.TBL.Levels);
+            $("#Notes").val(data.TBL.Notes);
+
+            $('#Post').val(data.TBL.Post);
+
+
+            if (data.TBL.Post == true) {
+                $("#BtnPost span").text(GetMessage(MessageType.PostButtonTxt));
+            }
+            else {
+
+                $("#BtnPost span").text(GetMessage(MessageType.UnPostButtonTxt));
+            }
+
+            $("#NodePath").val(data.NodePath);
+             
+   
+        });
+
+        $("#treeview").data("kendoTreeView").dataSource.read();
+     
+        $("#window").data("kendoWindow").close();
+    }
+
+</script>
+
+@* End Combo Box Events *@
+
+<script>
+    //treeview selected changed
+    function treeviewonSelect(e) {
+        var tv = $("#treeview").data("kendoTreeView");
+        var item = tv.dataItem(e.node);
+        //alert(item.id);
+
+        //Read(item.id,ReadType.Current)
+      
+        $.post("@Url.Action("TreeViewChanged", "Stock_Groups")", { SelectedId: item.id},
+          function (data) {
+        
+              //Set All Model fields to avoid refreshing
+
+              $("#Id").val(data.Id);
+              $("#ParentId").val(data.ParentId);
+              $('#HasChildren').prop('checked', data.HasChildren); // if you want to appear checkbox 
+              $("#ParentId").data("kendoComboBox").value(data.ParentId);
+              $("#Code").val(data.Code);
+              $("#NameE").val(data.NameE);
+              $("#NameA").val(data.NameA);
+              $("#Levels").val(data.Levels);
+              $("#Notes").val(data.Notes);
+             
+              $('#Post').val(data.Post);
+
+
+              if (data.Post == true) {
+                  $("#BtnPost span").text(GetMessage(MessageType.PostButtonTxt));
+              }
+              else {
+
+                  $("#BtnPost span").text(GetMessage(MessageType.UnPostButtonTxt));
+              }
+
+
+       
+    });
+
+    }
+ 
+</script>
+
+@* General *@
+
+    <script>
+
+        function getDateFromAspString(aspString) {
+            if (aspString == null) { return new Date(Date.now()) }
+            var epochMilliseconds = aspString.replace(
+                /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                '$1');
+            if (epochMilliseconds != aspString) {
+                var d = new Date(parseInt(epochMilliseconds));
+                return d;
+            }
+        }
+
+
+    
+    </script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#BtnSave").attr('type', 'button');
+        $("#BtnDiscard").attr('type', 'button');
+
+        $("#BtnReuse").removeAttr("data-toggle");
+        $("#BtnReuse").removeAttr("data-target");
+        $("#BtnReuse").removeAttr("data-action");
+
+        $("#BtnDelete").removeAttr("data-toggle");
+        $("#BtnDelete").removeAttr("data-target");
+        $("#BtnDelete").removeAttr("data-action");
+
+        $("#BtnPost").removeAttr("data-toggle");
+        $("#BtnPost").removeAttr("data-target");
+        $("#BtnPost").removeAttr("data-action");
+
+              read
+         })
+
+ 
+
+
+    $("#BtnCreate").click(function () {
+
+
+
+        //var $selected = $('#2');
+      
+        //alert($(node).parentsUntil('.k-treeview', '.k-item'))
+        ////$("#treeview").data("kendoTreeView").expand(node);
+
+
+        ////First expand node pathe for loadondemand type
+        //$("#treeview").data("kendoTreeView").expandPath([2, 4]);
+
+
+        ////Second Select Node
+        //var dataItem = $("#treeview").data("kendoTreeView").dataSource.get(1); // find item with id = 2
+        //var node = $("#treeview").data("kendoTreeView").findByUid(dataItem.uid);
+        //$("#treeview").data("kendoTreeView").select(node);
+
+        $(document).ready(function () {
+        
+        
+
+            $("input.form-control").val('');
+            $("hidden").val('');
+            $("#Id").val('0');
+            $("#MemberShipId").val('0');
+        
+
+
+            var tv = $("#treeview").data("kendoTreeView");
+            var selectedNode = tv.select();
+            var item = tv.dataItem(selectedNode);
+            if (item) {
+                $("#ParentId").data("kendoComboBox").value(item.id);
+            } else {
+                $("#ParentId").data("kendoComboBox").value('');
+            }
+          
+
+        });
+
+    })
+
+
+    $("#BtnSave").click(function () {
+
+        
+        if ($('#Id').val() == null || $('#Id').val() == '') {
+            $('#Id').val('0') //et id to 0 for save furst record in table without click create
+        }
+     
+
+        //Validation
+        if ($('#NameA').val()=='') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+            $.ajax({
+                url: "@Url.Content("~/Stock_Groups/Insert")",
+                type: 'POST',
+                data: {
+                  
+                    Id: $('#Id').val(),
+                    CompanyId: $('#CompanyLists').val(),
+                    Code: $('#Code').val(),
+                    NameA: $('#NameA').val(),
+                    NameE: $('#NameE').val(),
+                    ParentId: $('#ParentId').val(),
+                    HasChildren: $('#HasChildren').is(':checked'),
+                    Notes: $('#Notes').val(),
+
+
+
+                },
+                dataType: 'json',
+                success: function (result) {
+
+
+                    if (result.MessageType == 'success')
+                        $("#ParentId").data("kendoComboBox").dataSource.read();
+                    { Read(result.Id, ReadType.Current); }
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+                },
+                error: function (result) {
+                    //Responsible for reload login page if if user not authenticate
+                    window.location.href = window.location.href;
+                },
+            });
+        
+    });
+
+
+    $("#BtnDiscard").click(function () {
+
+        var Id
+
+        if ($('#Id').val() == '' || $('#Id').val() == 0) {
+            Id = 0;
+            return Read(Id, ReadType.First);
+        }
+        else {
+            Id = $('#Id').val();
+            return Read(Id, ReadType.Current);
+        }
+
+
+
+    });
+
+
+    $("#BtnReuse").click(function () {
+
+        
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+        data: {
+            PerType: 5,
+            Url: window.location.pathname
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            if (result.result == 'True') {
+
+
+                // Show confirmation and if ok execute Reuse function
+                ShowConfirmMessage(GetMessage(MessageType.ReuseConfirmHDR), GetMessage(MessageType.ReuseConfirm), 'Reuse');
+
+
+            }
+
+            else {
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+            }
+
+        },
+        error: function (result) {
+
+        },
+        });
+
+    });
+
+    function Reuse() {
+
+        //Validation
+        if ($('#id').val() == '') {
+            showAndDismissAlert('danger', 'No data to reuse')
+            return;
+        }
+
+        if ($('#NameA').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+
+
+
+
+
+
+        $(document).ready(function () {
+
+
+            $.ajax({
+                url: "@Url.Content("~/Stock_Groups/Reuse")",
+                type: 'POST',
+                data: {
+
+                    Id: $('#Id').val(),
+                 
+
+                },
+                dataType: 'json',
+                success: function (result) {
+
+                    if (result.MessageType == 'success')
+                        $("#ParentId").data("kendoComboBox").dataSource.read();
+
+                    { Read(result.Id, ReadType.Current); }
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+                },
+                error: function (result) {
+                    //Responsible for reload login page if if user not authenticate
+                    window.location.href = window.location.href;
+                },
+            });
+        });
+    }
+
+    $("#BtnDelete").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+        data: {
+            PerType: 4,
+            Url: window.location.pathname
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            if (result.result == 'True') {
+
+                if ($('#Post').val() == 'true') {
+                    showAndDismissAlert('info', GetMessage(MessageType.RefuseDeletePosting))
+                    return;
+                }
+
+                // Show confirmation and if ok execute Delete function
+                ShowConfirmMessage(GetMessage(MessageType.DeleteConfirmHDR), GetMessage(MessageType.DeleteConfirm), 'Delete');
+
+
+            }
+
+            else {
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+            }
+
+        },
+        error: function (result) {
+
+        },
+        });
+
+    });
+    function Delete() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Groups/Delete")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    }
+    
+    $("#BtnPost").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+        data: {
+            PerType: ($('#Post').val() == 'true')?7:6,
+            Url: window.location.pathname
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            if (result.result == 'True') {
+
+
+                // Show confirmation and if ok execute Delete function
+                if   ($('#Post').val() == 'true')
+                {
+                    ShowConfirmMessage(GetMessage(MessageType.UnPostConfirmHDR), GetMessage(MessageType.UnPostConfirm), 'Post');
+                }
+                else
+                {
+                    ShowConfirmMessage(GetMessage(MessageType.PostConfirmHDR), GetMessage(MessageType.PostConfirm), 'Post');
+                }
+
+
+            }
+
+            else {
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+            }
+
+        },
+        error: function (result) {
+
+        },
+        });
+
+    });
+
+    function Post() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Groups/Post")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    }
+
+    //ComboBox Events
+    function DataBoundEvent() {
+
+    }
+
+    function SelectEvent(e) {
+
+    }
+</script>
+
+@* End General *@
+

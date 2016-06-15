@@ -1,0 +1,967 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUR ERP PROGRAM</title>
+    @using Telerik.Reporting
+    @using Telerik.ReportViewer.Mvc
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+
+
+
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.default.min.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/kendo/2014.1.528/jquery.min.js")"></script>
+<script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.all.min.js")"></script>
+<script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.aspnetmvc.min.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/date.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+        <script src="@Url.Content("~/Scripts/kendo/cultures/kendo.culture.ar-SA.min.js")"></script>
+        <script src="@Url.Content("~/Scripts/towords.js")"></script>
+
+
+        <link rel="stylesheet" href="@Url.Content("~/MessageStyleScripts/jquery.ui.all.css")" />
+        <link rel="stylesheet" href="@Url.Content("~/MessageStyleScripts/jquery-ui.css")" />
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.core.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.widget.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.mouse.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.button.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.draggable.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.position.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.resizable.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.button.js")'></script>
+        <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.dialog.js")'></script>
+
+
+
+
+
+        @Scripts.Render("~/bundles/jqueryval")
+
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+
+
+
+
+
+
+    @* For Reports *@
+
+ 
+    <script src="@Url.Content("~/ReportViewer/js/telerikReportViewer-8.1.14.804.js")"></script>
+    <link href="@Url.Content("~/ReportViewer/styles/telerikReportViewer-8.1.14.804.css")" rel="stylesheet" />
+
+
+    <script src="http://cdn.kendostatic.com/2013.2.918/js/kendo.web.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2013.2.918/js/kendo.mobile.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2013.2.918/js/kendo.all.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2013.2.918/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2013.2.918/styles/kendo.blueopal.min.css" rel="stylesheet" />
+
+    @* End For Reports *@
+
+    <script>
+  
+
+
+
+
+
+                 $(function () {
+                     ShowMessage = function (txt) {
+                        // alert(txt);
+                         document.getElementById("lblMessage").innerHTML = txt;
+
+                         $("#dialog-message").dialog({
+                             bgiframe: true,
+                             autoOpen: true,
+                             modal: true,
+                             buttons: {
+                                 Ok: function () {
+                                     $(this).dialog("close");
+                                 },
+
+                             }
+                         });
+                     }
+                 });
+
+                 $(function () {
+                     ShowMessageConfirm = function (txt) {
+                         var submit = false;
+                         document.getElementById("lblMessageConfirm").innerHTML = txt;
+
+                         $("#dialog-confirm").dialog({
+
+                             //open: function() { $(".ui-dialog").css("box-shadow","#000 5px 5px 5px"); },
+                             resizable: false,
+                             //height: 140,
+                             //width:400,
+
+                             modal: true,
+                             buttons: {
+                                 "Ok": function () {
+                                     $(this).dialog("close");
+                                     submit = true;
+                                 },
+                                 Cancel: function () {
+
+                                     $(this).dialog("close");
+                                 }
+                             }
+                         });
+                     }
+                 });
+
+
+
+
+    </script>
+
+</head>
+<body>
+
+    @*Open from here don't have closed closed it in seperated page we open it in layout and close in page*@
+    <form id="MainForm" action="" method="post">
+       
+        <div class="container-fluid" style="" >
+
+         
+            <div>
+                <!-- Modal Dialog For open page as popup -->
+                @(Html.Kendo().Window().Name("windowPagePopUp").Title("Create and Edit Accounts")
+                        .Resizable()
+                .Modal(true)
+                        //.LoadContentFrom("Index", "GL_ChartOFAccounts")
+                .Iframe(true)
+                        .Draggable(true)
+                .Visible(false)
+                        .Events(e => e.Close("windowPagePopUpOnClose"))
+                .Actions(actions => actions.Close())
+                .Content(@<text>
+
+                </text>)
+
+                )
+
+            </div>
+        
+            <div class="row" >
+                <div class="col-xs-12 col-sm-6">
+                    <div id="FormTitle" style="background: #a2c3db;color:black; font-size: large;">
+                        <label id="LBLFormHDR" style="margin-left: 15px; margin-top: 10px ;margin-bottom :10px ; min-height:33px"></label>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  
+
+                    <div id="DivCompanies" style="text-align: right">
+                        @(Html.Kendo().DropDownList()
+                                 .Name("CompanyLists")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .HtmlAttributes(new { style = "margin-right:0px;width:100%; max-width:2000px;text-align:left;margin-top:10px;font-size:larg;font-weight:bold;margin-bottom: 10px;float:right" })
+                         .DataSource(source =>
+                          { source.Read(read => { read.Action("FillCompanies", "GenerlaClasses"); }); })
+                          .Events(e =>
+                                  {
+                                      e.Change("Companychange")
+                                      .DataBound("Companychange");
+                                      //.Select("onSelect");
+                                      //  .Open("open")
+                                      //   .Close("close")
+
+                                  })
+
+                        )
+                    </div>
+                    <script>
+                        function SentCompanyId() {
+                            var CompInfo = $("#CompanyLists").val();
+                            if (CompInfo) {
+                                return {
+                                    CompanyId: CompInfo,
+                                };
+                            }
+                        }
+
+                    </script>
+                  
+                </div>
+
+                
+
+                </div>
+            </div>
+       
+        <div class="row"  >
+            <div class="col-xs-12">
+
+
+                <div id="GeneralControl" style=" background: #c4bebe; color: blue; height: auto;">
+
+
+
+                    <div id="BtnsDiv" class="row">
+                        <div class="col-xs-12" style=" margin-top: 20px; margin-bottom: 20px;margin-left:20px">
+
+                            <button class="btn-default" id="BtnPreview" type="button" value="Preview" name="submitButton" style="width:65px;height:50px;margin:0 0  0 0"><i class="glyphicon glyphicon-ok"></i><br />  @(Request.Cookies["Language"].Value == "Arabic" ? "عرض" : "Preview") </button>
+                            <button class="btn-default" id="BtnSendByMail" type="button" value="Send by Mail" name="submitButton" style="width:65px;height:50px;margin:0 0  0 0"><i class="glyphicon glyphicon-share-alt"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "ارسال" : "Send") </button>
+                            <button class="btn-default" id="BtnShare" type="button" value="Share" name="submitButton" style="width:65px;height:50px;margin:0 0  0 0"><i class="glyphicon glyphicon-share"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "مشاركة" : "Share") </button>
+
+                        </div>
+
+
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-12">
+                            @*<div class="alert-messages text-center" style="position: fixed; z-index: 7000; width: 100%"></div>*@
+                            <div class="alert-messages text-center" style="position: absolute; width: 97%; left: 1.5%; top: 0; border: none; z-index: 7000;text-align:center"></div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Modal Dialog -->
+                    <div class="modal fade" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header" style="color:black">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Delete Parmanently</h4>
+                                </div>
+                                <div class="modal-body" style="color:black">
+                                    <p>Are you sure about this?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-danger" id="confirm" name="submitButton" value="Delete">Ok</button>
+                                    @*Send value name to cintroller*@
+                                    <input id="ActionValue" type="hidden" value="" name="submitButton">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Modal Dialog Ajax without post form -->
+                    <div class="modal fade" id="confirmMessage" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true" data-title="" data-message="" data-function="">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header" style="color:black">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Delete Parmanently</h4>
+                                </div>
+                                <div class="modal-body" style="color:black">
+                                    <p>Are you sure about this?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="btnMessageCancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button id="confirm" type="button" class="btn btn-danger" name="submitButton" value="Delete">Ok</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                </div>
+
+
+            </div>
+      
+        </div>
+
+      
+
+        <div style="background-color:white;">
+
+            <div id="DivBranches" style="margin-right: 10px;margin-left:10px;">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-2">
+                        @Html.Label("Branches", new { style = "margin-top:10px;margin-left:5px" })
+                    </div>
+                    <div class="col-xs-12 col-sm-10">
+
+
+
+                        <div>
+                            @(Html.Kendo().MultiSelect()
+             .Name("BranchLists")
+             .DataTextField("Name")
+             .AutoBind(true)
+             .Placeholder("Select one or more branches")
+             .DataValueField("Id")
+                   .HtmlAttributes(new { style = "width:100%; max-width:2000px;margin-top:10px;font-size:larg;font-weight:bold;margin-bottom: 10px" })
+             .DataSource(source =>
+              { source.Read(read => { read.Action("FillBranches", "GenerlaClasses").Data("SentCompanyId"); }); })
+              .Events(e =>
+                      {
+                          e.Change("Branchchange")
+                          .DataBound("Branchchange");
+                          // .Select("onSelect")
+                          //  .Open("open")
+                          //   .Close("close")
+
+                      })
+                                    //.CascadeFrom("CompanyLists")
+                            )
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-xs-12 ">
+                    <div id="content" style="background:white">
+                        @RenderBody()
+
+
+                    </div>
+
+                </div>
+                <style>
+                    #reportViewer1 {
+                        position: relative;
+                        left: 5px;
+                        right: 5px;
+                        top: 5px;
+                        bottom: 5px;
+                        overflow: hidden;
+                        width: 100%;
+                        height: 1150px;
+                        font-family: Verdana, Arial;
+                    }
+                </style>
+              
+                <div class="col-xs-12 ">
+                    <div style="margin-left:0px;margin-right:10px">
+                        @(Html.TelerikReporting().ReportViewer()
+                   .Id("reportViewer1")
+                   .ServiceUrl(Url.Content("~/api/reports/"))
+                   .TemplateUrl(Url.Content("~/ReportViewer/templates/telerikReportViewerTemplate-8.1.14.804.html"))
+                           //.ReportSource("")
+                   .ViewMode(ViewModes.PRINT_PREVIEW)
+                   .ScaleMode(ScaleModes.SPECIFIC)
+                   .Scale(1.0)
+                   
+                   .PersistSession(false)
+                   .PrintMode(PrintMode.AutoSelect)
+                  
+                        )
+                    </div>
+                    </div>
+                    <div class="col-xs-12 ">
+                        <div style="background:white; height:20px">
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+        </div>
+
+    
+ 
+
+        <div id="dialog-message" title="Message Box">
+            <p>
+                <label id="lblMessage" style="color: black; font-size: small; font-family: Tahoma"></label>
+            </p>
+        </div>
+
+        <div id="dialog-confirm" title="Confirmation" style="margin-top:10px;  box-shadow:none">
+            <p>
+                <label id="lblMessageConfirm" style="color:black ;font-size:small;font-family:Tahoma"></label>
+            </p>
+        </div>
+
+
+
+
+
+
+        @*BootStrab Styling for validation message*@
+        <script>
+
+            function getLocaleShortDateString(d) {
+                var f = { "ar-SA": "dd/MM/yy", "bg-BG": "dd.M.yyyy", "ca-ES": "dd/MM/yyyy", "zh-TW": "yyyy/M/d", "cs-CZ": "d.M.yyyy", "da-DK": "dd-MM-yyyy", "de-DE": "dd.MM.yyyy", "el-GR": "d/M/yyyy", "en-US": "M/d/yyyy", "fi-FI": "d.M.yyyy", "fr-FR": "dd/MM/yyyy", "he-IL": "dd/MM/yyyy", "hu-HU": "yyyy. MM. dd.", "is-IS": "d.M.yyyy", "it-IT": "dd/MM/yyyy", "ja-JP": "yyyy/MM/dd", "ko-KR": "yyyy-MM-dd", "nl-NL": "d-M-yyyy", "nb-NO": "dd.MM.yyyy", "pl-PL": "yyyy-MM-dd", "pt-BR": "d/M/yyyy", "ro-RO": "dd.MM.yyyy", "ru-RU": "dd.MM.yyyy", "hr-HR": "d.M.yyyy", "sk-SK": "d. M. yyyy", "sq-AL": "yyyy-MM-dd", "sv-SE": "yyyy-MM-dd", "th-TH": "d/M/yyyy", "tr-TR": "dd.MM.yyyy", "ur-PK": "dd/MM/yyyy", "id-ID": "dd/MM/yyyy", "uk-UA": "dd.MM.yyyy", "be-BY": "dd.MM.yyyy", "sl-SI": "d.M.yyyy", "et-EE": "d.MM.yyyy", "lv-LV": "yyyy.MM.dd.", "lt-LT": "yyyy.MM.dd", "fa-IR": "MM/dd/yyyy", "vi-VN": "dd/MM/yyyy", "hy-AM": "dd.MM.yyyy", "az-Latn-AZ": "dd.MM.yyyy", "eu-ES": "yyyy/MM/dd", "mk-MK": "dd.MM.yyyy", "af-ZA": "yyyy/MM/dd", "ka-GE": "dd.MM.yyyy", "fo-FO": "dd-MM-yyyy", "hi-IN": "dd-MM-yyyy", "ms-MY": "dd/MM/yyyy", "kk-KZ": "dd.MM.yyyy", "ky-KG": "dd.MM.yy", "sw-KE": "M/d/yyyy", "uz-Latn-UZ": "dd/MM yyyy", "tt-RU": "dd.MM.yyyy", "pa-IN": "dd-MM-yy", "gu-IN": "dd-MM-yy", "ta-IN": "dd-MM-yyyy", "te-IN": "dd-MM-yy", "kn-IN": "dd-MM-yy", "mr-IN": "dd-MM-yyyy", "sa-IN": "dd-MM-yyyy", "mn-MN": "yy.MM.dd", "gl-ES": "dd/MM/yy", "kok-IN": "dd-MM-yyyy", "syr-SY": "dd/MM/yyyy", "dv-MV": "dd/MM/yy", "ar-IQ": "dd/MM/yyyy", "zh-CN": "yyyy/M/d", "de-CH": "dd.MM.yyyy", "en-GB": "dd/MM/yyyy", "es-MX": "dd/MM/yyyy", "fr-BE": "d/MM/yyyy", "it-CH": "dd.MM.yyyy", "nl-BE": "d/MM/yyyy", "nn-NO": "dd.MM.yyyy", "pt-PT": "dd-MM-yyyy", "sr-Latn-CS": "d.M.yyyy", "sv-FI": "d.M.yyyy", "az-Cyrl-AZ": "dd.MM.yyyy", "ms-BN": "dd/MM/yyyy", "uz-Cyrl-UZ": "dd.MM.yyyy", "ar-EG": "dd/MM/yyyy", "zh-HK": "d/M/yyyy", "de-AT": "dd.MM.yyyy", "en-AU": "d/MM/yyyy", "es-ES": "dd/MM/yyyy", "fr-CA": "yyyy-MM-dd", "sr-Cyrl-CS": "d.M.yyyy", "ar-LY": "dd/MM/yyyy", "zh-SG": "d/M/yyyy", "de-LU": "dd.MM.yyyy", "en-CA": "dd/MM/yyyy", "es-GT": "dd/MM/yyyy", "fr-CH": "dd.MM.yyyy", "ar-DZ": "dd-MM-yyyy", "zh-MO": "d/M/yyyy", "de-LI": "dd.MM.yyyy", "en-NZ": "d/MM/yyyy", "es-CR": "dd/MM/yyyy", "fr-LU": "dd/MM/yyyy", "ar-MA": "dd-MM-yyyy", "en-IE": "dd/MM/yyyy", "es-PA": "MM/dd/yyyy", "fr-MC": "dd/MM/yyyy", "ar-TN": "dd-MM-yyyy", "en-ZA": "yyyy/MM/dd", "es-DO": "dd/MM/yyyy", "ar-OM": "dd/MM/yyyy", "en-JM": "dd/MM/yyyy", "es-VE": "dd/MM/yyyy", "ar-YE": "dd/MM/yyyy", "en-029": "MM/dd/yyyy", "es-CO": "dd/MM/yyyy", "ar-SY": "dd/MM/yyyy", "en-BZ": "dd/MM/yyyy", "es-PE": "dd/MM/yyyy", "ar-JO": "dd/MM/yyyy", "en-TT": "dd/MM/yyyy", "es-AR": "dd/MM/yyyy", "ar-LB": "dd/MM/yyyy", "en-ZW": "M/d/yyyy", "es-EC": "dd/MM/yyyy", "ar-KW": "dd/MM/yyyy", "en-PH": "M/d/yyyy", "es-CL": "dd-MM-yyyy", "ar-AE": "dd/MM/yyyy", "es-UY": "dd/MM/yyyy", "ar-BH": "dd/MM/yyyy", "es-PY": "dd/MM/yyyy", "ar-QA": "dd/MM/yyyy", "es-BO": "dd/MM/yyyy", "es-SV": "dd/MM/yyyy", "es-HN": "dd/MM/yyyy", "es-NI": "dd/MM/yyyy", "es-PR": "dd/MM/yyyy", "am-ET": "d/M/yyyy", "tzm-Latn-DZ": "dd-MM-yyyy", "iu-Latn-CA": "d/MM/yyyy", "sma-NO": "dd.MM.yyyy", "mn-Mong-CN": "yyyy/M/d", "gd-GB": "dd/MM/yyyy", "en-MY": "d/M/yyyy", "prs-AF": "dd/MM/yy", "bn-BD": "dd-MM-yy", "wo-SN": "dd/MM/yyyy", "rw-RW": "M/d/yyyy", "qut-GT": "dd/MM/yyyy", "sah-RU": "MM.dd.yyyy", "gsw-FR": "dd/MM/yyyy", "co-FR": "dd/MM/yyyy", "oc-FR": "dd/MM/yyyy", "mi-NZ": "dd/MM/yyyy", "ga-IE": "dd/MM/yyyy", "se-SE": "yyyy-MM-dd", "br-FR": "dd/MM/yyyy", "smn-FI": "d.M.yyyy", "moh-CA": "M/d/yyyy", "arn-CL": "dd-MM-yyyy", "ii-CN": "yyyy/M/d", "dsb-DE": "d. M. yyyy", "ig-NG": "d/M/yyyy", "kl-GL": "dd-MM-yyyy", "lb-LU": "dd/MM/yyyy", "ba-RU": "dd.MM.yy", "nso-ZA": "yyyy/MM/dd", "quz-BO": "dd/MM/yyyy", "yo-NG": "d/M/yyyy", "ha-Latn-NG": "d/M/yyyy", "fil-PH": "M/d/yyyy", "ps-AF": "dd/MM/yy", "fy-NL": "d-M-yyyy", "ne-NP": "M/d/yyyy", "se-NO": "dd.MM.yyyy", "iu-Cans-CA": "d/M/yyyy", "sr-Latn-RS": "d.M.yyyy", "si-LK": "yyyy-MM-dd", "sr-Cyrl-RS": "d.M.yyyy", "lo-LA": "dd/MM/yyyy", "km-KH": "yyyy-MM-dd", "cy-GB": "dd/MM/yyyy", "bo-CN": "yyyy/M/d", "sms-FI": "d.M.yyyy", "as-IN": "dd-MM-yyyy", "ml-IN": "dd-MM-yy", "en-IN": "dd-MM-yyyy", "or-IN": "dd-MM-yy", "bn-IN": "dd-MM-yy", "tk-TM": "dd.MM.yy", "bs-Latn-BA": "d.M.yyyy", "mt-MT": "dd/MM/yyyy", "sr-Cyrl-ME": "d.M.yyyy", "se-FI": "d.M.yyyy", "zu-ZA": "yyyy/MM/dd", "xh-ZA": "yyyy/MM/dd", "tn-ZA": "yyyy/MM/dd", "hsb-DE": "d. M. yyyy", "bs-Cyrl-BA": "d.M.yyyy", "tg-Cyrl-TJ": "dd.MM.yy", "sr-Latn-BA": "d.M.yyyy", "smj-NO": "dd.MM.yyyy", "rm-CH": "dd/MM/yyyy", "smj-SE": "yyyy-MM-dd", "quz-EC": "dd/MM/yyyy", "quz-PE": "dd/MM/yyyy", "hr-BA": "d.M.yyyy.", "sr-Latn-ME": "d.M.yyyy", "sma-SE": "yyyy-MM-dd", "en-SG": "d/M/yyyy", "ug-CN": "yyyy-M-d", "sr-Cyrl-BA": "d.M.yyyy", "es-US": "M/d/yyyy" };
+
+                var l = navigator.language ? navigator.language : navigator['userLanguage'], y = d.getFullYear(), m = d.getMonth() + 1, d = d.getDate();
+                f = (l in f) ? f[l] : "MM/dd/yyyy";
+                function z(s) { s = '' + s; return s.length > 1 ? s : '0' + s; }
+                f = f.replace(/yyyy/, y); f = f.replace(/yy/, String(y).substr(2));
+                f = f.replace(/MM/, z(m)); f = f.replace(/M/, m);
+                f = f.replace(/dd/, z(d)); f = f.replace(/d/, d);
+                return f;
+            }
+
+
+            $(document).ready(function () {
+                /* Bootstrap Fix */
+                $.validator.setDefaults({
+                    highlight: function (element) {
+                        $(element).closest("div.control-group").addClass("error");
+                    },
+                    unhighlight: function (element) {
+                        $(element).closest("div.control-group").removeClass("error");
+                    }
+                });
+                var current_div;
+                $(".editor-label, .editor-field").each(function () {
+                    var $this = $(this);
+                    if ($this.hasClass("editor-label")) {
+                        current_div = $('<div class="control-group"></div>').insertBefore(this);
+                    }
+                    current_div.append(this);
+                });
+                $(".editor-label").each(function () {
+                    $(this).contents().unwrap();
+                });
+                $(".editor-field").each(function () {
+                    $(this).addClass("controls");
+                    $(this).removeClass("editor-field");
+                });
+                $("label").each(function () {
+                    $(this).addClass("control-label");
+                });
+                $("span.field-validation-valid, span.field-validation-error").each(function () {
+                    $(this).addClass("help-inline");
+                });
+                $("form").each(function () {
+                    $(this).addClass("form-horizontal");
+                    $(this).find("div.control-group").each(function () {
+                        if ($(this).find("span.field-validation-error").length > 0) {
+                            $(this).addClass("error");
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dialog show event handler -->
+        <script type="text/javascript">
+            $('#confirmDelete').on('show.bs.modal', function (e) {
+                $message = $(e.relatedTarget).attr('data-message');
+                $(this).find('.modal-body p').text($message);
+                $title = $(e.relatedTarget).attr('data-title');
+                $(this).find('.modal-title').text($title);
+                $ActionName = $(e.relatedTarget).attr('data-action');
+                // Pass form reference to modal for submission on yes/ok
+                var form = $(e.relatedTarget).closest('form');
+                $(this).find('.modal-footer #confirm').data('form', form);
+            });
+            //Form confirm (yes/ok) handler, submits form
+            $('#confirmDelete').find('.modal-footer #confirm').on('click', function () {
+
+                $("#ActionValue").val($ActionName);
+                $(this).data('form').submit();
+            });
+        </script>
+
+
+
+        <input id="ConfirmMessageTitle" type="hidden" />
+        <input id="ConfirmMessageContain" type="hidden" />
+        <input id="ConfirmMessageFunc" type="hidden" />
+        <input id="ConfirmMessageReturn" type="hidden" />
+        <input id="ConfirmMessageType" type="hidden" />
+        <input id="RowIndexForPopUP" type="hidden" />
+        <input id="ControlNameForPopUP" type="hidden" />
+        <input id="ControlTypeForPopUP" type="hidden" />
+        <input id="ModelIdForPopUP" type="hidden" />
+        <input id="ModelNameForPopUP" type="hidden" />
+        <input id="ModelCompanyIdForPopUP" type="hidden" />
+        <input id="ModelBranchIdForPopUP" type="hidden" />
+        <input id="ModelSetValueForPopUP" type="hidden" />
+        <input id="ModelTransactIdForPopUP" type="hidden" />
+
+
+        <!-- Dialog show event handler  For confirmMessage with Ajax-->
+        <script>
+
+    function windowPagePopUpOnClose() {
+        $("#windowPagePopUp").data("kendoWindow").content("")
+     
+        $.ajax({
+            url: "@Url.Content("~/Base/GetPopUpSessionValue")",
+            type: 'POST',
+        data: {
+          
+           
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            //Case of Grid
+            if ($('#ControlTypeForPopUP').val() == "Grid")
+            {
+            if (result.Id != 0  ) {
+                //var model = $('#DetailGrid').data().kendoGrid.dataSource.data()[$('#RowIndexForPopUP').val()];
+                if ($('#ModelSetValueForPopUP').val() != 'No') {
+                    var model = $('#' + $('#ControlNameForPopUP').val()).data().kendoGrid.dataSource.data()[$('#RowIndexForPopUP').val()];
+                    model.set($('#ModelIdForPopUP').val(), result.Id);
+                    model.set($('#ModelNameForPopUP').val(), result.Name);
+                }
+            }
+            }
+
+           else if($('#ControlTypeForPopUP').val() == "Combo")
+           {
+               if (result.Id != 0)
+               {
+                   if ($('#ModelSetValueForPopUP').val() != 'No')
+                   {
+                   $('#' + $('#ControlNameForPopUP').val()).data('kendoComboBox').value(result.Id);
+                       //$('#' + $('#ControlNameForPopUP').val()).data('kendoComboBox').text(result.Name);
+                   }
+                   $('#' + $('#ControlNameForPopUP').val()).data('kendoComboBox').dataSource.read();
+               }
+              
+           }
+
+        },
+        error: function (result) {
+          
+        },
+        });
+
+
+    }
+            function ShowPageAsPopUp(Title, URL, ControlName, ControlType, ModelId, ModelName, rowIndex, ModelCompanyId, ModelBranchId, ModelSetValue,ModelTransactId) {
+
+                //This function responsible for open extra page to add new or edit or search
+                // when closeng current value return back to combobox but if (ModelSetValueForPopUP) is No no value return back 
+                //But if user search for it he will found it  it establish for stand alone combo or for grid combo
+                $('#RowIndexForPopUP').val('');
+                $('#RowIndexForPopUP').val(rowIndex);
+
+                $('#ControlNameForPopUP').val('');
+                $('#ControlNameForPopUP').val(ControlName);
+
+                $('#ControlTypeForPopUP').val('');
+                $('#ControlTypeForPopUP').val(ControlType);
+
+                $('#ModelIdForPopUP').val('');
+                $('#ModelIdForPopUP').val(ModelId);
+
+
+
+                $('#ModelNameForPopUP').val('');
+                $('#ModelNameForPopUP').val(ModelName);
+
+
+                $('#ModelCompanyIdForPopUP').val('');
+                $('#ModelCompanyIdForPopUP').val(ModelCompanyId);
+
+                $('#ModelBranchIdForPopUP').val('');
+                $('#ModelBranchIdForPopUP').val(ModelBranchId);
+
+
+                $('#ModelSetValueForPopUP').val('');
+                $('#ModelSetValueForPopUP').val(ModelSetValue);
+
+
+                $('#ModelTransactIdForPopUP').val('');
+                $('#ModelTransactIdForPopUP').val(ModelTransactId);
+
+
+
+
+                $("#windowPagePopUp").parent().css('width', "100%");
+                $("#windowPagePopUp").parent().css('height', "95%");
+                $("#windowPagePopUp").data("kendoWindow").title(Title)
+
+
+                $("#windowPagePopUp").data("kendoWindow").refresh({
+                    url: "@Url.Content("~/")" + URL
+
+                });
+
+          
+                $("#windowPagePopUp").data("kendoWindow").center().open();
+
+                @*$.ajax({
+                    url: "@Url.Content("~/Base/SetPopUpSessionValue")",
+                    type: 'POST',
+                data: {
+           
+                },
+                dataType: 'json',
+                success: function (result) {
+
+                    //Set Session IsReturnBackToDetailPageActive     to true before open window in ajax controll function 
+               
+
+                },
+                error: function (result) {
+          
+                },
+                });*@
+
+
+
+    }
+    $('#OpenPageAsPopUp').on('show.bs.modal', function (e) {
+
+
+        $(this).find('.modal-body p').text($('#ConfirmMessageContain').val());
+        $(this).find('.modal-title').text($('#ConfirmMessageTitle').val());
+
+    });
+
+
+    function ShowConfirmMessage(Title, Message, SuccFunc, Type) {
+        $('#ConfirmMessageTitle').val('');
+        $('#ConfirmMessageContain').val('');
+        $('#ConfirmMessageFunc').val('');
+        $('#ConfirmMessageReturn').val('');
+        $('#ConfirmMessageType').val('');
+
+
+        $('#ConfirmMessageTitle').val(Title);
+        $('#ConfirmMessageContain').val(Message);
+        $('#ConfirmMessageFunc').val(SuccFunc);
+        $('#ConfirmMessageType').val(Type);
+
+
+        if (Type == "WithOutConfirm") // Show modal without ok or cancel
+        {
+            $('#btnMessageCancel').hide();
+            $('#confirm').hide();
+        }
+        else {
+            $('#btnMessageCancel').show();
+            $('#confirm').show();
+        }
+
+        $('#confirmMessage').modal('show');
+
+    }
+
+    $('#confirmMessage').on('show.bs.modal', function (e) {
+
+
+        $(this).find('.modal-body p').text($('#ConfirmMessageContain').val());
+        $(this).find('.modal-title').text($('#ConfirmMessageTitle').val());
+
+    });
+
+    //Form confirm (yes/ok) handler, submits form
+    $('#confirmMessage').find('.modal-footer #confirm').on('click', function () {
+
+        $('#ConfirmMessageReturn').val('OK');
+
+        $('.modal.in').modal('hide')
+        window[$('#ConfirmMessageFunc').val()]();
+
+    });
+        </script>
+
+
+        @*<span id="close" style="float: right; display: inline-block; padding: 2px 5px; background: #ccc;"*@
+        <script>
+            function showAndDismissAlert(type, message) {
+                var htmlAlert = '<div id="FlashDialog" class="alert alert-' + type + '">' + message + '<a href=#><span id="close" style="float: right; display: inline-block; padding: 2px 5px;" onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode); return false;">x</span></a></div>';
+
+                // Prepend so that alert is on top, could also append if we want new alerts to show below instead of on top.
+                $(".alert-messages").prepend(htmlAlert);
+
+                // Since we are prepending, take the first alert and tell it to fade in and then fade out.
+                // Note: if we were appending, then should use last() instead of first()
+                var delay
+                if (type == 'success') {
+                    delay = 1500
+                }
+                else if (type == 'info') {
+                    delay = 2500
+                }
+                else if (type == 'danger') {
+                    delay = 5000
+                }
+
+                $(".alert-messages .alert").first().hide().fadeIn(200).delay(delay).fadeOut(500, function () { $(this).remove(); });
+            }
+        </script>
+
+        @if (TempData["ReturnMessage"] != null)
+        {
+            <script>
+
+                showAndDismissAlert('@TempData["MessageType"]', '@TempData["ReturnMessage"]')
+             
+            </script>
+        }
+        
+        <script>
+            //for enter
+            $('input,select').keydown(function (e) {
+                var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+                if (key == 13) {
+                    e.preventDefault();
+                    var inputs = $('#content').find(':input:visible');
+                    var nextinput = 0;
+                    if (inputs.index(this) < (inputs.length - 1)) nextinput = inputs.index(this) + 1;
+                    if (inputs.length == 1) $(this).blur().focus();
+                    else inputs.eq(nextinput).focus();
+                }
+            })
+
+
+        </script>
+
+        <script>
+            function getLocaleDateString() {
+
+                var formats = {
+                    "ar-SA": "dd/MM/yy",
+                    "bg-BG": "dd.M.yyyy",
+                    "ca-ES": "dd/MM/yyyy",
+                    "zh-TW": "yyyy/M/d",
+                    "cs-CZ": "d.M.yyyy",
+                    "da-DK": "dd-MM-yyyy",
+                    "de-DE": "dd.MM.yyyy",
+                    "el-GR": "d/M/yyyy",
+                    "en-US": "M/d/yyyy",
+                    "fi-FI": "d.M.yyyy",
+                    "fr-FR": "dd/MM/yyyy",
+                    "he-IL": "dd/MM/yyyy",
+                    "hu-HU": "yyyy. MM. dd.",
+                    "is-IS": "d.M.yyyy",
+                    "it-IT": "dd/MM/yyyy",
+                    "ja-JP": "yyyy/MM/dd",
+                    "ko-KR": "yyyy-MM-dd",
+                    "nl-NL": "d-M-yyyy",
+                    "nb-NO": "dd.MM.yyyy",
+                    "pl-PL": "yyyy-MM-dd",
+                    "pt-BR": "d/M/yyyy",
+                    "ro-RO": "dd.MM.yyyy",
+                    "ru-RU": "dd.MM.yyyy",
+                    "hr-HR": "d.M.yyyy",
+                    "sk-SK": "d. M. yyyy",
+                    "sq-AL": "yyyy-MM-dd",
+                    "sv-SE": "yyyy-MM-dd",
+                    "th-TH": "d/M/yyyy",
+                    "tr-TR": "dd.MM.yyyy",
+                    "ur-PK": "dd/MM/yyyy",
+                    "id-ID": "dd/MM/yyyy",
+                    "uk-UA": "dd.MM.yyyy",
+                    "be-BY": "dd.MM.yyyy",
+                    "sl-SI": "d.M.yyyy",
+                    "et-EE": "d.MM.yyyy",
+                    "lv-LV": "yyyy.MM.dd.",
+                    "lt-LT": "yyyy.MM.dd",
+                    "fa-IR": "MM/dd/yyyy",
+                    "vi-VN": "dd/MM/yyyy",
+                    "hy-AM": "dd.MM.yyyy",
+                    "az-Latn-AZ": "dd.MM.yyyy",
+                    "eu-ES": "yyyy/MM/dd",
+                    "mk-MK": "dd.MM.yyyy",
+                    "af-ZA": "yyyy/MM/dd",
+                    "ka-GE": "dd.MM.yyyy",
+                    "fo-FO": "dd-MM-yyyy",
+                    "hi-IN": "dd-MM-yyyy",
+                    "ms-MY": "dd/MM/yyyy",
+                    "kk-KZ": "dd.MM.yyyy",
+                    "ky-KG": "dd.MM.yy",
+                    "sw-KE": "M/d/yyyy",
+                    "uz-Latn-UZ": "dd/MM yyyy",
+                    "tt-RU": "dd.MM.yyyy",
+                    "pa-IN": "dd-MM-yy",
+                    "gu-IN": "dd-MM-yy",
+                    "ta-IN": "dd-MM-yyyy",
+                    "te-IN": "dd-MM-yy",
+                    "kn-IN": "dd-MM-yy",
+                    "mr-IN": "dd-MM-yyyy",
+                    "sa-IN": "dd-MM-yyyy",
+                    "mn-MN": "yy.MM.dd",
+                    "gl-ES": "dd/MM/yy",
+                    "kok-IN": "dd-MM-yyyy",
+                    "syr-SY": "dd/MM/yyyy",
+                    "dv-MV": "dd/MM/yy",
+                    "ar-IQ": "dd/MM/yyyy",
+                    "zh-CN": "yyyy/M/d",
+                    "de-CH": "dd.MM.yyyy",
+                    "en-GB": "dd/MM/yyyy",
+                    "es-MX": "dd/MM/yyyy",
+                    "fr-BE": "d/MM/yyyy",
+                    "it-CH": "dd.MM.yyyy",
+                    "nl-BE": "d/MM/yyyy",
+                    "nn-NO": "dd.MM.yyyy",
+                    "pt-PT": "dd-MM-yyyy",
+                    "sr-Latn-CS": "d.M.yyyy",
+                    "sv-FI": "d.M.yyyy",
+                    "az-Cyrl-AZ": "dd.MM.yyyy",
+                    "ms-BN": "dd/MM/yyyy",
+                    "uz-Cyrl-UZ": "dd.MM.yyyy",
+                    "ar-EG": "dd/MM/yyyy",
+                    "zh-HK": "d/M/yyyy",
+                    "de-AT": "dd.MM.yyyy",
+                    "en-AU": "d/MM/yyyy",
+                    "es-ES": "dd/MM/yyyy",
+                    "fr-CA": "yyyy-MM-dd",
+                    "sr-Cyrl-CS": "d.M.yyyy",
+                    "ar-LY": "dd/MM/yyyy",
+                    "zh-SG": "d/M/yyyy",
+                    "de-LU": "dd.MM.yyyy",
+                    "en-CA": "dd/MM/yyyy",
+                    "es-GT": "dd/MM/yyyy",
+                    "fr-CH": "dd.MM.yyyy",
+                    "ar-DZ": "dd-MM-yyyy",
+                    "zh-MO": "d/M/yyyy",
+                    "de-LI": "dd.MM.yyyy",
+                    "en-NZ": "d/MM/yyyy",
+                    "es-CR": "dd/MM/yyyy",
+                    "fr-LU": "dd/MM/yyyy",
+                    "ar-MA": "dd-MM-yyyy",
+                    "en-IE": "dd/MM/yyyy",
+                    "es-PA": "MM/dd/yyyy",
+                    "fr-MC": "dd/MM/yyyy",
+                    "ar-TN": "dd-MM-yyyy",
+                    "en-ZA": "yyyy/MM/dd",
+                    "es-DO": "dd/MM/yyyy",
+                    "ar-OM": "dd/MM/yyyy",
+                    "en-JM": "dd/MM/yyyy",
+                    "es-VE": "dd/MM/yyyy",
+                    "ar-YE": "dd/MM/yyyy",
+                    "en-029": "MM/dd/yyyy",
+                    "es-CO": "dd/MM/yyyy",
+                    "ar-SY": "dd/MM/yyyy",
+                    "en-BZ": "dd/MM/yyyy",
+                    "es-PE": "dd/MM/yyyy",
+                    "ar-JO": "dd/MM/yyyy",
+                    "en-TT": "dd/MM/yyyy",
+                    "es-AR": "dd/MM/yyyy",
+                    "ar-LB": "dd/MM/yyyy",
+                    "en-ZW": "M/d/yyyy",
+                    "es-EC": "dd/MM/yyyy",
+                    "ar-KW": "dd/MM/yyyy",
+                    "en-PH": "M/d/yyyy",
+                    "es-CL": "dd-MM-yyyy",
+                    "ar-AE": "dd/MM/yyyy",
+                    "es-UY": "dd/MM/yyyy",
+                    "ar-BH": "dd/MM/yyyy",
+                    "es-PY": "dd/MM/yyyy",
+                    "ar-QA": "dd/MM/yyyy",
+                    "es-BO": "dd/MM/yyyy",
+                    "es-SV": "dd/MM/yyyy",
+                    "es-HN": "dd/MM/yyyy",
+                    "es-NI": "dd/MM/yyyy",
+                    "es-PR": "dd/MM/yyyy",
+                    "am-ET": "d/M/yyyy",
+                    "tzm-Latn-DZ": "dd-MM-yyyy",
+                    "iu-Latn-CA": "d/MM/yyyy",
+                    "sma-NO": "dd.MM.yyyy",
+                    "mn-Mong-CN": "yyyy/M/d",
+                    "gd-GB": "dd/MM/yyyy",
+                    "en-MY": "d/M/yyyy",
+                    "prs-AF": "dd/MM/yy",
+                    "bn-BD": "dd-MM-yy",
+                    "wo-SN": "dd/MM/yyyy",
+                    "rw-RW": "M/d/yyyy",
+                    "qut-GT": "dd/MM/yyyy",
+                    "sah-RU": "MM.dd.yyyy",
+                    "gsw-FR": "dd/MM/yyyy",
+                    "co-FR": "dd/MM/yyyy",
+                    "oc-FR": "dd/MM/yyyy",
+                    "mi-NZ": "dd/MM/yyyy",
+                    "ga-IE": "dd/MM/yyyy",
+                    "se-SE": "yyyy-MM-dd",
+                    "br-FR": "dd/MM/yyyy",
+                    "smn-FI": "d.M.yyyy",
+                    "moh-CA": "M/d/yyyy",
+                    "arn-CL": "dd-MM-yyyy",
+                    "ii-CN": "yyyy/M/d",
+                    "dsb-DE": "d. M. yyyy",
+                    "ig-NG": "d/M/yyyy",
+                    "kl-GL": "dd-MM-yyyy",
+                    "lb-LU": "dd/MM/yyyy",
+                    "ba-RU": "dd.MM.yy",
+                    "nso-ZA": "yyyy/MM/dd",
+                    "quz-BO": "dd/MM/yyyy",
+                    "yo-NG": "d/M/yyyy",
+                    "ha-Latn-NG": "d/M/yyyy",
+                    "fil-PH": "M/d/yyyy",
+                    "ps-AF": "dd/MM/yy",
+                    "fy-NL": "d-M-yyyy",
+                    "ne-NP": "M/d/yyyy",
+                    "se-NO": "dd.MM.yyyy",
+                    "iu-Cans-CA": "d/M/yyyy",
+                    "sr-Latn-RS": "d.M.yyyy",
+                    "si-LK": "yyyy-MM-dd",
+                    "sr-Cyrl-RS": "d.M.yyyy",
+                    "lo-LA": "dd/MM/yyyy",
+                    "km-KH": "yyyy-MM-dd",
+                    "cy-GB": "dd/MM/yyyy",
+                    "bo-CN": "yyyy/M/d",
+                    "sms-FI": "d.M.yyyy",
+                    "as-IN": "dd-MM-yyyy",
+                    "ml-IN": "dd-MM-yy",
+                    "en-IN": "dd-MM-yyyy",
+                    "or-IN": "dd-MM-yy",
+                    "bn-IN": "dd-MM-yy",
+                    "tk-TM": "dd.MM.yy",
+                    "bs-Latn-BA": "d.M.yyyy",
+                    "mt-MT": "dd/MM/yyyy",
+                    "sr-Cyrl-ME": "d.M.yyyy",
+                    "se-FI": "d.M.yyyy",
+                    "zu-ZA": "yyyy/MM/dd",
+                    "xh-ZA": "yyyy/MM/dd",
+                    "tn-ZA": "yyyy/MM/dd",
+                    "hsb-DE": "d. M. yyyy",
+                    "bs-Cyrl-BA": "d.M.yyyy",
+                    "tg-Cyrl-TJ": "dd.MM.yy",
+                    "sr-Latn-BA": "d.M.yyyy",
+                    "smj-NO": "dd.MM.yyyy",
+                    "rm-CH": "dd/MM/yyyy",
+                    "smj-SE": "yyyy-MM-dd",
+                    "quz-EC": "dd/MM/yyyy",
+                    "quz-PE": "dd/MM/yyyy",
+                    "hr-BA": "d.M.yyyy.",
+                    "sr-Latn-ME": "d.M.yyyy",
+                    "sma-SE": "yyyy-MM-dd",
+                    "en-SG": "d/M/yyyy",
+                    "ug-CN": "yyyy-M-d",
+                    "sr-Cyrl-BA": "d.M.yyyy",
+                    "es-US": "M/d/yyyy"
+                };
+
+                return formats[navigator.language] || 'dd/MM/yyyy';
+
+            }
+        </script>
+
+</body>
+
+
+
+</html>

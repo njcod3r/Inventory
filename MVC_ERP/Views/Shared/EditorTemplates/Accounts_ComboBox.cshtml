@@ -1,0 +1,41 @@
+﻿@model int?
+@{var fieldName = "Filter" + ViewData.TemplateInfo.HtmlFieldPrefix;}
+
+@(Html.Kendo().ComboBoxFor(m => m)
+                         //.Name("AccountId")
+                      .DataTextField("Name")
+                             .DataValueField("Id")
+                             
+                                 //.HeaderTemplate("<div class='dropdown-header' style='width:500px'><span class='k-widget k-header'  style='margin-right:30px'>Code</span><span class='k-widget k-header'>Name</span></div>")
+                            .Template("<span class='k-state-default'  style='margin-right:10px'>#: data.Code #</span><span class='k-state-default'>#: data.Name #</span>")
+                                .AutoBind(true)
+                            .Placeholder("Type part of cod or name")
+                            .HighlightFirst(true)
+
+              //.MinLength(2)
+              
+                .Filter(FilterType.Contains)
+                         .HtmlAttributes(new { style = "width:100%; max-width:3000px;left:0;margin:0;text-align:left" })
+                              
+                          
+                            .DataSource(source =>
+                         { 
+                             source.Read(read =>
+                             {
+                                 read.Action("FillAccounts", "GenerlaClasses").Data(@fieldName);
+
+                             }).ServerFiltering(true); 
+                             
+                         })
+                         .Events(e =>
+                         {
+                             e.Select("SelectEvent");
+                             e.DataBound("DataBoundEvent");
+                          
+                         
+                       })
+
+                                          //.CascadeFrom("CompanyLists") 
+                                    
+                         
+)

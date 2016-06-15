@@ -1,0 +1,1518 @@
+﻿@model  MVC_ERP.Models.Stock_Setting_General
+@{
+    ViewBag.Title = "Stock Setting";
+
+    <script>
+        document.getElementById("LBLFormHDR").innerText = "Stock Setting";
+    </script>
+
+}
+
+@Html.Hidden("Id", Model.Id)
+
+<div style="margin-left:10px;margin-right:10px">
+
+    <br />
+    @(Html.Kendo().TabStrip()
+                .HtmlAttributes(new { style = "height:auto" })
+
+          .Name("tabstrip")
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text("Stock Accounts")
+                  .HtmlAttributes(new { style = "height:auto" })
+                  .Selected(true)
+                  .Content(@<text>
+
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-2">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "طريقة الربط" : "Bind Type:")
+                        </div>
+                        <div class="col-xs-12 col-sm-3" style="margin-right:38px;">
+                            @(Html.Kendo().DropDownList()
+                            .Name("AccountBindMethod")
+                                    .HtmlAttributes(new { style = "width:90%" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = (Request.Cookies["Language"].Value == "Arabic") ? "الفرع" : "Branch",
+                              Value = "1" , Selected = true
+                               },
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "المخزن" : "Warehouse",
+                            Value = "2"
+                             }
+                             ,
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "مجموعة الأصناف" : "Group Products",
+                            Value = "3"
+                             }}))
+                        </div>
+
+                        <div class="col-xs-12 col-sm-2">
+
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "نوع الربط" : "Stocktacking Type:")
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            @(Html.Kendo().DropDownList()
+                                    .Name("StocktackingType")
+                             .HtmlAttributes(new { style = "width:90%" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = (Request.Cookies["Language"].Value == "Arabic") ? "مستمر" : "Continuous",
+                              Value = "1"
+                               },
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "دورية" : "Periodical",
+                            Value = "2"
+                             }
+                             }))
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+
+                        <div class="col-xs-12 col-sm-6" style="margin-bottom: 20px; margin-top: 20px; height: auto;">
+
+                            <div class="demo-section" style="background-color: #e9f6c8; color: white; width: 85%; height: 100%; scrollbar-arrow-color: red;">
+                                <div id="treeview" style="height: 400px; width: 80%; scrollbar-arrow-color: red; display: block; "></div>
+                                <div id="treeviewWH" style="height: 400px; width: 80%; scrollbar-arrow-color: red; display: none; "></div>
+                                <div id="treeviewPG" style="height: 400px; width: 80%; scrollbar-arrow-color: red; display: none; "></div>
+                            </div>
+
+                            <script>
+
+                                var tvstring = $("#tvformat").text();
+                                var tvds = eval(tvstring);
+                                var HTDS = new kendo.data.HierarchicalDataSource({
+                                    data: tvds
+                                });
+
+                                var tvWH = $("#treeviewWH").kendoTreeView({
+
+                                    checkboxes: {
+                                        checkChildren: true,
+                                        name: "checkedItems",
+                                        //template: "<input type='checkbox' name='checkedItems' #= item.checked ? 'checked' : '' # value='#= item.id #' />"
+                                    },
+                                    //dataSource: kendo.observableHierarchy(HTDS),
+                                    dataTextField: "text",
+                                    select: treeviewonSelect,
+                                    //expanded: "expanded",
+
+                                    // dataUrlField: "dataUrlField",
+                                }).data("kendoTreeView")
+
+                                $(".k-item").addClass("treenode");
+
+                                function treeviewonSelect(e) {
+
+
+                                    var tvWH = $("#treeviewWH").data("kendoTreeView");
+                                    var item = tvWH.dataItem(e.node);
+
+
+                                    $.post("@Url.Action("TreeViewChanged", "Stock_Setting")", { SelectedId: item.id, CompanyId: $("#CompanyLists").val() },
+                                    function (data) {
+
+                                        //Set All Model fields to avoid refreshing
+
+
+                                        alert(data.Code);
+
+
+
+
+                                    });
+
+
+                                }
+
+                                var tvPGstring = $("#tvformat").text();
+                                var tvPGds = eval(tvPGstring);
+                                var HTPGDS = new kendo.data.HierarchicalDataSource({
+                                    data: tvPGds
+                                });
+
+                                var tvPG = $("#treeviewPG").kendoTreeView({
+
+                                    checkboxes: {
+                                        checkChildren: true,
+                                        name: "checkedItems",
+                                        //template: "<input type='checkbox' name='checkedItems' #= item.checked ? 'checked' : '' # value='#= item.id #' />"
+                                    },
+                                    //dataSource: kendo.observableHierarchy(HTDS),
+                                    dataTextField: "text",
+                                    select: treeviewonSelect,
+                                    //expanded: "expanded",
+
+                                    // dataUrlField: "dataUrlField",
+                                }).data("kendoTreeView")
+
+                                $(".k-item").addClass("treenode");
+
+                                function treeviewonSelect(e) {
+
+
+                                    var tvPG = $("#treeviewPG").data("kendoTreeView");
+                                    var item = tvPG.dataItem(e.node);
+
+
+                                    $.post("@Url.Action("TreeViewChanged", "Stock_Setting")", { SelectedId: item.id, CompanyId: $("#CompanyLists").val() },
+                                function (data) {
+
+                                    //Set All Model fields to avoid refreshing
+
+
+                                    alert(data.id);
+
+
+
+
+                                });
+
+
+                                }
+
+
+                            </script>
+
+                            <style type="text/css">
+                                .treenode {
+                                    font-size: 12pt;
+                                    /* text-decoration: none;
+                                    overflow: hidden;
+                                    overflow-x: hidden;
+                                    overflow-y: hidden;
+                                    filter: none;
+                                    font-weight: bold;*/
+                                    /*color: white;*/
+                                    /*background-color: transparent;*/
+                                }
+
+                                #Periodical {
+                                    display: none;
+                                }
+                            </style>
+
+                        </div>
+
+
+
+
+                        <div id="Continuous" style="margin-top:20px;">
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب المبيعات" : "Sales Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+
+                            <div class="col-xs-12  col-sm-3" style="margin-bottom: 5px;width:auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary { TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "SalesAccount_GenerlaClasses_FillAccounts" } })
+                            </div>
+
+
+
+                            <div class="col-xs-12  col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب مرتجع المبيعات" : "Return Sales Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "ReturnSalesAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+
+
+                            <div class="col-xs-12  col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب المخزون" : "Store Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "StoreAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+
+
+
+                            <div class="col-xs-12  col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب بضاعة بالطريق" : "Goods in Transit Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                                        {
+                                            TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "GoodsInTransitAccountId_GenerlaClasses_FillAccounts" }
+                                        })
+                            </div>
+
+                            <div class="col-xs-12  col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب تكلفة البضاعة" : "Material Cost Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12  col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "CostGoodsAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+
+
+                            <div class="col-xs-12  col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب الفروقات الجردية" : "Stock Adjust Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "EarnDiscountAccount_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب الاتلاف المخزني" : "Stock Adjust Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "DestoryAccount_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+
+                        </div>
+
+                        <div id="Periodical" style="margin-top:20px;">
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب المبيعات" : "Sales Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "SalesAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب مرتجع المبيعات" : "Return Sales Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "ReturnSalesAccount_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب المشتريات" : "Purchase Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "PurchaseAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب مرتجع المشتريات" : "Return Purchase Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "ReturnPurchaseAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب الخصم المسموح به" : "Discount Allow Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "AllowDiscountAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+                            <div class="col-xs-12 col-sm-2">
+                                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حساب الخصم المكتسب" : "Discount Earn Account", new { @style = "font-size:12px;color:#5f3110;" })
+                            </div>
+                            <div class="col-xs-12 col-sm-3" style="margin-bottom: 5px; width: auto;">
+                                @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "EarnDiscountAccountId_GenerlaClasses_FillAccounts" }
+                         })
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "خصائص عامة" : "General Setting")
+                   .HtmlAttributes(new { style = "height:auto" })
+                  .Content(@<text>
+
+                    <div class="row">
+                        <br />
+                        <br />
+                        <div class="col-xs-12 col-sm-2">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "رقم الحساب" : "Box Account:", new { @style = "font-size:12px;color:#5f3110;" })
+                        </div>
+                        <div class="col-xs-12 col-sm-3" style="width:auto;">
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "BoxAccount_GenerlaClasses_FillAccounts" }
+                         })
+                        </div>
+                        <div class="col-xs-12 col-sm-2">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "رقم الفيزا" : "Visa Account:", new { @style = "font-size:12px;color:#5f3110;" })
+                        </div>
+                        <div class="col-xs-12  col-sm-3" style="width:auto;">
+                            @Html.Partial("EditorTemplates/UC_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "VisaAccount_GenerlaClasses_FillAccounts" }
+                         })
+                        </div>
+
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-2">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "سياسة الاستلام والصرف " : "Receipt Deleviry Policy:", new { @style = "font-size:12px;color:#5f3110;" })
+                        </div>
+                        <div class="col-xs-12  col-sm-2" style="margin-right: 40px;">
+                            @(Html.Kendo().DropDownList()
+                            .Name("ReceiptDeleviryPolicy")
+                                            .HtmlAttributes(new { style = "" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = (Request.Cookies["Language"].Value == "Arabic") ? "مع الفاتورة" : "With invoice",
+                              Value = "1"
+                               },
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "يسبق الفاتورة" : "Before invoice",
+                            Value = "2"
+                             }
+                             ,
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "بعد الفاتورة" : "After invoice",
+                            Value = "3"
+                             }
+
+
+                             })
+
+                            )
+                        </div>
+                        <div class="col-xs-12 col-sm-2">
+                            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "طريقة الدفع" : "Default Pay Method:", new { @style = "font-size:12px;color:#5f3110;" })
+                        </div>
+                        <div class="col-xs-12  col-sm-2">
+                            @(Html.Kendo().DropDownList()
+                            .Name("DefaultPayMethod")
+                                            .HtmlAttributes(new { style = "margin-bottom:10px;" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = (Request.Cookies["Language"].Value == "Arabic") ? "أجل" : "Credit",
+                              Value = "1"
+                               },
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "نقدي" : "Cash",
+                            Value = "2"
+                             }
+
+
+                             }))
+                        </div>
+
+                    </div>
+
+
+
+
+
+                </text>);
+
+          })
+    )
+</div>
+
+
+
+<script>
+
+    function onChange() {
+
+    }
+
+    $("#StocktackingType").change(function () {
+        var text = $("#StocktackingType").data("kendoDropDownList").text();
+        if (text == "Periodical") {
+            $("#Periodical").css("display", "block");
+            $("#Continuous").css("display", "none");
+        } else {
+            $("#Periodical").css("display", "none");
+            $("#Continuous").css("display", "block");
+        }
+
+    })
+
+
+    function SetGroupId() {
+        var info = $("#Id").val();
+        if (info) {
+            return {
+                Id: info
+            };
+        }
+    }
+
+
+</script>
+
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+
+        @* Window *@
+        @(Html.Kendo().Window().Name("window").Title("Search companies")
+
+            .Content(@<text>
+
+
+
+            <br />
+            <div class="row">
+
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input id="txtSearchValue" type="text" class="form-control" style="max-width:3000px" placeholder="Search">
+                        <span class="input-group-btn">
+                            <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                        </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            </div><!-- /.row -->
+
+            <br />
+
+
+
+            <div style="width:100%; height:300px">
+                @(Html.Kendo().Grid<MVC_ERP.Models.Priv_Groups>()
+             .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code);
+                 columns.Bound(c => c.NameE);
+                 columns.Bound(c => c.NameA);
+                 columns.Bound(c => c.Notes);
+             })
+
+
+                 .Sortable()
+                .HtmlAttributes(new { style = "width:100%;min-height:200px;height:100%" })
+
+                       .Scrollable(scrolling => scrolling.Height(250))
+                       .DataSource(dataSource => dataSource.Ajax()
+                       .PageSize(1000)
+                           .Read(read => read
+                               .Action("Search", "Priv_Groups").Data("SetSearchValue")
+                            ))
+
+                      .Selectable()
+                      .Filterable()
+                      .EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                )
+
+            </div>
+
+            <br />
+
+            </text>)
+                                                                                                                                                                                                                                                                                                                                                        .Scrollable(false)
+                                                                                                                                                                                                                                                                                                                                                        .Visible(false)
+                                                                                                                                                                                                                                                                                                                                                        .Modal(true)
+                                                                                                                                                                                                                                                                                                                                                        .Actions(actions => actions.Close())
+                                                                                                                                                                                                                                                                                                                                                        .Events(ev => ev.Close("onClose"))
+        )
+
+
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+
+    function onClose() {
+        //$("#undo").show();
+    }
+
+    function SetSearchValue() {
+        var info = $("#txtSearchValue").val();
+        if (info) {
+            return {
+                TxtSearchVal: info
+            };
+        }
+    }
+
+    $(document).ready(function () {
+        $("#BtnSearch").bind("click", function () {
+            $("#window").data("kendoWindow").center().open();
+            $("#SearchGrid").data("kendoGrid").dataSource.read();
+
+        });
+
+
+
+    });
+</script>
+
+
+@* End Window *@
+
+@*Close from here don't have Open Open it in Layout page*@
+    </form>
+
+@* Combo Box Events *@
+<script>
+
+    function onSelect(e) {
+
+    };
+    function ChangeEvent(e) {
+    }
+
+    function Currencychange(e) {
+        //Change value of hidden field
+        $('#CurrencyId').val(e.sender.value());
+
+    };
+
+    function Companychange(e) {
+
+
+        $("#BranchLists").data("kendoDropDownList").dataSource.read();
+        ReadWarehourse(0, ReadType.Last);
+        ReadProductGroup(0, ReadType.Last);
+
+
+    };
+
+    function Branchchange(e) {
+        //Read(0, ReadType.Last)
+    };
+</script>
+
+@* End Combo Box Events *@
+
+<script>
+
+    var ReadType = {
+        Empty: 0,
+        First: 1,
+        Next: 2,
+        Current: 3,
+        Previous: 4,
+        Last: 5
+    }
+
+
+    $("#AccountBindMethod").change(function () {
+        var valueAccount = $("#AccountBindMethod").val();
+
+        if (valueAccount == 2) {
+            $("#treeviewPG").css("display", "none");
+            $("#treeview").css("display", "none");
+            $("#treeviewWH").css("display", "block");
+
+
+        } else if (valueAccount == 3) {
+            $("#treeviewWH").css("display", "none");
+            $("#treeviewPG").css("display", "block");
+            $("#treeview").css("display", "none");
+
+        } else {
+            $("#treeviewWH").css("display", "none");
+            $("#treeviewPG").css("display", "none");
+            $("#treeview").css("display", "block");
+        }
+
+
+    })
+
+
+
+    //Read warehouse Function
+    function ReadWarehourse(Id, ReadType) {
+        var lang = $.cookie("Language");
+
+        if (Id == 0) {
+            Id = $("#CompanyLists").val();
+
+        }
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Setting/TreeviewWarehouse")",
+            type: 'POST',
+            data: {
+                CompanyId: Id,
+                Language: lang
+            },
+            dataType: 'json',
+            success: function (result) {
+                //Read Tree
+                var HTDS = new kendo.data.HierarchicalDataSource({
+                    data: eval(result.TreeWH)
+                });
+                
+                var treeviewWH = $("#treeviewWH").data("kendoTreeView");
+                treeviewWH.setDataSource(HTDS);
+                $("#treeviewWH").data("kendoTreeView").expand(".k-item");
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+    }
+
+    //Read ProductGroup Function
+    function ReadProductGroup(Id, ReadType) {
+        var lang = $.cookie("Language");
+
+        if (Id == 0) {
+            Id = $("#CompanyLists").val();
+
+        }
+        $.ajax({
+            url: "@Url.Content("~/Stock_Setting/TreeviewProductGroup")",
+            type: 'POST',
+            data: {
+
+                CompanyId: Id,
+                Language: lang
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                //Read Tree
+                var HTPGDS = new kendo.data.HierarchicalDataSource({
+                    data: eval(result.TreePGDs)
+                });
+
+                var treeviewPG = $("#treeviewPG").data("kendoTreeView");
+                treeviewPG.setDataSource(HTPGDS);
+
+                $("#treeviewPG").data("kendoTreeView").expand(".k-item");
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+    }
+
+
+    $("#BtnGetSearchResult").click(function () {
+
+        $("#SearchGrid").data("kendoGrid").dataSource.read();
+    })
+
+
+    $("#BtnCloseWindow").click(function (e) {
+        $("#window").data("kendoWindow").close();
+    });
+
+    //Search
+    function item_selected(e) {
+
+        var grid = $("#SearchGrid").data("kendoGrid");
+        var id;
+
+        grid.select().each(function () {
+            var dataItem = grid.dataItem($(this));
+            id = dataItem.Id;
+        });
+
+        Read(id, ReadType.Current);
+
+    }
+
+
+    function FilterSalesAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#SalesAccountId").data("kendoComboBox").text(),
+            Id: $("#SalesAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterSalesAccount() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#SalesAccount").data("kendoComboBox").text(),
+            Id: $("#SalesAccount").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterReturnSalesAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#ReturnSalesAccountId").data("kendoComboBox").text(),
+            Id: $("#ReturnSalesAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterPurchaseAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#PurchaseAccountId").data("kendoComboBox").text(),
+            Id: $("#PurchaseAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterStoreAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#StoreAccountId").data("kendoComboBox").text(),
+            Id: $("#StoreAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterGoodsInTransitAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#GoodsInTransitAccountId").data("kendoComboBox").text(),
+            Id: $("#GoodsInTransitAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterGoodsInTransitAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#GoodsInTransitAccountId").data("kendoComboBox").text(),
+            Id: $("#GoodsInTransitAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterCostGoodsAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#CostGoodsAccountId").data("kendoComboBox").text(),
+            Id: $("#CostGoodsAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterDestoryAccount() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#DestoryAccount").data("kendoComboBox").text(),
+            Id: $("#DestoryAccount").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterReturnSalesAccount() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#ReturnSalesAccount").data("kendoComboBox").text(),
+            Id: $("#ReturnSalesAccount").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterReturnPurchaseAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#ReturnPurchaseAccountId").data("kendoComboBox").text(),
+            Id: $("#ReturnPurchaseAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterAllowDiscountAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#AllowDiscountAccountId").data("kendoComboBox").text(),
+            Id: $("#AllowDiscountAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterEarnDiscountAccountId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#EarnDiscountAccountId").data("kendoComboBox").text(),
+            Id: $("#EarnDiscountAccountId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterEarnDiscountAccount() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#EarnDiscountAccount").data("kendoComboBox").text(),
+            Id: $("#EarnDiscountAccount").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterBoxAccount() {
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#BoxAccount").data("kendoComboBox").text(),
+            Id: $("#BoxAccount").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterVisaAccount() {
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#VisaAccount").data("kendoComboBox").text(),
+            Id: $("#VisaAccount").data("kendoComboBox").value()
+        };
+    }
+
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#BtnSave").attr('type', 'button');
+        $("#BtnDiscard").attr('type', 'button');
+
+        $("#BtnReuse").removeAttr("data-toggle");
+        $("#BtnReuse").removeAttr("data-target");
+        $("#BtnReuse").removeAttr("data-action");
+
+        $("#BtnDelete").removeAttr("data-toggle");
+        $("#BtnDelete").removeAttr("data-target");
+        $("#BtnDelete").removeAttr("data-action");
+
+        $("#BtnPost").removeAttr("data-toggle");
+        $("#BtnPost").removeAttr("data-target");
+        $("#BtnPost").removeAttr("data-action");
+
+        $("#DivNavigation").hide();
+        $("#SecondNavDiv").hide();
+        $("#BtnCreate").hide();
+
+        $('#BtnPost').insertAfter('#BtnDelete');
+
+        $('#BtnPost').css('marginLeft', 4 + 'px');
+
+        //$("#treeview").data("kendoTreeView").expand(".k-item");
+        Read($("#Id").val());
+    })
+
+
+  
+
+
+    //Read Function
+    function Read(Id) {
+        
+        var CompanyId, BranchId;
+     
+        if (Id == 0) {
+            Id = $("#Id").val();
+        }
+
+        if (CompanyId == 0) {
+            CompanyId = $("#CompanyLists").val();
+        }
+
+        if (BranchId == 0) {
+            BranchId = $("#BranchLists").val()
+        }
+        //Fill Controls
+              
+       
+        $.post("@Url.Action("Read", "Stock_Setting")", {
+        Id: Id,
+        CompanyId: CompanyId,
+        BranchId: BranchId
+    },
+    function (data) {
+        
+        //Set All Model fields to avoid refreshing
+       
+        $("#Id").val(data.TBL.Id);
+        $("#AccountBindMethod").val(data.TBL.AccountBindMethod);
+        $("#StocktackingType").val(data.TBL.StocktackingType);
+        $("#NameA").val(data.TBL.BranchId);
+        $("#Levels").val(data.TBL.Levels);
+        $("#VisaAccountId").val(data.TBL.VisaAccountId);
+        $("#BoxAccountId").val(data.TBL.BoxAccountId);
+        $("#ReceiptDeleviryPolicy").val(data.TBL.ReceiptDeleviryPolicy);
+        $("#DefaultPayMethod").val(data.TBL.DefaultPayMethod);
+        alert(data.TBLDtl.ReturnPurchaseAccountId);
+        $("#ReturnPurchaseAccountId").data('kendoComboBox').Value(data.TBLDtl.ReturnPurchaseAccountId);
+        
+        $("#ReturnSalesAccountId").val(data.TBLDtl.ReturnSalesAccountId);
+        $("#StoreAccountId").val(data.TBLDtl.StoreAccountId);
+        $("#GoodsInTransitAccountId").val(data.TBLDtl.GoodsInTransitAccountId);
+        $("#AllowDiscountAccountId").val(data.TBLDtl.AllowDiscountAccountId);
+        $("#DestoryAccount").val(data.TBLDtl.DestoryAccount);
+        $("#AdjustAccountId").val(data.TBLDtl.AdjustAccountId);
+
+        $('#Post').val(data.TBL.Post);
+
+
+        if (data.TBL.Post == true) {
+            $("#BtnPost span").text(GetMessage(MessageType.PostButtonTxt));
+        }
+        else {
+
+            $("#BtnPost span").text(GetMessage(MessageType.UnPostButtonTxt));
+        }
+
+        $("#NodePath").val(data.NodePath);
+             
+   
+    });
+
+    }
+
+    $("#BtnCreate").click(function () {
+
+        $(document).ready(function () {
+            $("input.form-control").val('');
+            $("hidden").val('');
+            $("#Id").val('0');
+            $("#MemberShipId").val('0');
+            $('input:checkbox').removeAttr('checked');
+            $('#treeview input[type="checkbox"]').prop('checked', false).change();
+
+
+        });
+
+    })
+
+
+
+    $("#BtnSave").click(function () {
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Setting/CheckSetting")",
+            type: 'POST',
+            data: {
+
+                Id: $("#Id").val(),
+                AccountBindMethod: $("#AccountBindMethod").val()
+            }
+            , dataType: 'json',
+            success: function (result) {
+
+
+                if (result.AccountBindMethod == $("#AccountBindMethod").val()) {
+
+                    var tvWH = $("#treeviewWH").data("kendoTreeView");
+                    var selectedNode = tvWH.select();
+                    var item = tvWH.dataItem(selectedNode);
+                    var SItem;
+                    if (item) {
+                        SItem = item.id;
+                    } else {
+                        SItem = 0;
+                    }
+
+                    var RadioType;
+
+                    if ($('#rdioOneMenue').is(':checked')) { RadioType = 1 }
+                    if ($('#rdioOneMenueAndChildren').is(':checked')) { RadioType = 2 }
+                    if ($('#rdioAll').is(':checked')) { RadioType = 3 }
+
+                    $(document).ready(function () {
+                        var valueAccount = $("#AccountBindMethod").val();
+
+                        if (valueAccount == 1) {
+                            $.ajax({
+                                url: "@Url.Content("~/Stock_Setting/Insert")",
+                                type: 'POST',
+                                data: {
+
+                                    Id: $("#Id").val(),
+                                    CompanyId: $("#CompanyLists").val(),
+                                    BranchId: $("#BranchLists").val(),
+                                    AccountBindMethod: valueAccount,
+                                    BoxAccountId: $('#BoxAccountId').val(),
+                                    VisaAccountId: $('#VisaAccountId').val(),
+                                    StocktackingType: $("#StocktackingType").val(),
+                                    ReceiptDeleviryPolicy: $('#ReceiptDeleviryPolicy').val(),
+                                    DefaultPayMethod: $('#DefaultPayMethod').val(),
+                                    WarehouseId: $("#WarehouseId").val(),
+                                    GroupId: $("#GroupId").val(),
+                                    SalesAccountId: $("#SalesAccount").val(),
+                                    PurchaseAccountId: $('#PurchaseAccountId').val(),
+                                    ReturnSalesAccountId: $("#ReturnSalesAccountId").val(),
+                                    ReturnPurchaseAccountId: $('#ReturnPurchaseAccountId').val(),
+                                    StoreAccountId: $('#StoreAccountId').val(),
+                                    CostGoodsAccountId: $('#CostGoodsAccountId').val(),
+                                    GoodsInTransitAccountId: $('#GoodsInTransitAccountId').val(),
+                                    AdjustAccountId: $('#AdjustAccountId').val(),
+                                    DestoryAccount: $('#DestoryAccount').val(),
+                                    AllowDiscountAccountId: $('#AllowDiscountAccountId').val(),
+                                    EarnDiscountAccountId: $('#EarnDiscountAccountId').val(),
+                                    SalesAccount: $("#SalesAccountId").val(),
+                                    ReturnSalesAccount: $("#ReturnSalesAccount").val(),
+
+                                },
+                                dataType: 'json',
+                                success: function (result) {
+
+
+                                    if (result.MessageType == 'success')
+                                    { Read(result.Id, ReadType.Current); }
+                                    showAndDismissAlert(result.MessageType, result.resultSetting)
+
+                                },
+                                error: function (result) {
+                                    alert("Error");
+                                },
+                            });
+                        } else if (valueAccount == 2) {
+                            var treeWH = $("#treeviewWH").data("kendoTreeView").dataSource.data();
+
+                            alert(JSON.stringify(treeWH));
+
+                            $.ajax({
+                                url: "@Url.Content("~/Stock_Setting/Insert")",
+                                type: 'POST',
+                                data: {
+                                    xmlWarehouseNodes: JSON.stringify(treeWH),
+
+
+                                    Id: $("#Id").val(),
+                                    CompanyId: $("#CompanyLists").val(),
+                                    BranchId: $("#BranchLists").val(),
+                                    AccountBindMethod: valueAccount,
+                                    BoxAccountId: $('#BoxAccountId').val(),
+                                    VisaAccountId: $('#VisaAccountId').val(),
+                                    StocktackingType: $("#StocktackingType").val(),
+                                    ReceiptDeleviryPolicy: $('#ReceiptDeleviryPolicy').val(),
+                                    DefaultPayMethod: $('#DefaultPayMethod').val(),
+                                    WarehouseId: $("#WarehouseId").val(),
+                                    GroupId: $("#GroupId").val(),
+                                    SalesAccountId: $("#SalesAccount").val(),
+                                    PurchaseAccountId: $('#PurchaseAccountId').val(),
+                                    ReturnSalesAccountId: $("#ReturnSalesAccountId").val(),
+                                    ReturnPurchaseAccountId: $('#ReturnPurchaseAccountId').val(),
+                                    StoreAccountId: $('#StoreAccountId').val(),
+                                    CostGoodsAccountId: $('#CostGoodsAccountId').val(),
+                                    GoodsInTransitAccountId: $('#GoodsInTransitAccountId').val(),
+                                    AdjustAccountId: $('#AdjustAccountId').val(),
+                                    DestoryAccount: $('#DestoryAccount').val(),
+                                    AllowDiscountAccountId: $('#AllowDiscountAccountId').val(),
+                                    EarnDiscountAccountId: $('#EarnDiscountAccountId').val(),
+                                    SalesAccount: $("#SalesAccountId").val(),
+                                    ReturnSalesAccount: $("#ReturnSalesAccount").val(),
+
+                                },
+                                dataType: 'json',
+                                success: function (result) {
+
+
+                                    if (result.MessageType == 'success')
+                                    { Read(result.Id, ReadType.Current); }
+                                    showAndDismissAlert(result.MessageType, result.resultSetting)
+
+                                },
+                                error: function (result) {
+                                    alert("Error");
+                                },
+                            });
+                        } else if (valueAccount == 3) {
+                            var treePG = $("#treeviewPG").data("kendoTreeView").dataSource.data();
+
+
+                            $.ajax({
+                                url: "@Url.Content("~/Stock_Setting/Insert")",
+                                type: 'POST',
+                                data: {
+                                    xmlProductGroupNodes: JSON.stringify(treePG),
+
+
+                                    Id: $("#Id").val(),
+                                    CompanyId: $("#CompanyLists").val(),
+                                    BranchId: $("#BranchLists").val(),
+                                    AccountBindMethod: valueAccount,
+                                    BoxAccountId: $('#BoxAccountId').val(),
+                                    VisaAccountId: $('#VisaAccountId').val(),
+                                    StocktackingType: $("#StocktackingType").val(),
+                                    ReceiptDeleviryPolicy: $('#ReceiptDeleviryPolicy').val(),
+                                    DefaultPayMethod: $('#DefaultPayMethod').val(),
+                                    WarehouseId: $("#WarehouseId").val(),
+                                    GroupId: $("#GroupId").val(),
+                                    SalesAccountId: $("#SalesAccount").val(),
+                                    PurchaseAccountId: $('#PurchaseAccountId').val(),
+                                    ReturnSalesAccountId: $("#ReturnSalesAccountId").val(),
+                                    ReturnPurchaseAccountId: $('#ReturnPurchaseAccountId').val(),
+                                    StoreAccountId: $('#StoreAccountId').val(),
+                                    CostGoodsAccountId: $('#CostGoodsAccountId').val(),
+                                    GoodsInTransitAccountId: $('#GoodsInTransitAccountId').val(),
+                                    AdjustAccountId: $('#AdjustAccountId').val(),
+                                    DestoryAccount: $('#DestoryAccount').val(),
+                                    AllowDiscountAccountId: $('#AllowDiscountAccountId').val(),
+                                    EarnDiscountAccountId: $('#EarnDiscountAccountId').val(),
+                                    SalesAccount: $("#SalesAccountId").val(),
+                                    ReturnSalesAccount: $("#ReturnSalesAccount").val(),
+
+                                },
+                                dataType: 'json',
+                                success: function (result) {
+
+
+                                    if (result.MessageType == 'success')
+                                    { Read(result.Id, ReadType.Current); }
+                                    showAndDismissAlert(result.MessageType, result.resultSetting)
+
+                                },
+                                error: function (result) {
+                                    alert("Error");
+                                },
+                            });
+                        }
+
+
+
+                    });
+                } else {
+
+
+                    var lang = $.cookie("Language");
+                    var message;
+                    if (lang == "Arabic") {
+                        message = "هل تريد تغيير نوع الربط و حفظة في قاعدة البيانات؟";
+                    }
+                    else {
+                        message = "Are you sure you change bind type and save in data base ?";
+                    }
+
+                    if (confirm(message)) {
+                        var tvWH = $("#treeviewWH").data("kendoTreeView");
+                        var selectedNode = tvWH.select();
+                        var item = tvWH.dataItem(selectedNode);
+                        var SItem;
+                        if (item) {
+                            SItem = item.id;
+                        } else {
+                            SItem = 0;
+                        }
+
+                        var RadioType;
+
+                        if ($('#rdioOneMenue').is(':checked')) { RadioType = 1 }
+                        if ($('#rdioOneMenueAndChildren').is(':checked')) { RadioType = 2 }
+                        if ($('#rdioAll').is(':checked')) { RadioType = 3 }
+
+                        $(document).ready(function () {
+                            var valueAccount = $("#AccountBindMethod").val();
+
+                            if (valueAccount == 1) {
+                                $.ajax({
+                                    url: "@Url.Content("~/Stock_Setting/Insert")",
+                                    type: 'POST',
+                                    data: {
+
+                                        Id: $("#Id").val(),
+                                        CompanyId: $("#CompanyLists").val(),
+                                        BranchId: $("#BranchLists").val(),
+                                        AccountBindMethod: valueAccount,
+                                        BoxAccountId: $('#BoxAccountId').val(),
+                                        VisaAccountId: $('#VisaAccountId').val(),
+                                        StocktackingType: $("#StocktackingType").val(),
+                                        ReceiptDeleviryPolicy: $('#ReceiptDeleviryPolicy').val(),
+                                        DefaultPayMethod: $('#DefaultPayMethod').val(),
+                                        WarehouseId: $("#WarehouseId").val(),
+                                        GroupId: $("#GroupId").val(),
+                                        SalesAccountId: $("#SalesAccount").val(),
+                                        PurchaseAccountId: $('#PurchaseAccountId').val(),
+                                        ReturnSalesAccountId: $("#ReturnSalesAccountId").val(),
+                                        ReturnPurchaseAccountId: $('#ReturnPurchaseAccountId').val(),
+                                        StoreAccountId: $('#StoreAccountId').val(),
+                                        CostGoodsAccountId: $('#CostGoodsAccountId').val(),
+                                        GoodsInTransitAccountId: $('#GoodsInTransitAccountId').val(),
+                                        AdjustAccountId: $('#AdjustAccountId').val(),
+                                        DestoryAccount: $('#DestoryAccount').val(),
+                                        AllowDiscountAccountId: $('#AllowDiscountAccountId').val(),
+                                        EarnDiscountAccountId: $('#EarnDiscountAccountId').val(),
+                                        SalesAccount: $("#SalesAccountId").val(),
+                                        ReturnSalesAccount: $("#ReturnSalesAccount").val(),
+
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+
+
+                                        if (result.MessageType == 'success')
+                                        { Read(result.Id, ReadType.Current); }
+                                        showAndDismissAlert(result.MessageType, result.resultSetting)
+
+                                    },
+                                    error: function (result) {
+                                        alert("Error");
+                                    },
+                                });
+                            } else if (valueAccount == 2) {
+                                var treeWH = $("#treeviewWH").data("kendoTreeView").dataSource.data();
+
+                                alert(treeWH);
+                                $.ajax({
+                                    url: "@Url.Content("~/Stock_Setting/Insert")",
+                                    type: 'POST',
+                                    data: {
+                                        xmlWarehouseNodes: JSON.stringify(treeWH),
+
+
+                                        Id: $("#Id").val(),
+                                        CompanyId: $("#CompanyLists").val(),
+                                        BranchId: $("#BranchLists").val(),
+                                        AccountBindMethod: valueAccount,
+                                        BoxAccountId: $('#BoxAccountId').val(),
+                                        VisaAccountId: $('#VisaAccountId').val(),
+                                        StocktackingType: $("#StocktackingType").val(),
+                                        ReceiptDeleviryPolicy: $('#ReceiptDeleviryPolicy').val(),
+                                        DefaultPayMethod: $('#DefaultPayMethod').val(),
+                                        WarehouseId: $("#WarehouseId").val(),
+                                        GroupId: $("#GroupId").val(),
+                                        SalesAccountId: $("#SalesAccount").val(),
+                                        PurchaseAccountId: $('#PurchaseAccountId').val(),
+                                        ReturnSalesAccountId: $("#ReturnSalesAccountId").val(),
+                                        ReturnPurchaseAccountId: $('#ReturnPurchaseAccountId').val(),
+                                        StoreAccountId: $('#StoreAccountId').val(),
+                                        CostGoodsAccountId: $('#CostGoodsAccountId').val(),
+                                        GoodsInTransitAccountId: $('#GoodsInTransitAccountId').val(),
+                                        AdjustAccountId: $('#AdjustAccountId').val(),
+                                        DestoryAccount: $('#DestoryAccount').val(),
+                                        AllowDiscountAccountId: $('#AllowDiscountAccountId').val(),
+                                        EarnDiscountAccountId: $('#EarnDiscountAccountId').val(),
+                                        SalesAccount: $("#SalesAccountId").val(),
+                                        ReturnSalesAccount: $("#ReturnSalesAccount").val(),
+
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+
+
+                                        if (result.MessageType == 'success')
+                                        { Read(result.Id, ReadType.Current); }
+                                        showAndDismissAlert(result.MessageType, result.resultSetting)
+
+                                    },
+                                    error: function (result) {
+                                        alert("Error");
+                                    },
+                                });
+                            } else if (valueAccount == 3) {
+                                var treePG = $("#treeviewPG").data("kendoTreeView").dataSource.data();
+
+
+                                $.ajax({
+                                    url: "@Url.Content("~/Stock_Setting/Insert")",
+                                    type: 'POST',
+                                    data: {
+                                        xmlProductGroupNodes: JSON.stringify(treePG),
+
+
+                                        Id: $("#Id").val(),
+                                        CompanyId: $("#CompanyLists").val(),
+                                        BranchId: $("#BranchLists").val(),
+                                        AccountBindMethod: valueAccount,
+                                        BoxAccountId: $('#BoxAccountId').val(),
+                                        VisaAccountId: $('#VisaAccountId').val(),
+                                        StocktackingType: $("#StocktackingType").val(),
+                                        ReceiptDeleviryPolicy: $('#ReceiptDeleviryPolicy').val(),
+                                        DefaultPayMethod: $('#DefaultPayMethod').val(),
+                                        WarehouseId: $("#WarehouseId").val(),
+                                        GroupId: $("#GroupId").val(),
+                                        SalesAccountId: $("#SalesAccount").val(),
+                                        PurchaseAccountId: $('#PurchaseAccountId').val(),
+                                        ReturnSalesAccountId: $("#ReturnSalesAccountId").val(),
+                                        ReturnPurchaseAccountId: $('#ReturnPurchaseAccountId').val(),
+                                        StoreAccountId: $('#StoreAccountId').val(),
+                                        CostGoodsAccountId: $('#CostGoodsAccountId').val(),
+                                        GoodsInTransitAccountId: $('#GoodsInTransitAccountId').val(),
+                                        AdjustAccountId: $('#AdjustAccountId').val(),
+                                        DestoryAccount: $('#DestoryAccount').val(),
+                                        AllowDiscountAccountId: $('#AllowDiscountAccountId').val(),
+                                        EarnDiscountAccountId: $('#EarnDiscountAccountId').val(),
+                                        SalesAccount: $("#SalesAccountId").val(),
+                                        ReturnSalesAccount: $("#ReturnSalesAccount").val(),
+
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+
+
+                                        if (result.MessageType == 'success')
+                                        { Read(result.Id, ReadType.Current); }
+                                        showAndDismissAlert(result.MessageType, result.resultSetting)
+
+                                    },
+                                    error: function (result) {
+                                        alert("Error");
+                                    },
+                                });
+                            }
+
+
+
+                        });
+                    } else {
+
+                    }
+                }
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+
+
+
+    });
+
+
+    $("#BtnDiscard").click(function () {
+
+        var Id
+
+        if ($('#Id').val() == '' || $('#Id').val() == 0) {
+            Id = 0;
+            return Read(Id, ReadType.Last);
+        }
+        else {
+            Id = $('#Id').val();
+            return Read(Id, ReadType.Current);
+        }
+
+
+
+    });
+
+    
+
+    $("#BtnDelete").click(function () {
+
+        // Show confirmation and if ok execute Delete function
+        ShowConfirmMessage('Delete confirmation', 'Are you sure you want to delete ?', 'Delete');
+
+
+    });
+
+    function Delete() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Setting/Delete")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Last); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+
+    }
+
+    $("#BtnPost").click(function () {
+
+        // Show confirmation and if ok execute Delete function
+        ShowConfirmMessage('Post confirmation', 'Posting prevent edit or delete are you sure you want to pot?', 'Post');
+
+
+    });
+
+    function Post() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Setting/Post")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+
+    }
+
+    //ComboBox Events
+    function DataBoundEvent() {
+
+    }
+
+    function SelectEvent(e) {
+
+
+    }
+</script>

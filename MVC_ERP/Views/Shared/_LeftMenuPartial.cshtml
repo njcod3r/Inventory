@@ -1,0 +1,48 @@
+﻿
+
+    <div class="demo-section" style="color:white; width:90% ;height:100%">
+        <br />
+        <div id="treeview"></div>
+    </div>
+    <script>
+
+                                var tvstring = $("#tvformat").text();
+                                var tvds = eval(tvstring);
+                                var HTDS = new kendo.data.HierarchicalDataSource({
+                                    data: tvds
+                                });
+
+                                var tv = $("#treeview").kendoTreeView({
+
+                                    dataSource: kendo.observableHierarchy(HTDS),
+                                    dataTextField: "text",
+                                    select: treeviewonSelect,
+                                    expanded: "expanded",
+
+                                    // dataUrlField: "dataUrlField",
+                                }).data("kendoTreeView")
+
+                                $(".k-item").addClass("treenode");
+
+                                function treeviewonSelect(e) {
+                                    var tv = $("#treeview").data("kendoTreeView");
+                                    var item = tv.dataItem(e.node);
+                                    //SelectedId: item.id
+
+
+                                }
+
+    </script>
+    <style type="text/css">
+        .treenode {
+            font-size: 12pt;
+            /* text-decoration: none;
+                                    overflow: hidden;
+                                    overflow-x: hidden;
+                                    overflow-y: hidden;
+                                    filter: none;
+                                    font-weight: bold;*/
+            /*color: white;*/
+            /*background-color: transparent;*/
+        }
+    </style>

@@ -1,0 +1,376 @@
+﻿@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUR ERP PROGRAM</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @*This bundle was moved by the Telerik VS Extensions for compatibility reasons*@
+    @Scripts.Render("~/bundles/jquery")
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.default.min.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/kendo/2014.1.528/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.aspnetmvc.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo.modernizr.custom.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")" type="text/javascript"></script>
+
+    <script language="javascript" type="text/javascript">
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        }
+    </script>
+
+
+
+</head>
+<body>
+ 
+    <div id="Home01" class="container-fluid" style="top:0">
+        <div id="Home02" class="row" style="color: white; background:black; height: auto; top: 0; left: 0; right: 0; margin-left: 0px;margin-right:0px; z-index: 999; position: fixed;">
+
+            <div id="Home03" class="col-xs-12 col-sm-8" style="">
+               <h3>ERP PROGRAM</h3>
+            </div>
+
+            <div id="Home03" class="col-xs-9 col-sm-3" style="margin-top: 10px">
+                @Html.Partial("_LoginPartial")
+            </div>
+            <div id="Home03" class="col-xs-1" style="margin-top:10px;margin-bottom:0px">
+                @Html.ActionLink("العربية", "ChangeLanguage", new { Src ="xxxxx"}, new { id = "HerfLanguage" })
+            </div>
+
+        </div>
+
+
+
+        <div id="Home04" class="row">
+            <div id="Home05" class="col-xs-12 col-sm-3" style="margin-top: 5px; ">
+                <div id="LeftMenue"  style="">
+
+                    <div id="MainMenue01" class="form-group" style="background: #308b09">
+                        <div id="MainMenue02" class="input-group" style="background: #308b09">
+
+                            <input id="filterText" class="form-control" type="email" placeholder="Search" style="-webkit-appearance: none;border-radius: 0;max-width:800px">
+
+                            <div id="MainMenue03" class="input-group-addon" style="background: #308b09; -webkit-appearance: none; border-radius: 0; height:100%">
+
+                                <span class="glyphicon glyphicon-search"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <script id="treeview-template" type="text/kendo-ui-template">
+                        #: item.text #
+                        # if (!item.items) { #
+                        <a class='delete-link' href='\#'></a>
+                        # } #
+                    </script>
+                    <div id="tvformat" hidden="hidden">@ViewData["TVDS"]</div>
+                    <div class="demo-section" style="color:white; width:90% ;height:100%">
+                        <br />
+                        <div id="treeview" style="margin-left:10px;overflow:hidden"></div>
+                    </div>
+                    <script>
+
+    var tvstring = $("#tvformat").text();
+    var tvds = eval(tvstring);
+    var HTDS = new kendo.data.HierarchicalDataSource({
+        data: tvds
+    });
+
+    var tv = $("#treeview").kendoTreeView({
+                           //template: "<span style='color: white'>#= item.text #</span> # if (item.UrlLink != '') { #<a TARGET='_blank' href='#: item.UrlLink #'><img title='Full Screen' src='@Url.Content("~/Images/fullscreen.png")' /></a> # } #",
+                            template: " # if (item.UrlLink != '') { #<a style='text-decoration: none' TARGET='frame' href='#: '@Url.Action("")' + item.UrlLink #'><span style='color: white'>#= item.text #</span></a> # } else {#<span style='color: white'>#= item.text #</span>#} # ",
+                            dataSource: kendo.observableHierarchy(HTDS),
+                            dataTextField: "text",
+                            select: treeviewonSelect,
+                            expanded: "expanded",
+                            
+                            //dataUrlField: UrlLink,
+                        }).data("kendoTreeView")
+
+                        $(".k-item").addClass("treenode");
+
+                        function treeviewonSelect(e) {
+
+                            var tv = $("#treeview").data("kendoTreeView");
+                            var item = tv.dataItem(e.node);
+                            //SelectedId: item.id
+
+                            if (item.UrlLink != '') {
+
+                                var Link = "@Url.Action("")" + item.UrlLink;
+
+                                 $('#frame').prop('src', Link)
+                               }
+                     else {
+
+                   treeview.toggle($(e.node).closest(".k-item"));
+                    }
+                  }
+
+
+                    </script>
+                    <style type="text/css">
+                        #treeview .k-link {
+                            color: red;
+                        }
+
+                        .k-link {
+                            color: red;
+                        }
+
+                        .treenode {
+                            font-size: 12pt;
+                            /* text-decoration: none;
+                                    overflow: hidden;
+                                    overflow-x: hidden;
+                                    overflow-y: hidden;
+                                    filter: none;
+                                    font-weight: bold;*/
+                            /*color: white;*/
+                            background-color: transparent;
+                        }
+                    </style>
+
+
+
+                    <br />
+                </div>
+            </div>
+
+
+
+
+
+            <div id="Iframe" class="col-xs-12 col-sm-9" style="margin-top:5px">
+
+                <iframe name="frame" id="frame" src="@Url.Action("Default","Home")" scrolling="no" style="position: absolute; width: 100%; left: 0; top: 0; border: none; background: #000000" onload='javascript:resizeIframe(this);'>
+                  
+                </iframe>
+              
+              
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <style scoped>
+    .demo-section {
+        width: 200px;
+    }
+
+    #treeview .k-sprite {
+        background-image: url("@Url.Content("~/Content/web/treeview/coloricons-sprite.png")");
+    }
+
+    .rootfolder { background-position: 0 0; }
+    .folder { background-position: 0 -16px; }
+    .pdf { background-position: 0 -32px; }
+    .html { background-position: 0 -48px; }
+    .image { background-position: 0 -64px; }
+    </style>
+    <script>
+        $("#filterText").keyup(function (e) {
+            var filterText = $(this).val();
+            if (filterText !== "") {
+                $("#treeview .k-group .k-group .k-in").closest("li").hide();
+                $("#treeview .k-group .k-group .k-in:contains(" + filterText + ")").each(function () {
+                    $(this).parents("ul, li").each(function () {
+                        $(this).show();
+                    });
+                });
+            } else {
+                $("#treeview .k-group").find("ul").hide();
+                $("#treeview .k-group").find("li").show();
+                $("#treeview .k-group .k-group .k-in").closest("li").hide();
+                $("#treeview .k-group .k-group .k-in:contains(" + filterText + ")").each(function () {
+                    $(this).parents("ul, li").each(function () {
+                        $(this).show();
+                    });
+                });
+
+            }
+
+
+
+            //
+        });
+
+
+
+    </script>
+  
+    @{ //Change Language Label
+
+        if (Request.Cookies["Language"]!= null)
+        { 
+        if(Request.Cookies["Language"].Value == "Arabic")
+        { 
+        <script>  
+            $("#HerfLanguage").text('English');
+          
+        </script>
+        }
+        else
+        { 
+        <script>
+            $("#HerfLanguage").text('العربية');
+        </script>
+        }
+        
+        }
+        }
+    <script>
+
+
+        $(window).bind('beforeunload', function () {
+            //After refresh whole page get the same frame src
+            $.cookie("CurrentIframeSrc", $('#frame').attr('src'));
+
+        });
+
+        $(document).ready(function () {
+
+           //After refresh whole page get the same frame src
+            if ($.cookie('CurrentIframeSrc') != "")
+                {
+                $('#frame').prop('src', $.cookie('CurrentIframeSrc'))
+
+                $.cookie("CurrentIframeSrc", '');
+               }
+        });
+
+
+              window.addEventListener('resize', function (event) {
+                  // do stuff here
+
+
+                  if ($(window).width() < 800 && $(window).height() < 600) {
+                      $('#Home02').css({
+                          position: 'absolute',
+                          top: 0
+                      });
+
+                      $('#LeftMenue').css('margin-top', $("#Home02").height());
+                      $('#Iframe').css('margin-top', 0);
+
+                  }
+                  else {
+                      $('#Home02').css({
+                          position: 'fixed',
+                          top: 0
+                      });
+
+                      $('#LeftMenue').css('margin-top', $("#Home02").height());
+                      $('#Iframe').css('margin-top', $("#Home02").height());
+                  }
+
+
+              });
+
+              $(document).ready(function () {
+
+                  if ($(window).width() < 800 && $(window).height() < 600) {
+                      $('#Home02').css({
+                          position: 'absolute',
+                          top: 0
+                      });
+
+                      $('#LeftMenue').css('margin-top', $("#Home02").height());
+                      $('#Iframe').css('margin-top', $("#Home02").height());
+
+                  }
+                  else {
+                      $('#Home02').css({
+                          position: 'fixed',
+                          top: 0
+                      });
+
+                      $('#LeftMenue').css('margin-top', $("#Home02").height());
+                      $('#Iframe').css('margin-top', $("#Home02").height());
+                  }
+
+
+
+
+              })
+
+
+              var treeview;
+
+
+              function onSelect(e) {
+                  //this.expand(e.node);
+                  //treeview.toggle(e.node);
+                  treeview.toggle($(e.node).closest(".k-item"));
+
+              }
+
+              function onChange(e) {
+                  //  alert("Selection changed");
+
+              }
+
+
+
+              function onExpand(e) {
+                  //alert("Expanding " + treeview.text(e.node));
+              }
+
+
+              $('#HerfLanguage').click(function () {
+
+                  this.href = this.href.replace("xxxxx", $('#frame').attr('src'));
+              });
+
+
+
+              $(document).ready(function () {
+                  treeview = $("#treeview").data("kendoTreeView");
+
+                  //Load iframe if change language
+                  if ('@TempData["IframeSRC"]' !== "") {
+                      $('#frame').prop('src', '@TempData["IframeSRC"]')
+                  }
+
+              });
+
+
+              $(document).ready(function () {
+
+
+                  if ($.cookie("Language") == "Arabic") {
+                      $("#HerfLanguage").text('English');
+
+                  }
+                  else {
+                      $("#HerfLanguage").text('العربية');
+                  }
+
+              });
+
+
+</script>
+
+    <footer>
+        <p>&copy;  @DateTime.Now.Year - Mazen &  Mohamed </p>
+    </footer>
+
+
+</body>
+
+</html>

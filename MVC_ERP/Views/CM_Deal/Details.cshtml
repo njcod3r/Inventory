@@ -1,0 +1,410 @@
+﻿@model MVC_ERP.Models.CMEx_Deal
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CMEx_Deal</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DealDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DealDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DealDateH)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DealDateH)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Source)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Source)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SalesOrderID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalesOrderID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ResrvationID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ResrvationID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CustomerID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CustomerID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AgentID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AgentID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BLNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BLNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromPort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromPort)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ToPort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToPort)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PlaceOfRecieved)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PlaceOfRecieved)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PlaceOfDeliver)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PlaceOfDeliver)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Wight)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Wight)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NetWight)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NetWight)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Unit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Unit)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GoodDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GoodDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AuthorizedPerson)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthorizedPerson)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AuthorizedPersonTel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthorizedPersonTel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LCNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LCNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Consignee)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Consignee)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ConsigneeTel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConsigneeTel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ConsigneeFax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConsigneeFax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ConsigneeAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConsigneeAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notifay)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notifay)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VoyageNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VoyageNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BookingRef)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BookingRef)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VesselName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VesselName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ArriveDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ArriveDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ArriveDateH)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ArriveDateH)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EntryUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EntryUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EntryDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EntryDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EditDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Shipper)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shipper)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShipperTel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShipperTel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShipperFax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShipperFax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShipperAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShipperAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GoodDangerous)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GoodDangerous)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PON)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PON)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NotifayTel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NotifayTel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NotifayFax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NotifayFax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NotifayAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NotifayAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingLine)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingLine)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TransetTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TransetTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PayMethod)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PayMethod)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SailedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SailedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SailedDateH)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SailedDateH)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BayanNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BayanNo)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

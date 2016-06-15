@@ -1,0 +1,26 @@
+﻿@model int?
+@(Html.Kendo().ComboBoxFor(m => m)
+
+                         .DataTextField("Name")
+                         .DataValueField("Id")
+                         .Placeholder("Select Currency")
+                         .Filter(FilterType.Contains)
+                                      .Template("<span class='k-state-default'  style='margin-right:10px'>#: data.Code #</span><span class='k-state-default' >#: data.Name #</span><span class='k-state-default' style='float:right;margin-right:100px'>#: data.Rate #</span>")
+                                 .HtmlAttributes(new { style = "width:100%; max-width:3000px;left:0;margin:0;text-align:left" })
+                         .DataSource(source =>
+                         {
+                             source.Read(read =>
+                             {
+                                 read.Action("FillCurrencies", "GenerlaClasses");
+                             });
+                         })
+
+                              .Events(e =>
+                              {
+                                  e.Select("SelectEvent");
+                                  e.DataBound("DataBoundEvent");
+
+                             })
+
+
+)

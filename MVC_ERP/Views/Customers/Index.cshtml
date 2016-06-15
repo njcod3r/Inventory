@@ -1,0 +1,640 @@
+﻿@model  MVC_ERP.Models.Sys_Partners
+    @{
+        ViewBag.Title = "Customers";
+
+        <script>
+            document.getElementById("LBLFormHDR").innerText = "Customers";
+        </script>
+
+    }
+
+    <div style="margin-left:10px;margin-right:10px">
+        <div class="row">
+            <br />
+
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false)
+
+            @* Hidden Fields *@
+            @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.PartnerType, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+            @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+            @* End Of Hidden Fields *@
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Company")
+            </div>
+
+            <div class="col-xs-12 col-sm-10" style="margin-bottom: 5px">
+            @Html.HiddenFor(model => model.CompanyId)
+            @(Html.Kendo().DropDownListFor(model => model.CompanyId)
+                         .Name("CompanyList")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .HtmlAttributes(new { style = "width:100%; max-width:280px;left:0;margin:0;text-align:left" })
+                         .DataSource(source =>
+                          {source.Read(read =>{read.Action("FillCompanies", "GenerlaClasses"); }); })
+                          .Events(e =>
+                                  {
+                                   e.Change("Companychange")
+                                   .DataBound("Companychange");
+                                    // .Select("onSelect")
+                                   //  .Open("open")
+                                  //   .Close("close")
+                                       
+                                    })
+
+                )
+            </div>
+
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Code")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @placeholder = "Leave empty to generate auto code" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Is Supplier")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.CheckBoxFor(model => model.IsCustomerSupplier, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("English name")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.NameE, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Arabic name")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.NameA, new { @class = "form-control" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Groups")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @(Html.Kendo().ComboBoxFor(model => model.PartnerGroup_Id)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("FillCustomerGroups", "GenerlaClasses").Data("SentCompanyId");
+                              });
+                          })
+                )
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Activity")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @(Html.Kendo().ComboBoxFor(model => model.ActivityId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("FillActivities", "GenerlaClasses");
+                              });
+                          })
+                )
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Main customer")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @(Html.Kendo().ComboBoxFor(model => model.MainPartnerId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("FillCustomers", "GenerlaClasses").Data("SentCompanyId");
+                              });
+                          })
+                )
+
+               
+
+
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Account number")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 15px">
+                @(Html.Kendo().ComboBoxFor(model => model.AccountId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  //read.Action("FillAccounts", "GenerlaClasses").Data("SentCompanyId");
+                              });
+                          })
+                )
+            </div >
+          
+                <div class=" col-xs-12" style="width:99.3%; margin-left:5px;  text-align: center; height: 1px; background: #308b09; overflow: hidden; margin-bottom: 15px; "></div>
+    
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Country")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @(Html.Kendo().ComboBoxFor(model => model.CountryId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                           .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                            //.AutoBind(false)
+                         .MinLength(3)
+                         .DataValueField("Id")
+
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("FillCountries", "GenerlaClasses");
+                              })
+                              .ServerFiltering(true);
+
+                          })
+                          .AutoBind(true)
+                          .HighlightFirst(true)
+                    )
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("City")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @(Html.Kendo().ComboBoxFor(model => model.CityId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+
+                         .DataValueField("Id")
+
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("FillCities", "GenerlaClasses").Data("SentCountryId");
+
+                              })
+                               .ServerFiltering(true);
+                          })
+                        .AutoBind(false)
+                        .CascadeFrom("CountryId")
+                        .HighlightFirst(true)
+                    )
+                </div>
+
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Zip code")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.Zip, new { @class = "form-control" })
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("P O Box")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.P_O_Box, new { @class = "form-control" })
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Deal date")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.Kendo().DatePickerFor(model => model.DealDate).HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Sales delegator")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @(Html.Kendo().ComboBoxFor(model => model.SalesDelegatorId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  //read.Action("FillCustomers", "GenerlaClasses").Data("SentCompanyId");
+                              });
+                          })
+                    )
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Telephone")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.Telephone, new { @class = "form-control" })
+                </div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Fax")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.Fax, new { @class = "form-control" })
+                </div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("E-Mail")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                </div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Web site")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.WebSite, new { @class = "form-control" })
+                </div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Address")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextAreaFor(model => model.Address, new { @class = "form-control" })
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Notes")
+                </div>
+        
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 15px">
+                    @Html.TextAreaFor(model => model.Notes, new { @class = "form-control" })
+                </div>
+            <div class=" col-xs-12" style="width:99.3%; margin-left:5px;  text-align: center; height: 1px; background: #308b09; overflow: hidden; margin-bottom: 15px; "></div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Register number")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.TextBoxFor(model => model.RegisterNo, new { @style = "height:30px", @class = "form-control" })
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Register end date")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.Kendo().DatePickerFor(model => model.RegisterEndDate).HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                   
+                </div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Opening State")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @(Html.Kendo().DropDownListFor(model => model.OpeningBalanceNature).HtmlAttributes(new { style = "width:100%; max-width:280px" })
+                 .DataTextField("Text")
+                 .DataValueField("Value")
+                 .BindTo(new List<SelectListItem>() {
+                  new SelectListItem() {
+                  Text = "Debit",
+                  Value = "1"
+                 },
+                 new SelectListItem() {
+                  Text = "Credit",
+                  Value = "2"
+                 }
+                 })
+
+                    )
+                </div>
+
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Opening balance")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.Kendo().NumericTextBoxFor(model => model.OpeningBalance).HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                </div>
+
+
+
+
+
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Days limits")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.Kendo().IntegerTextBoxFor(model => model.DayLimit).HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                </div>
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Money limits")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.Kendo().NumericTextBoxFor(model => model.MoneyLimit).HtmlAttributes(new { @class = "kendo", @style = "width:100%; max-width:280px" })
+                </div>
+
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Currency")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @(Html.Kendo().ComboBoxFor(model => model.CurrencyId)
+                        .HtmlAttributes(new { @class = "kendo", style = "width:100%; max-width:280px" })
+                .Filter(FilterType.Contains)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("FillCurrencies", "GenerlaClasses");
+                              });
+                          })
+                    )
+                </div>
+
+
+                <div class="col-xs-12 col-sm-2">
+                    @Html.Label("Stoped")
+                </div>
+                <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                    @Html.CheckBoxFor(model => model.Stoped)
+                </div>
+
+
+            </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            @* Window *@
+            @(Html.Kendo().Window().Name("window").Title("Search Customers")
+         
+            .Content(@<text>
+
+                <br />
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="txtSearchValue" type="text" class="form-control" style="max-width:3000px" placeholder="Search">
+                            <span class="input-group-btn">
+                                <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                            </span>
+                        </div><!-- /input-group -->
+                    </div><!-- /.col-lg-6 -->
+                </div><!-- /.row -->
+
+                <br />
+
+                <div style="width:100%; height:300px">
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Sys_Partners>()
+             .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code);
+                 columns.Bound(c => c.NameE);
+                 columns.Bound(c => c.NameA);
+                 columns.Bound(c => c.Notes);
+             })
+
+
+                 .Sortable()
+                .HtmlAttributes(new {style = "width:100%;min-height:200px;height:100%" })
+
+                       .Scrollable(scrolling => scrolling.Height(250))
+                          
+
+                          .DataSource(dataSource => dataSource.Ajax()
+                              //.ServerOperation(true)
+
+                           .PageSize(1000)
+                           .Read(read => read
+                               .Action("Search", "Customers").Data("SetSearchValue")
+                            ))
+
+                     .Selectable()
+                      .Filterable()
+                      .EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                    )
+
+                </div>
+
+                <br />
+            
+            </text>)
+                            .Scrollable(false)
+                            .Visible(false)
+                             .Modal(true)
+                             .Actions(actions => actions.Close())
+                             .Events(ev => ev.Close("onClose"))
+
+
+            )
+
+
+
+
+        </div>
+
+    </div>
+     @* End Window *@
+     @*Close from here don't have Open Open it in Layout page*@
+    </form>
+
+
+    @*  Window Events *@
+    <script>
+        function Companychange(e) {
+
+        };
+        function Branchchange(e) {
+
+        };
+        $(document).ready(function () {
+            $("#DivCompanies").hide();
+            $("#DivBranches").hide();
+            $("#CmbFinancialYear").data("kendoDropDownList").wrapper.hide();
+        })
+
+        function onClose() {
+            //$("#undo").show();
+        }
+
+        function SentCompanyId() {
+            var CompInfo = $("#CompanyList").val();
+            var CustomerInfo = $("#Id").val();
+            if (CompInfo) {
+                return {
+                    CompanyId: CompInfo,
+                    PartnerId: CustomerInfo
+                };
+            }
+        }
+
+        function SentCountryId() {
+            var Info = $("#CountryId").val();
+            if (Info) {
+                return {
+                    CountryId: Info,
+                };
+            }
+        }
+        function SetSearchValue() {
+            var info = $("#txtSearchValue").val();
+            var CompInfo = $("#CompanyList").val();
+            if (info) {
+                return {
+                  
+                    CompanySearchId: CompInfo,
+                    TxtSearchVal: info
+                };
+            }
+        }
+
+        $(document).ready(function () {
+            $("#BtnSearch").bind("click", function () {
+                $("#window").data("kendoWindow").center().open();
+
+                var cc = $("#CompanyList").val();
+                $("#SearchGrid").data("kendoGrid").dataSource.read({ "CompanySearchId": cc });
+
+            });
+        });
+
+        
+        $("#BtnCloseWindow").click(function (e) {
+            $("#window").data("kendoWindow").close();
+        });
+
+
+        $("#BtnGetSearchResult").click(function () {
+ 
+            var cc = $("#CompanyList").val();
+            $("#SearchGrid").data("kendoGrid").dataSource.read({ "CompanySearchId": cc });
+        })
+
+
+   
+        //Grid
+
+        function item_selected(e) {
+            var grid = $("#SearchGrid").data("kendoGrid");
+            var id;
+
+            grid.select().each(function () {
+                var dataItem = grid.dataItem($(this));
+                id = dataItem.Id;
+            });
+
+            window.location.href = "@Url.Content("~/Customers/Index/")" + id;
+        }
+
+    </script>
+@*  End Window Events *@
+
+
+
+@* Combo Box Events *@
+<script>
+
+    function onSelect(e) {
+
+    };
+
+    function Companychange(e) {
+        //Change value of hidden field
+        $('#CompanyId').val(e.sender.value());
+
+        //Post form to load only branches related to company
+       
+            $.post("@Url.Action("CompanyChanged", "Customers")", { CompanyList: e.sender.value() },
+             function (json) {
+                 if ('@TempData["SelectedID"]' != e.sender.value()) {
+                 window.location.href = "@Url.Content("~/Customers/Index/")" + json.id; 
+                 }
+             });
+        
+    };
+
+
+
+</script>
+
+@* End Combo Box Events *@
+
+
+@* General *@
+
+    <script>
+        $("#BtnCreate").click(function () {
+
+            $(document).ready(function () {
+
+              
+                $("MainPartnerId").val('0');
+                var cc = $("#CompanyList").val();
+               $("#MainPartnerId").data("kendoComboBox").dataSource.read({ "CompanySearchId": cc ,"PartnerId":0});
+                $("input.form-control").val('');
+                $("input.kendo").val('');
+                $("textarea.form-control").val('');
+                $("hidden").val('');
+                $("#Id").val('0');
+                $("#MainPartnerId").data("kendoComboBox").value('');
+                $("#PartnerType").val('0');
+                $("#MemberShipId").val('0');
+                $('input:checkbox').attr('checked', false);
+                $('input:checkbox').prop('checked', false);
+                $("#OpeningBalanceNature").data("kendoDropDownList").value('1');
+           
+             
+            });
+
+        })
+
+
+        //ComboBox Events
+        function DataBoundEvent() {
+
+        }
+
+        function SelectEvent(e) {
+
+        }
+    </script>
+@* End General *@
+

@@ -1,0 +1,281 @@
+﻿@using Telerik.Reporting
+@using Telerik.ReportViewer.Mvc
+@{
+    Layout = "~/Views/Shared/_LayoutFinalReports.cshtml";
+}
+@{
+    ViewBag.Title = "Account Statement";
+
+    <script>
+        document.getElementById("LBLFormHDR").innerText = "Account Statement";
+    </script>
+
+}
+<div style="margin-right: 10px;margin-left:10px;">
+    <div class="row">
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.Hidden("Rate")
+
+
+ 
+
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("From date", new { style = "margin-left:5px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px; margin-left: 0px">
+            @Html.Partial("EditorTemplates/_GHDatePartialNotNull", new MVC_ERP.Models.UserControl_GHDate_NotNull(), new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "FromDate" }
+                         })
+        </div>
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("To date", new { style = "margin-left:5px" })
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px; margin-right: 0px">
+            @Html.Partial("EditorTemplates/_GHDatePartialNotNull", new MVC_ERP.Models.UserControl_GHDate_NotNull(), new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "ToDate" }
+                         })
+        </div>
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Transact Type", new { style = "margin-left:5px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px; margin-left: 0px">
+            @(Html.Kendo().DropDownList()
+                    .Name("TransactType")
+            .HtmlAttributes(new { style = "width:100%" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = "All Transaction",
+                              Value = "1"
+                               },
+                            new SelectListItem() {
+                            Text = "Only Debit Transaction ",
+                            Value = "2"
+                             }
+                             ,
+                            new SelectListItem() {
+                            Text = "Only Credit Transaction",
+                            Value = "3"
+                             }
+                             ,
+
+                             })
+
+            )
+        </div>
+      
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Currency", new { style = "margin-left:5px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px; margin-left: 0px">
+            @Html.Partial("EditorTemplates/Currency_ComboBox", 0, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "CurrencyId" }
+                         })
+        </div>
+
+
+
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Account", new { style = "margin-left:5px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px; margin-left: 0px ">
+   
+            @Html.Partial("EditorTemplates/UC_CheckListBox", 0, new ViewDataDictionary
+                         {
+                             //First=ControlName   Second=ControllerName  third=ActionResultName Forth=ShowAll at first or not
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "AccountId_GenerlaClasses_FillAllAccounts_False" }
+                         })
+          
+       
+          
+        </div>
+
+
+
+
+    </div>
+    </div>
+
+    <script>
+        function Companychange(e) {
+
+
+            $("#BranchLists").data("kendoMultiSelect").dataSource.read();
+
+            $("#AccountIdGrid").data("kendoGrid").dataSource.read({ CompanyId: $("#CompanyLists").val(), filters: '' });
+
+
+        };
+
+        function Branchchange(e) {
+
+        };
+
+
+        //ComboBox Events
+        function DataBoundEvent() {
+          
+        }
+
+        function SelectEvent(e) {
+          
+            var dataItem = this.dataItem(e.item.index());
+
+            if (this.element.attr("id") == "CurrencyId") {
+
+                $.ajax({
+                    url: "@Url.Content("~/GenerlaClasses/GetCurrencyRate")",
+                    type: 'POST',
+                data: {
+                    CurrencyId: dataItem.Id
+          
+                },
+                dataType: 'json',
+                success: function (result) {
+                  
+                  
+                    $("#Rate").val(result.Rate);
+
+                },
+                error: function (result) {
+          
+                },
+                });
+            }
+
+        }
+
+
+   
+
+           @{
+            var dataSource = new UriReportSource() { Uri = "GL/AccountStatment.trdx" };
+            dataSource.Parameters.Add(new Telerik.Reporting.Parameter() { Name = "CompanyId", Value = 1 });
+
+            }
+
+        $("#BtnPreview").click(function () {
+         
+
+            if (($("#CompanyLists").val() == '' || $("#CompanyLists").val() == 0)) {
+                showAndDismissAlert('danger', 'Please select company')
+                $("#CompanyLists").data("kendoDropDownList").focus()
+                return;
+            }
+          
+            if (($("#BranchLists").val() == null || $("#BranchLists").val() == 0)) {
+                showAndDismissAlert('danger', 'Please select branches')
+                $("#BranchLists").data("kendoMultiSelect").focus()
+                return;
+            }
+
+
+            if ($("#FromDate_Gregi").data("kendoDatePicker").value() == null || $("#FromDate_Hijri").val() == '') {
+                showAndDismissAlert('danger', 'Please select from date')
+                $("#FromDate_Gregi").focus()
+                return;
+            }
+
+            if ($("#ToDate_Gregi").data("kendoDatePicker").value() == null || $("#ToDate_Hijri").val() == '') {
+                showAndDismissAlert('danger', 'Please select to date')
+                $("#ToDate_Gregi").focus()
+                return;
+            }
+
+
+            if (($("#AccountId").text() == '' || $("#AccountId").text() == 'No items selected')) {
+                showAndDismissAlert('danger', 'Please select account')
+                $("#AccountId").focus()
+                return;
+            }
+
+            if (($("#CurrencyId").val() == '' || $("#CurrencyId").val() == 0)) {
+                showAndDismissAlert('danger', 'Please select currency')
+                $("#CurrencyId").data("kendoDropDownList").focus()
+                return;
+            }
+
+            if (($("#Rate").val() == '' || $("#Rate").val() == 0)) {
+                showAndDismissAlert('danger', 'Selected currency not having rate zero rate not availabl ')
+                $("#Rate").focus()
+                return;
+            }
+
+            //Telerik report reduce day from date parameter so we add day here
+            var FirstDate = new Date($("#FromDate_Gregi").data("kendoDatePicker").value())
+            //FirstDate.setDate(FirstDate.getDate() + 1)
+            FirstDate = FirstDate.toLocaleDateString('en-US')
+
+
+            var LastDate = new Date($("#ToDate_Gregi").data("kendoDatePicker").value())
+            //LastDate.setDate(LastDate.getDate())
+            LastDate = LastDate.toLocaleDateString('en-US')
+
+         
+            var viewer = $("#reportViewer1").data("telerik_ReportViewer");
+            viewer.reportSource({
+                report: "GL/AccountStatment.trdx",
+                parameters: { CompanyId: $("#CompanyLists").val(), BranchId: $("#BranchLists").val(), Title: "Account Statement", TypeOfShowing: $("#TransactType").val(), CurrencyId: $("#CurrencyId").val(), Rate: $("#Rate").val(), CurrencyName: $("#CurrencyId").data('kendoComboBox').text(), UserName: ($.cookie('Language') == "English") ? $.cookie('UserNameE') : $.cookie('UserNameA'), FirstDate: FirstDate, FirstDateHijri: $("#FromDate_Hijri").val(), LastDate: LastDate, LastDateHijri: $("#ToDate_Hijri").val(), Accounts: $("#AccountId").text() }
+            });
+            viewer.refreshReport();
+
+
+        })
+
+        $(document).ready(function () {
+        
+
+            $("#FromDate_Gregi").data("kendoDatePicker").value(new Date(new Date().getFullYear(), 0));
+            $("#FromDate_Gregi").data("kendoDatePicker").trigger("change");
+
+
+
+            $("#ToDate_Gregi").data("kendoDatePicker").value(new Date());
+            $("#ToDate_Gregi").data("kendoDatePicker").trigger("change");
+
+            $.ajax({
+                url: "@Url.Content("~/GenerlaClasses/GetLocalCurrency")",
+                type: 'POST',
+            data: {
+          
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.Id != 0) {
+
+                    $("#CurrencyId").data("kendoComboBox").value(result.Id);
+                    $("#Rate").val(1);
+                }
+
+            },
+            error: function (result) {
+          
+            },
+            });
+           
+        });
+
+
+        $("#BtnSendByMail").click(function () {
+
+   
+
+            alert($("#AccountId").text())
+           
+        })
+    </script>

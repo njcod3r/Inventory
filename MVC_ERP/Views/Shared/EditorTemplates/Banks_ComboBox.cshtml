@@ -1,0 +1,28 @@
+﻿@model int?
+@(Html.Kendo().ComboBoxFor(m => m)
+                         .HtmlAttributes(new { style = "width:100%; max-width:600px" })
+                         .DataTextField("Name")
+                         .DataValueField("Id")
+                         .SelectedIndex(0)
+                         .Placeholder("Select Bank")
+                         .Filter(FilterType.Contains)
+                          .Template("<span class='k-state-default'  style='margin-right:10px'>#: data.Code #</span><span class='k-state-default'>#: data.Name #</span>")
+
+                         .DataSource(source =>
+                         {
+                             source.Read(read =>
+                             {
+                                 read.Action("FillBanks", "GenerlaClasses");
+                             });
+                         })
+
+                              .Events(e =>
+                             {
+                                 e.Select("SelectEvent");
+                                 e.DataBound("DataBoundEvent");
+                                 e.Change("ChangeEvent");
+                               
+                             })
+
+                                     //.CascadeFrom("CompanyLists")
+)

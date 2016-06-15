@@ -1,0 +1,26 @@
+﻿
+@model int?
+@(Html.Kendo().DropDownListFor(m => m)
+
+                         .DataTextField("Name")
+                         .DataValueField("Id")
+                       
+                       
+                                 .HtmlAttributes(new { style = "width:100%; max-width:3000px;left:0;margin:0;text-align:left" })
+                         .DataSource(source =>
+                         {
+                             source.Read(read =>
+                             {
+                                 read.Action("FillFinancialYear", "GenerlaClasses");
+                             });
+                         })
+
+                              .Events(e =>
+                              {
+                                  e.Select("SelectEvent");
+                                  e.DataBound("DataBoundEvent");
+
+                              })
+
+
+)

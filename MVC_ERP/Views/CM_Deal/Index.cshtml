@@ -1,0 +1,96 @@
+﻿@model IEnumerable<MVC_ERP.Models.CM_Deal>
+
+<div class="row">
+    <div class="col-xs-9">
+        @(Html.Kendo().Grid<MVC_ERP.Models.Sys_Companies>()
+
+.Name("CMDeal")
+.Columns(columns =>
+        {
+            columns.Bound(c => c.Code);
+            columns.Bound(c => c.NameE);
+            columns.Bound(c => c.NameA);
+            columns.Bound(c => c.RegisterNo);
+        })
+
+
+   .Pageable()
+.Sortable()
+        .HtmlAttributes(new { style = "height:430px;" })
+   .Scrollable()
+
+          .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(false)
+                .ButtonCount(5)
+
+                )
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                     .PageSize(200)
+                .Read(read => read
+                    // .ServerOperation(false)
+                        .Action("Products_Deal", "CM_Deal"))
+            )
+
+            .Filterable()
+            .Mobile()
+
+
+        )
+
+
+    </div>
+    <div class="col-xs-3">
+        @Html.TextArea("x")
+        <br />
+        <input type="text" value="Hiiiiii" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-9">
+        @(Html.Kendo().Grid<MVC_ERP.Models.CM_Deal>()
+
+.Name("CMDeal")
+.Columns(columns =>
+        {
+            columns.Bound(c => c.Serial);
+            columns.Bound(c => c.ReceiptDate);
+            columns.Bound(c => c.Goods);
+            columns.Bound(c => c.Bakhera);
+        })
+
+
+   .Pageable()
+.Sortable()
+        .HtmlAttributes(new { style = "height:430px;" })
+   .Scrollable()
+          .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5)
+
+                )
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                     .PageSize(20)
+                .Read(read => read
+                    // .ServerOperation(false)
+                        .Action("Products_Deal", "CM_Deal"))
+            )
+
+            .Filterable()
+            .Mobile()
+
+
+        )
+
+
+    </div>
+    <div class="col-xs-3">
+        @Html.TextArea("x")
+        <br />
+        <input type="text" value="Hiiiiii" />
+    </div>
+</div>
+

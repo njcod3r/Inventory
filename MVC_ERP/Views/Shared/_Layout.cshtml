@@ -1,0 +1,1037 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUR ERP PROGRAM</title>
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+
+
+<!--This bundle was moved by the Telerik VS Extensions for compatibility reasons-->
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.default.min.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/kendo/2014.1.528/jquery.min.js")"></script>
+<script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.all.min.js")"></script>
+<script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.aspnetmvc.min.js")"></script>
+
+
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Scripts/kendo/cultures/kendo.culture.ar-SA.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/towords.js")"></script>
+
+
+<link rel="stylesheet" href="@Url.Content("~/MessageStyleScripts/jquery.ui.all.css")" />
+<link rel="stylesheet" href="@Url.Content("~/MessageStyleScripts/jquery-ui.css")" />
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.core.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.widget.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.mouse.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.button.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.draggable.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.position.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.resizable.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.button.js")'></script>
+<script src='@Url.Content("~/MessageStyleScripts/jquery.ui.dialog.js")'></script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+
+
+
+@RenderSection("scripts", required: false)
+
+
+    <script>
+  
+
+
+
+
+
+                 $(function () {
+                     ShowMessage = function (txt) {
+                        // alert(txt);
+                         document.getElementById("lblMessage").innerHTML = txt;
+
+                         $("#dialog-message").dialog({
+                             bgiframe: true,
+                             autoOpen: true,
+                             modal: true,
+                             buttons: {
+                                 Ok: function () {
+                                     $(this).dialog("close");
+                                 },
+
+                             }
+                         });
+                     }
+                 });
+
+                 $(function () {
+                     ShowMessageConfirm = function (txt) {
+                         var submit = false;
+                         document.getElementById("lblMessageConfirm").innerHTML = txt;
+
+                         $("#dialog-confirm").dialog({
+
+                             //open: function() { $(".ui-dialog").css("box-shadow","#000 5px 5px 5px"); },
+                             resizable: false,
+                             //height: 140,
+                             //width:400,
+
+                             modal: true,
+                             buttons: {
+                                 "Ok": function () {
+                                     $(this).dialog("close");
+                                     submit = true;
+                                 },
+                                 Cancel: function () {
+
+                                     $(this).dialog("close");
+                                 }
+                             }
+                         });
+                     }
+                 });
+
+
+
+
+    </script>
+
+</head>
+<body>
+
+    @*Open from here don't have closed closed it in seperated page we open it in layout and close in page*@
+    <form id="MainForm" action="" method="post">
+       
+        <div id="FormHeaderButtons" class="container-fluid" style="background: black; height: auto; top: 0; left: 0; right: 0;margin-left: 15px; margin-right: 15px; z-index:999; position: fixed;">
+
+
+            <div>
+                <!-- Modal Dialog For open page as popup -->
+                @(Html.Kendo().Window().Name("windowPagePopUp").Title("Create and Edit Accounts")
+                        .Resizable()
+                .Modal(true)
+                        //.LoadContentFrom("Index", "GL_ChartOFAccounts")
+                .Iframe(true)
+                .Scrollable(true)
+                        .Draggable(true)
+                .Visible(false)
+                        .Events(e => e.Close("windowPagePopUpOnClose"))
+                .Actions(actions => actions.Close())
+                .Content(@<text>
+
+                </text>)
+
+                )
+
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <div id="FormTitle" style="background: #a2c3db;color:black; font-size: large;">
+                        <label id="LBLFormHDR" style="margin-left: 15px; margin-top: 0px ;margin-bottom :9px "></label>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div id="DivBranches">
+                        <div style="text-align: right">
+                            @(Html.Kendo().DropDownList()
+                         .Name("BranchLists")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+
+                         .DataValueField("Id")
+                                 .HtmlAttributes(new { style = "margin-left:5px;width:49%; max-width:2000px;text-align:left;margin-top:5px;font-size:larg;font-weight:bold;margin-bottom: 5px;float:right" })
+                         .DataSource(source =>
+                          { source.Read(read => { read.Action("FillBranches", "GenerlaClasses").Data("SentCompanyId"); }); })
+                          .Events(e =>
+                                  {
+                                      e.Change("Branchchange")
+                                      .DataBound("Branchchange");
+                                      // .Select("onSelect")
+                                      //  .Open("open")
+                                      //   .Close("close")
+
+                                  })
+                                    //.CascadeFrom("CompanyLists")
+                            )
+
+                        </div>
+                    </div>
+
+                    <div id="DivCompanies" style="text-align: right">
+                        @(Html.Kendo().DropDownList()
+                                 .Name("CompanyLists")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .HtmlAttributes(new { style = "margin-right:0px;width:49%; max-width:2000px;text-align:left;margin-top:5px;font-size:larg;font-weight:bold;margin-bottom: 5px;float:right" })
+                         .DataSource(source =>
+                          { source.Read(read => { read.Action("FillCompanies", "GenerlaClasses"); }); })
+                          .Events(e =>
+                                  {
+                                      e.Change("Companychange")
+                                      .DataBound("Companychange");
+                                      //.Select("onSelect");
+                                      //  .Open("open")
+                                      //   .Close("close")
+
+                                  })
+
+                        )
+                    </div>
+                    <script>
+                        function SentCompanyId() {
+                            var CompInfo = $("#CompanyLists").val();
+                            if (CompInfo) {
+                                return {
+                                    CompanyId: CompInfo,
+                                };
+                            }
+                        }
+
+                    </script>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-xs-12">
+
+
+                    <div id="GeneralControl" style=" background: #c4bebe; color: blue; height: auto;">
+
+
+
+                        <div id="BtnsDiv" class="row no-gutter">
+                            <div id="FirstNavDiv" class="col-xs-12 col-sm-4" style="text-align: center; margin-top: 15px; margin-bottom: 10px">
+
+                                <button class="btn-default" id="BtnCreate" type="button" value="Create" name="submitButton" style="width: 59px; height: 50px; margin-top: 1px; top: 0px; position: static"><i class="glyphicon glyphicon-plus"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "جديد" : "Create") </button>
+                                <button class="btn-default" id="BtnSave" type="submit" value="Save" name="submitButton" style="width: 59px; height: 50px"><i class="glyphicon glyphicon-floppy-disk"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "حفظ" : "Save") </button>
+                                <button class="btn-default" id="BtnDiscard" type="submit" value="Discard" name="submitButton" style="width: 59px; height: 50px"><i class="glyphicon glyphicon-refresh"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "الغاء" : "Cancel") </button>
+                                <button class="btn-default" type="button" data-toggle="modal" data-target="#confirmDelete" data-action="Delete" data-title="Delete confirmation" style="width: 59px; height: 50px; margin: 0 0 0 0"
+                                        id="BtnDelete" name="submitButton" value="Delete" data-message="Are you sure you want to delete ?">
+                                    <i class="glyphicon glyphicon-trash"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "حذف" : "Delete")
+                                </button>
+                            </div>
+                            <div id="SecondNavDiv" class="col-xs-12 col-sm-4" style="text-align: center; margin-top: 15px; margin-bottom: 10px;top:0">
+
+                                <button class="btn-default" type="button" data-toggle="modal" data-target="#confirmDelete" data-action="Reuse" data-title="Reuse confirmation" style="width: 59px; height: 50px; margin: 0 0 0 0"
+                                        id="BtnReuse" name="submitButton" value="Reuse" data-message="This action will duplicate these data with new code are you sure you want to reuse ?">
+                                    <i class="glyphicon glyphicon-repeat"></i><br /> @(Request.Cookies["Language"].Value == "Arabic" ? "اعادة" : "Reuse")
+                                </button>
+                                <button class="btn-default" type="button" data-toggle="modal" data-target="#confirmDelete" data-action="Post" data-title="Post confirmation" style="width: 59px; height: 50px; margin: 0 0 0 0; top: 0"
+                                        id="BtnPost" name="submitButton" value="Post" data-message="Posting prevent edit or delete are you sure you want to pot?">
+                                    <i class="glyphicon glyphicon-ok"></i><br /><span>@(Request.Cookies["Language"].Value == "Arabic" ? "توثيق" : "Post")</span>
+                                </button>
+
+
+                                <button class="btn-default" id="BtnPrint" type="button" value="Print" name="submitButton" style="width: 59px; height: 50px; margin: 0 0 0 0"><i class="glyphicon glyphicon-print"></i><br />  @(Request.Cookies["Language"].Value == "Arabic" ? "طباعة" : "Print") </button>
+                                <button class="btn-default" id="BtnSearch" type="button" value="Search" name="submitButton" style="width: 59px; height: 50px"><i class="glyphicon glyphicon-search"></i><br />@(Request.Cookies["Language"].Value == "Arabic" ? "بحث" : "Search")</button>
+
+
+
+                            </div>
+
+
+
+                            <div id="DivNavigation" class="col-xs-12 col-sm-4" style="text-align: center; margin-top:20px; margin-bottom: 10px;">
+
+
+
+                                <img id="BtnFirst" title=@(Request.Cookies["Language"].Value == "Arabic" ? "الاول" : "First") src="@Url.Content("~/Images/First.png")" alt="First" class="img-circle" width="40" height="40" onclick="FirstNav();">
+                                <img id="BtnNext" title=@(Request.Cookies["Language"].Value == "Arabic" ? "السابق" : "previous") src="@Url.Content("~/Images/Previous.png")" alt="Previous" class="img-circle" width="40" height="40" onclick="PreviousNav();">
+                                <img id="BtnPrevious" title=@(Request.Cookies["Language"].Value == "Arabic" ? "التالي" : "Next") src="@Url.Content("~/Images/Next.png")" alt="Next" class="img-circle" width="40" height="40" onclick="NextNav();">
+                                <img id="BtnLast" title=@(Request.Cookies["Language"].Value == "Arabic" ? "الاخير" : "Last") src="@Url.Content("~/Images/Last.png")" alt="Last" class="img-circle" width="40" height="40" onclick="LastNav();">
+
+                                @(Html.Kendo().DropDownList()
+                                        .Name("CmbFinancialYear")
+                                        .DataTextField("Name")
+                                        .DataValueField("Id")
+                                                .HtmlAttributes(new { style = "width:25%; max-width:3000px;left:0;margin:0;text-align:left;margin-left:10px" })
+                                        .DataSource(source =>
+                                        {
+                                            source.Read(read =>
+                                            {
+                                                read.Action("FillFinancialYear", "GenerlaClasses");
+                                            });
+                                        })
+                                        .Events(e =>
+                                        {
+                                            e.Select("SelectEvent");
+                                            e.DataBound("DataBoundEvent");
+                                        }))
+
+
+
+
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="row">
+
+                            <div class="col-xs-12">
+                                @*<div class="alert-messages text-center" style="position: fixed; z-index: 7000; width: 100%"></div>*@
+                                
+                                <div class="alert-messages text-center" style="position: absolute;height:0px; width: 97%; left: 1.5%; top: 0; border: none; z-index: 7000;text-align:center"></div>
+                            </div>
+                        </div>
+
+                
+                   
+
+
+
+
+
+
+                    </div>
+
+                    <div class=" col-xs-12" style="width:100%; margin-left:0px;  text-align: center; height: 5px; background: #ffffff; overflow: hidden; margin-bottom: 0px; "></div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+
+
+        <!-- Modal Dialog -->
+        <div class="modal fade" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="color:black">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Delete Parmanently</h4>
+                    </div>
+                    <div class="modal-body" style="color:black">
+                        <p>Are you sure about this?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirm" name="submitButton" value="Delete">Ok</button>
+                        @*Send value name to cintroller*@
+                        <input id="ActionValue" type="hidden" value="" name="submitButton">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Modal Dialog Ajax without post form -->
+        <div class="modal fade" id="confirmMessage" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true" data-title="" data-message="" data-function="">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="color:black">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Delete Parmanently</h4>
+                    </div>
+                    <div class="modal-body" style="color:black">
+                        <p>Are you sure about this?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnMessageCancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="confirm" type="button" class="btn btn-danger" name="submitButton" value="Delete">Ok</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+         <div class="row">
+
+                <div class="col-xs-12 ">
+                    <div id="content" style="background:white">
+                        @RenderBody()
+
+                      
+                    </div>
+                
+                </div>
+                <div class="col-xs-12 ">
+                    <div style="background:white; height:20px">
+
+                    </div>
+                </div>
+            </div>
+
+
+
+ 
+
+        <div id="dialog-message" title="Message Box">
+            <p>
+                <label id="lblMessage" style="color: black; font-size: small; font-family: Tahoma"></label>
+            </p>
+        </div>
+
+        <div id="dialog-confirm" title="Confirmation" style="margin-top:10px;  box-shadow:none">
+            <p>
+                <label id="lblMessageConfirm" style="color:black ;font-size:small;font-family:Tahoma"></label>
+            </p>
+        </div>
+
+
+
+
+
+
+        @*BootStrab Styling for validation message*@
+        <script>
+
+
+
+            function FirstNav() {
+
+                return Read(0, ReadType.First);
+            }
+
+            function NextNav() {
+
+                return Read(0, ReadType.Next);
+            }
+
+            function PreviousNav(){
+
+                return Read(0, ReadType.Previous);
+            }
+
+            function LastNav()
+            {
+               
+                return Read(0, ReadType.Last);
+            }
+
+            window.addEventListener('resize', function (event) {
+                // do stuff here
+               
+
+                if ($(window).width() < 800 && $(window).height() < 600) {
+                    $('#FormHeaderButtons').css({
+                        position: 'absolute',
+                        top: 0
+                    });
+
+                    $('#content').css('margin-top', $("#FormHeaderButtons").height());
+
+                }
+                else {
+                    $('#FormHeaderButtons').css({
+                        position: 'fixed',
+                        top: 0
+                    });
+
+                    $('#content').css('margin-top', $("#FormHeaderButtons").height());
+                }
+
+
+            });
+
+            //window.addEventListener('scroll', function (event) {
+            //    // do stuff here
+            //    if ($(window).width() < 800 && $(window).height() < 600)
+            //    {
+            //        $('#FormHeaderButtons').css({
+            //            position: 'absolute',
+            //            top: 0
+            //        });
+
+            //        $('#content').css('margin-top', $("#FormHeaderButtons").height());
+
+            //    }
+            //    else
+            //    {
+            //        $('#FormHeaderButtons').css({
+            //            position: 'fixed',
+            //            top: 0
+            //        });
+
+            //        $('#content').css('margin-top', $("#FormHeaderButtons").height());
+            //    }
+            //});
+
+        
+
+            $(document).ready(function () {
+
+                if ($(window).width() < 800 && $(window).height() < 600) {
+                    $('#FormHeaderButtons').css({
+                        position: 'absolute',
+                        top: 0
+                    });
+
+                    $('#content').css('margin-top', $("#FormHeaderButtons").height());
+
+                }
+                else {
+                    $('#FormHeaderButtons').css({
+                        position: 'fixed',
+                        top: 0
+                    });
+
+                    $('#content').css('margin-top', $("#FormHeaderButtons").height());
+                }
+
+
+                $('#content').css('margin-top', $("#FormHeaderButtons").height()-10);
+                
+
+
+                /* Bootstrap Fix */
+                $.validator.setDefaults({
+                    highlight: function (element) {
+                        $(element).closest("div.control-group").addClass("error");
+                    },
+                    unhighlight: function (element) {
+                        $(element).closest("div.control-group").removeClass("error");
+                    }
+                });
+                var current_div;
+                $(".editor-label, .editor-field").each(function () {
+                    var $this = $(this);
+                    if ($this.hasClass("editor-label")) {
+                        current_div = $('<div class="control-group"></div>').insertBefore(this);
+                    }
+                    current_div.append(this);
+                });
+                $(".editor-label").each(function () {
+                    $(this).contents().unwrap();
+                });
+                $(".editor-field").each(function () {
+                    $(this).addClass("controls");
+                    $(this).removeClass("editor-field");
+                });
+                $("label").each(function () {
+                    $(this).addClass("control-label");
+                });
+                $("span.field-validation-valid, span.field-validation-error").each(function () {
+                    $(this).addClass("help-inline");
+                });
+                $("form").each(function () {
+                    $(this).addClass("form-horizontal");
+                    $(this).find("div.control-group").each(function () {
+                        if ($(this).find("span.field-validation-error").length > 0) {
+                            $(this).addClass("error");
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dialog show event handler -->
+        <script type="text/javascript">
+            $('#confirmDelete').on('show.bs.modal', function (e) {
+                $message = $(e.relatedTarget).attr('data-message');
+                $(this).find('.modal-body p').text($message);
+                $title = $(e.relatedTarget).attr('data-title');
+                $(this).find('.modal-title').text($title);
+                $ActionName = $(e.relatedTarget).attr('data-action');
+                // Pass form reference to modal for submission on yes/ok
+                var form = $(e.relatedTarget).closest('form');
+                $(this).find('.modal-footer #confirm').data('form', form);
+            });
+            //Form confirm (yes/ok) handler, submits form
+            $('#confirmDelete').find('.modal-footer #confirm').on('click', function () {
+
+                $("#ActionValue").val($ActionName);
+                $(this).data('form').submit();
+            });
+        </script>
+
+
+
+        <input id="ConfirmMessageTitle" type="hidden" />
+        <input id="ConfirmMessageContain" type="hidden" />
+        <input id="ConfirmMessageFunc" type="hidden" />
+        <input id="ConfirmMessageReturn" type="hidden" />
+        <input id="ConfirmMessageType" type="hidden" />
+        <input id="RowIndexForPopUP" type="hidden" />
+        <input id="ControlNameForPopUP" type="hidden" />
+        <input id="ControlTypeForPopUP" type="hidden" />
+        <input id="ModelIdForPopUP" type="hidden" />
+        <input id="ModelNameForPopUP" type="hidden" />
+        <input id="ModelCompanyIdForPopUP" type="hidden" />
+        <input id="ModelBranchIdForPopUP" type="hidden" />
+        <input id="ModelSetValueForPopUP" type="hidden" />
+        <input id="ModelTransactIdForPopUP" type="hidden" />
+
+
+        <!-- Dialog show event handler  For confirmMessage with Ajax-->
+        <script>
+
+    function windowPagePopUpOnClose() {
+        $("#windowPagePopUp").data("kendoWindow").content("")
+     
+        $.ajax({
+            url: "@Url.Content("~/Base/GetPopUpSessionValue")",
+            type: 'POST',
+        data: {
+          
+           
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            //Case of Grid
+            if ($('#ControlTypeForPopUP').val() == "Grid")
+            {
+            if (result.Id != 0  ) {
+                //var model = $('#DetailGrid').data().kendoGrid.dataSource.data()[$('#RowIndexForPopUP').val()];
+                if ($('#ModelSetValueForPopUP').val() != 'No') {
+                    var model = $('#' + $('#ControlNameForPopUP').val()).data().kendoGrid.dataSource.data()[$('#RowIndexForPopUP').val()];
+                    model.set($('#ModelIdForPopUP').val(), result.Id);
+                    model.set($('#ModelNameForPopUP').val(), result.Name);
+                }
+            }
+            }
+
+           else if($('#ControlTypeForPopUP').val() == "Combo")
+           {
+               if (result.Id != 0)
+               {
+                   if ($('#ModelSetValueForPopUP').val() != 'No')
+                   {
+                   $('#' + $('#ControlNameForPopUP').val()).data('kendoComboBox').value(result.Id);
+                       //$('#' + $('#ControlNameForPopUP').val()).data('kendoComboBox').text(result.Name);
+                   }
+                   $('#' + $('#ControlNameForPopUP').val()).data('kendoComboBox').dataSource.read();
+                  
+               }
+              
+           }
+
+        },
+        error: function (result) {
+          
+        },
+        });
+
+
+    }
+            function ShowPageAsPopUp(Title, URL, ControlName, ControlType, ModelId, ModelName, rowIndex, ModelCompanyId, ModelBranchId, ModelSetValue,ModelTransactId) {
+
+                //This function responsible for open extra page to add new or edit or search
+                // when closeng current value return back to combobox but if (ModelSetValueForPopUP) is No no value return back 
+                //But if user search for it he will found it  it establish for stand alone combo or for grid combo
+                $('#RowIndexForPopUP').val('');
+                $('#RowIndexForPopUP').val(rowIndex);
+
+                $('#ControlNameForPopUP').val('');
+                $('#ControlNameForPopUP').val(ControlName);
+
+                $('#ControlTypeForPopUP').val('');
+                $('#ControlTypeForPopUP').val(ControlType);
+
+                $('#ModelIdForPopUP').val('');
+                $('#ModelIdForPopUP').val(ModelId);
+
+
+
+                $('#ModelNameForPopUP').val('');
+                $('#ModelNameForPopUP').val(ModelName);
+
+
+                $('#ModelCompanyIdForPopUP').val('');
+                $('#ModelCompanyIdForPopUP').val(ModelCompanyId);
+
+                $('#ModelBranchIdForPopUP').val('');
+                $('#ModelBranchIdForPopUP').val(ModelBranchId);
+
+
+                $('#ModelSetValueForPopUP').val('');
+                $('#ModelSetValueForPopUP').val(ModelSetValue);
+
+
+                $('#ModelTransactIdForPopUP').val('');
+                $('#ModelTransactIdForPopUP').val(ModelTransactId);
+
+
+
+
+                $("#windowPagePopUp").parent().css('width', "100%");
+                $("#windowPagePopUp").parent().css('height', "95%");
+                $("#windowPagePopUp").data("kendoWindow").title(Title)
+
+
+                $("#windowPagePopUp").data("kendoWindow").refresh({
+                    url: "@Url.Content("~/")" + URL
+
+                });
+
+          
+                $("#windowPagePopUp").data("kendoWindow").center().open();
+
+                @*$.ajax({
+                    url: "@Url.Content("~/Base/SetPopUpSessionValue")",
+                    type: 'POST',
+                data: {
+           
+                },
+                dataType: 'json',
+                success: function (result) {
+
+                    //Set Session IsReturnBackToDetailPageActive     to true before open window in ajax controll function 
+               
+
+                },
+                error: function (result) {
+          
+                },
+                });*@
+
+
+
+    }
+    $('#OpenPageAsPopUp').on('show.bs.modal', function (e) {
+
+
+        $(this).find('.modal-body p').text($('#ConfirmMessageContain').val());
+        $(this).find('.modal-title').text($('#ConfirmMessageTitle').val());
+
+    });
+
+
+    function ShowConfirmMessage(Title, Message, SuccFunc, Type) {
+        $('#ConfirmMessageTitle').val('');
+        $('#ConfirmMessageContain').val('');
+        $('#ConfirmMessageFunc').val('');
+        $('#ConfirmMessageReturn').val('');
+        $('#ConfirmMessageType').val('');
+
+
+        $('#ConfirmMessageTitle').val(Title);
+        $('#ConfirmMessageContain').val(Message);
+        $('#ConfirmMessageFunc').val(SuccFunc);
+        $('#ConfirmMessageType').val(Type);
+
+
+        if (Type == "WithOutConfirm") // Show modal without ok or cancel
+        {
+            $('#btnMessageCancel').hide();
+            $('#confirm').hide();
+        }
+        else {
+            $('#btnMessageCancel').show();
+            $('#confirm').show();
+        }
+
+        $('#confirmMessage').modal('show');
+
+    }
+
+    $('#confirmMessage').on('show.bs.modal', function (e) {
+
+
+        $(this).find('.modal-body p').text($('#ConfirmMessageContain').val());
+        $(this).find('.modal-title').text($('#ConfirmMessageTitle').val());
+
+    });
+
+    //Form confirm (yes/ok) handler, submits form
+    $('#confirmMessage').find('.modal-footer #confirm').on('click', function () {
+
+        $('#ConfirmMessageReturn').val('OK');
+
+        $('.modal.in').modal('hide')
+        window[$('#ConfirmMessageFunc').val()]();
+
+    });
+        </script>
+
+
+        @*<span id="close" style="float: right; display: inline-block; padding: 2px 5px; background: #ccc;"*@
+        <script>
+            function showAndDismissAlert(type, message) {
+                var htmlAlert = '<div id="FlashDialog" class="alert alert-' + type + '">' + message + '<a href=#><span id="close" style="float: right; display: inline-block; padding: 2px 5px;" onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode); return false;">x</span></a></div>';
+
+                // Prepend so that alert is on top, could also append if we want new alerts to show below instead of on top.
+                $(".alert-messages").prepend(htmlAlert);
+
+                // Since we are prepending, take the first alert and tell it to fade in and then fade out.
+                // Note: if we were appending, then should use last() instead of first()
+                var delay
+                if (type == 'success') {
+                    delay = 1500
+                }
+                else if (type == 'info') {
+                    delay = 2500
+                }
+                else if (type == 'danger') {
+                    delay = 5000
+                }
+
+                $(".alert-messages .alert").first().hide().fadeIn(200).delay(delay).fadeOut(500, function () { $(this).remove(); });
+            }
+        </script>
+
+        @if (TempData["ReturnMessage"] != null)
+        {
+            <script>
+
+                showAndDismissAlert('@TempData["MessageType"]', '@TempData["ReturnMessage"]')
+                //showAndDismissAlert('danger', 'Error Encountered');
+                //showAndDismissAlert('info', 'Message Received');
+            </script>
+        }
+        
+        <script>
+            //for enter
+            $('input,select').keydown(function (e) {
+                var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+                if (key == 13) {
+                    e.preventDefault();
+                    var inputs = $('#content').find(':input:visible');
+                    var nextinput = 0;
+                    if (inputs.index(this) < (inputs.length - 1)) nextinput = inputs.index(this) + 1;
+                    if (inputs.length == 1) $(this).blur().focus();
+                    else inputs.eq(nextinput).focus();
+                }
+            })
+
+
+            //insert only numeric
+            function isNumberKey(evt) {
+
+                var charCode = (evt.which) ? evt.which : event.keyCode;
+                if (charCode != 46 && charCode > 31
+                && (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;
+            }
+
+        </script>
+
+      <script>
+          //Messages function
+          var MessageType = {
+              DeleteConfirm: 0,
+              ReuseConfirm: 1,
+              PostConfirm: 2,
+              UnPostConfirm: 3,
+              NoPermission: 4,
+              RefuseDeletePosting: 5,
+              RefuseDeleteRelated: 6,
+              PostConfirmHDR:7,
+              UnPostConfirmHDR: 8,
+              ReuseConfirmHDR: 9,
+              DeleteConfirmHDR: 10,
+              PostButtonTxt: 11,
+              UnPostButtonTxt:12,
+              CreateEditSearch: 13,
+              BtnMore: 14,
+              ArabicNameValidation: 14,
+              EnglishNameValidation: 14,
+          }
+
+          function GetMessage(MessageNumber) {
+
+
+              if (MessageNumber == MessageType.DeleteConfirmHDR) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Delete confirmation'
+                  }
+                  else {
+
+                      return 'تأكيد الحذف'
+                  }
+              }
+
+              if (MessageNumber == MessageType.DeleteConfirm)
+              {
+                  if ($.cookie('Language') == "English")
+                  {
+                      return 'Are you sure you want to delete ?'
+                  }
+                  else {
+
+                      return 'سوف تقوم بحذف هذه الحركة هل انت موافق على اتمام الاجراء ؟'
+                  }
+              }
+
+              if (MessageNumber == MessageType.ReuseConfirmHDR) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Reuse confirmation'
+                  }
+                  else {
+
+                      return 'تأكيد التكرار'
+                  }
+              }
+
+              if (MessageNumber == MessageType.ReuseConfirm) {
+                  if ($.cookie('Language') == "English") {
+                      return 'This action will duplicate these data with new code are you sure you want to reuse ?'
+                  }
+                  else {
+
+                      return 'سوف تقوم بتكرار هذة البيانات بكود جديد هل انت موافق على اتمام الاجراء ؟'
+                  }
+               }
+
+
+              if (MessageNumber == MessageType.PostConfirmHDR) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Post confirmation'
+                  }
+                  else {
+
+                      return 'تأكيد التوثيق'
+                  }
+              }
+
+              if (MessageNumber == MessageType.PostConfirm) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Posting prevent edit or delete are you sure you want to pot?'
+                  }
+                  else {
+
+                      return 'لا يمكنك التعديل او الحذف بعد التوثيق هل انت موافق على اتمام الاجراء ؟'
+                  }
+              }
+
+              if (MessageNumber == MessageType.UnPostConfirmHDR) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Un-Posting confirmation'
+                  }
+                  else {
+
+                      return 'تأكيد فك التوثيق'
+                  }
+              }
+
+              if (MessageNumber == MessageType.UnPostConfirm) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Un-Posting  allow edit and delete are you sure you want to Un-Pot?'
+                  }
+                  else {
+
+                      return 'فك التوثيق يتيح التعديل والحذف هل انت موافق على اتمام الاجراء ؟'
+                  }
+              }
+
+
+              if (MessageNumber == MessageType.NoPermission) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Sorry, you dont have permission'
+                  }
+                  else {
+
+                      return 'عفوا ليس لديك صلاحيات كافية'
+                  }
+              }
+
+
+              if (MessageNumber == MessageType.RefuseDeletePosting) {
+                  if ($.cookie('Language') == "English") {
+                      return 'This movment was posting you cant delete it'
+                  }
+                  else {
+
+                      return 'عفوا هذة الحركة موثقة لا يمكنك الحذف'
+                  }
+              }
+
+              if (MessageNumber == MessageType.RefuseDeleteRelated) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Sorry, you cant delete these data its used in another transaction'
+                  }
+                  else {
+
+                      return 'عفوا لا يمكنك حذف هذة البيانات كونها مستخدمه فى حركات اخري'
+                  }
+              }
+
+              if (MessageNumber == MessageType.UnPostButtonTxt) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Post'
+                  }
+                  else {
+
+                      return 'توثق'
+                  }
+              }
+
+              if (MessageNumber == MessageType.PostButtonTxt) {
+                  if ($.cookie('Language') == "English") {
+                      return 'UnPost'
+                  }
+                  else {
+
+                      return 'فك توثيق'
+                  }
+              }
+
+              if (MessageNumber == MessageType.CreateEditSearch) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Create Edit Search'
+                  }
+                  else {
+
+                      return 'جديد تعديل بحث'
+                  }
+              }
+              
+              if (MessageNumber == MessageType.BtnMore) {
+                  if ($.cookie('Language') == "English") {
+                      return 'More'
+                  }
+                  else {
+
+                      return 'اكثر'
+                  }
+              }
+
+              if (MessageNumber == MessageType.ArabicNameValidation) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Please insert Arabic name'
+                  }
+                  else {
+
+                      return 'فضلا ادخل الاسم العربي'
+                  }
+              }
+
+              if (MessageNumber == MessageType.EnglishNameValidation) {
+                  if ($.cookie('Language') == "English") {
+                      return 'Please insert English name'
+                  }
+                  else {
+
+                      return 'فضلا ادخل الاسم الاتيني'
+                  }
+              }
+
+
+          }
+
+
+      </script>
+</body>
+
+
+
+</html>

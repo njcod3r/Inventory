@@ -1,0 +1,42 @@
+﻿@model int?
+     
+@(Html.Kendo().ComboBoxFor(m => m)
+                        //.Name("CostCenterId_#=Id#")
+                      .DataTextField("Name")
+                             .DataValueField("Id")
+                             
+                                     .Template("<span class='k-state-default'  style='margin-right:10px'>#:data.Code#</span><span class='k-state-default'>#:data.Name#</span>")
+                             .AutoBind(true)
+                            .Placeholder("Type part of cod or name")
+                            .HighlightFirst(true)
+
+              //.MinLength(2)
+              
+                .Filter(FilterType.Contains)
+                         .HtmlAttributes(new { style = "width:100%; max-width:600px;left:0;margin:0;text-align:left" })
+                              
+                          
+                            .DataSource(source =>
+                         { 
+                             source.Read(read =>
+                             {
+                                 read.Action("FillFinancialYearPeriods", "GenerlaClasses").Data("FilterPeriods");
+
+                             }); 
+                             
+                         })
+                         .Events(e =>
+                         {
+                             e.Select("PeriodsGridSelect");
+                             e.DataBound("PeriodsGridDataBound");
+                             e.Change("PeriodsGridChange");
+                           
+                          
+                         //  .Open("open")
+                        //   .Close("close")
+                       })
+
+                          
+                                    
+                         
+)

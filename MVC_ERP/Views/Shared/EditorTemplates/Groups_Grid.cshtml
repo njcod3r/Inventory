@@ -1,0 +1,21 @@
+﻿@(Html.Kendo().ComboBox()
+                          .Name("GroupId")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .Text("Please select")
+                                     .DataValueField("GroupId")
+                         .HtmlAttributes(new { style = "width:100%; max-width:600px;left:0;margin:0;text-align:left" })
+                                .Template("<span data-id='${GroupId}'>${Name}</span>")
+
+                            .DataSource(source =>
+                         { source.Read(read => { read.Action("FillPrivGroups", "GenerlaClasses"); }); })
+                         .Events(e =>
+                         {
+                             // e.Select("onSelect");
+                             //.DataBound("Companychange");
+                             //e.Select("onSelect");
+                             //  .Open("open")
+                             //   .Close("close")
+                         })
+
+)

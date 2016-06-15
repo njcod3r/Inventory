@@ -1,0 +1,152 @@
+﻿@model MVC_ERP.Models.File_Unit
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>File_Unit</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Counter)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Counter)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.NameA)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.NameA)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.NameE)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.NameE)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ShrtNameA)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ShrtNameA)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ShortNameE)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ShortNameE)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Rate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Rate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.IsEqual)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.IsEqual)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.CreatedBy)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.CreatedDate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ModifiedBy)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ModifiedBy)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ModifiedDate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ModifiedDate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.IsDeleted)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.CompID)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.CompID)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.BranchID)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.BranchID)
+            </dd>
+    
+        </dl>
+    
+        @using (Html.BeginForm()) {
+            @Html.AntiForgeryToken()
+    
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
+    </div>
+</body>
+</html>

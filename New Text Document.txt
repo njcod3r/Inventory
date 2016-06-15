@@ -1,0 +1,47 @@
+ @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <!--This bundle was moved by the Telerik VS Extensions for compatibility reasons-->
+    <script src="@Url.Content("~/Scripts/jquery.min.js")" type="text/javascript"></script>
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2014.1.528/kendo.dataviz.default.min.css")" rel="stylesheet" type="text/css" />
+    @*<script src="@Url.Content("~/Scripts/kendo/2014.1.528/jquery.min.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.aspnetmvc.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2014.1.528/kendo.web.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/kendo.modernizr.custom.js")"></script>
+
+
+
+
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+
+
+
+
+    <link rel="stylesheet" href="@Url.Content("~/MessageStyleScripts/jquery.ui.all.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/MessageStyleScripts/jquery.ui.css")" />
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.core.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.widget.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.mouse.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.button.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.draggable.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.position.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.resizable.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.button.js")'></script>
+    <script src='@Url.Content("~/MessageStyleScripts/jquery.ui.dialog.js")'></script>
+
+
+
+
+
+
+
+    @RenderSection("scripts", required: false)

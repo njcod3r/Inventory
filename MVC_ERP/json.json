@@ -1,0 +1,70 @@
+[
+    {
+        "id"   :100,
+        "text" :"tree",
+        "items":[
+            {
+                "id"   :1,
+                "text" :"Vehicle",
+                "items":[
+                    {
+                        "id"   :2,
+                        "text" :"Cars",
+                        "items":[
+                            {
+                                "id"  :3,
+                                "text":"FM-1100"
+                            },
+                            {
+                                "id"  :4,
+                                "text":"FM-4200"
+                            }
+                        ]
+                    },
+                    {
+                        "id"   :5,
+                        "text" :"Bikes",
+                        "items":[
+                            {
+                                "id"  :6,
+                                "text":"FM-3100"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id"   :7,
+                "text" :"Personnel",
+                "items":[
+                    {
+                        "id"   :8,
+                        "text" :"Personnel",
+                        "items":[
+                            {
+                                "id"   :9,
+                                "text" :"Clients",
+                                "items":[
+                                    {
+                                        "id"  :10,
+                                        "text":"GH-3000"
+                                    }
+                                ]
+                            },
+                            {
+                                "id"   :11,
+                                "text" :"VIPs",
+                                "items":[
+                                    {
+                                        "id"  :12,
+                                        "text":"GH-3100"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,153 @@
+﻿body {
+    /*padding-top: 50px;*/
+    /*padding-bottom: 20px;*/
+    padding-left:15px;
+    padding-right:15px;
+    background:#000000;
+    overflow:scroll
+    
+    
+}
+/*label {
+   font-size: 14px;
+    font-weight:bold;
+}*/
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    /*padding-left: 15px;
+    padding-right: 15px;*/
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+
+}
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+#Header {
+   
+      color:white;
+    height:80px;
+}
+/*#GeneralControl {
+    background:#c4bebe;color:blue;height:auto;
+
+}*/
+/*#FormTitle
+{
+background:#c4bebe;
+color:black;font-size:large;
+
+
+}*/
+
+
+#Cl
+{
+    background:#ded8d8;
+}
+#LeftMenue {
+    background:#308b09;
+    margin-bottom:15px;
+    color:white;
+    height:100%;
+}
+
+#ContentBody {
+    background:white;
+    min-height:200px;
+    width:100%;
+    height:100%;
+}
+
+
+    .k-grid {
+        font-size: 14px;
+        font-weight: 500;
+        font-family: verdana, sans-serif;
+       }
+
+
+
+      
+    .k-header {
+         font-size: 14px;
+        /*font-weight: bold ;
+        font-family: verdana, sans-serif;*/
+    }
+
+    /*Remove space from column in vootstrap*/
+.row.no-gutter div[class*="col-"] {
+  /*background-color:#dd3333;*/
+}
+
+    
+.row.no-gutter [class*='col-']:not(:first-child),.row.no-gutter [class*='col-']:not(:last-child) {
+  padding-right:0;
+  padding-left:0;
+}
+
+/*@media (min-width: 100px)  {
+    #content {
+        margin-top: 320px;
+    }
+}
+@media (min-width: 600px)  {
+    #content {
+        margin-top: 315px;
+    }
+}
+@media (min-width: 400px)  {
+    #content {
+        margin-top: 315px;
+    }
+}
+@media (min-width: 765px)  {
+    #content {
+        margin-top: 140px;
+    }
+}
+
+@media (min-width: 992px)  {
+    #content {
+        margin-top: 140px;
+    }
+}
+@media (min-width: 1200px)  {
+    #content {
+        margin-top: 140px;
+    }
+}*/
+
+
+/* only for column content visible */
+.col-lg-1>div {background-color:#ddd;}
+
+

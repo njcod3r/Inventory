@@ -1,0 +1,21 @@
+﻿@model int?
+@(Html.Kendo().ComboBoxFor(m => m)
+
+                         .DataTextField("Name")
+                         .DataValueField("Id")
+                         .Placeholder("Select Company")
+                         .Filter(FilterType.Contains)
+                         //.HtmlAttributes(new { style = "width:100%; max-width:600px;left:0;margin:0;text-align:left" })
+                         .DataSource(source =>
+                         {
+                             source.Read(read =>
+                             {
+                                 read.Action("FillCompanies", "GenerlaClasses");
+                             });
+                         })
+                         .Events(e =>
+                         {
+                             e.Change("CompanyGridChange");
+                         })
+
+)

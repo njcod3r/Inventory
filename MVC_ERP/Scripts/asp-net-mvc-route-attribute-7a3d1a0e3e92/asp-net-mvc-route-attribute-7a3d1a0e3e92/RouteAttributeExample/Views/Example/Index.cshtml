@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<a href="/404">Direct page not found</a><br />
+<br />
+<a href="/user">User without Id (will 404)</a><br />
+<a href="/user/5">User id #5</a><br />
+<br />
+<a href="/986ECE8A-41B2-4ED5-B097-6265DF11752A">A magic GUID</a><br />
+<a href="/986ECE8A">Only part of a magic GUID (will 404)</a><br />
+<br />
+<a href="/phone-number/001-867-5309">Phone number without name</a><br />
+<a href="/phone-number/001-867-5309/Jenny">Phone number with name</a><br />
+<a href="/phone-number/8675309/Jenny">Incorrect formatted phone number (will 404)</a>

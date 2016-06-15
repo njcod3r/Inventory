@@ -1,0 +1,2055 @@
+﻿@model  MVC_ERP.Models.GL_DailyVoucher
+
+@{
+    ViewBag.Title = "Daily voucher";
+
+    <script>
+        document.getElementById("LBLFormHDR").innerText = "Daily voucher";
+    </script>
+
+}
+
+
+<div style="margin-left:10px;margin-right:10px">
+    <div class="row">
+        <br />
+
+        @Html.AntiForgeryToken()
+        @*@Html.ValidationSummary(false)*@
+
+
+        @* Hidden Fields *@
+        @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+        @Html.Hidden("PassedId") @*/*manage open from another form*/*@
+        @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+        <input id="txtCostCentersTables" hidden="hidden"/>
+
+        @Html.Hidden("GridCompany")
+
+
+        @* End Of Hidden Fields *@
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Journal")
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+            @(Html.Kendo().DropDownList()
+                          .Name("JournalId")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                         .HtmlAttributes(new { style = "width:100%; max-width:2000px;text-align:left;font-size:larg;font-weight:bold" })
+                         .DataSource(source =>
+                         { source.Read(read => { read.Action("FillJournals", "GenerlaClasses"); }); })
+                          .Events(e =>
+                                  {
+                                      e.Change("Journalchange")
+                                      .DataBound("Journalchange");
+                                    
+
+                                  })
+
+            )
+        </div>
+       </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Code")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @style = "width:100% ;max-width:2000px", @placeholder = "Leave empty to generate auto code" })
+            </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Transact date")
+        </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.Partial("EditorTemplates/_GHDatePartialNotNull", Model.TransactDate, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "VochTransactDate" }
+                         })
+            </div>
+           <div class="col-xs-12 col-sm-2">
+            @Html.Label("Total debit")
+           </div>
+           <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+            @Html.TextBoxFor(model => model.TotalDebit, new { @class = "form-control", disabled = "", @style = "width:100% ;max-width:2000px" })
+           </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Total Credit")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.TotalCredit, new { @class = "form-control", disabled = "", @style = "width:100% ;max-width:2000px" })
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Source")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @(Html.Kendo().DropDownListFor(model => model.Source)
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("Id")
+                                 .HtmlAttributes(new { disabled = "", style = "width:100%; max-width:2000px;text-align:left;font-size:larg;font-weight:bold" })
+                         .DataSource(source =>
+                         { source.Read(read => { read.Action("FillSourceName", "GenerlaClasses"); }); })
+                          
+
+                )
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                @Html.Label("Source No")
+            </div>
+            <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.SourceNo, new { @class = "form-control", disabled = "", @style = "width:100% ;max-width:2000px" })
+            </div>
+            
+         <div class="col-xs-12 col-sm-2">
+                @Html.Label("Notes")
+         </div>
+
+         <div class="col-xs-12 col-sm-10" style="margin-bottom: 5px">
+                @Html.TextBoxFor(model => model.Notes, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+         </div>       
+
+    </div>
+
+    <div style="margin-left: 0px; margin-right: 0px;">
+       
+      
+            @Html.Label("Related accounts", new { style = "color: #308b09" })
+      
+        @(Html.Kendo().Grid<MVC_ERP.Models.GL_DailyVoucher_DTL>()
+                     .Name("DetailGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title("S.No").ClientTemplate("#= renderNumber(data) #").Width(50);
+                         columns.Bound(c => c.AccountId).Width(200).Title("Account").EditorTemplateName("Accounts_Grid").ClientTemplate("#= AccountName #").ClientFooterTemplate("Rows count: #=count#");
+                         columns.Bound(c => c.Notes).Width(200).Title("Notes");
+                         columns.Bound(c => c.CurrencyId).Width(170).Title("Currency").EditorTemplateName("Currency_Grid").ClientTemplate("#= CurrencyName #");
+                         columns.Bound(c => c.Rate).Width(85).Title("Rate").ClientFooterTemplate("sum:");
+                         columns.Bound(c => c.Debit).Width(90).Title("Debit").ClientFooterTemplate("#=sum#");
+                         columns.Bound(c => c.Credit).Width(90).Title("Credit").ClientFooterTemplate("#=sum#");
+                         columns.Bound(c => c.DebitLocal).Width(100).Title("Local.D").ClientFooterTemplate("#=sum#");
+                         columns.Bound(c => c.CreditLocal).Width(100).Title("Local.C").ClientFooterTemplate("#=sum#");
+                         columns.Command(c => c.Custom("BtnShowCostCenter").Text("Cost Centers").Click("ShowCostCenter").HtmlAttributes(new { style = "background:#308b09;color: white" })).Width(130).Title("Cost centers");
+                         columns.Bound(c => c.TransactDate_Gregi).Width(120).Title("Date G").ClientTemplate("#= kendo.toString(kendo.parseDate(TransactDate_Gregi, 'dd/MM/yyyy'), 'dd/MM/yyyy') #");
+                         columns.Bound(c => c.TransactDate_Hijri).Width(100).Title("Date H");
+                        
+                         //columns.Command(command => command.Destroy()).Width(100);
+                     })
+
+         //.AutoBind(true)
+         //.Scrollable()
+         .Selectable()
+              
+                             .Sortable()
+                             .HtmlAttributes(new {@class="FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text("Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text("Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { id = "BtnRemoveDetailGridRow", style = "color: #562727" });
+
+
+
+                                })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+                                                    .Aggregates(aggregates =>
+                                                      {
+                                                       //aggregates.Add(p => p.UnitsInStock).Min().Max().Count();
+                                                       //aggregates.Add(p => p.UnitsOnOrder).Average();
+                                                          aggregates.Add(p => p.AccountId).Count();
+                                                          aggregates.Add(p => p.Debit).Sum();
+                                                          aggregates.Add(p => p.Credit).Sum();
+                                                          aggregates.Add(p => p.DebitLocal).Sum();
+                                                          aggregates.Add(p => p.CreditLocal).Sum();
+                                                      })
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+                                           model.Field(p => p.AccountId);
+                                          
+                                           model.Field(p => p.TransactDate_Gregi).DefaultValue(new DateTime(1900,1,1));
+                                           //model.Field(p => p.Id).Editable(false);
+                                       })
+                                                   .PageSize(1000)
+                                                           .Read(read => read.Action("LoadDetailGrid", "GL_DailyVoucher").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+                               
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+                                                          
+
+                                               
+                                               )
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12" style="">
+
+            @(Html.Kendo().Window().Name("windowCostCenter").Title("Cost center entry")
+
+                                                    .HtmlAttributes(new { style = "" })
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Animation(false)
+                                    .Actions(actions => actions.Close())
+                                    .Events(ev => ev.Close("onClose"))
+
+            .Content(@<text>
+
+
+
+                                        <br />
+                                        <div class="row">
+
+                                          
+                                        </div><!-- /.row -->
+
+                                        <br />
+
+
+
+                                       
+                                          @(Html.Kendo().Grid<MVC_ERP.Models.GL_DailyVoucher_CostCenter>()
+                                      .Name("CostCenterGrid")
+                      
+                                      .Columns(columns =>
+                                           {
+               
+                
+                                    columns.Template(t => { }).Title("S.No").ClientTemplate("#= renderNumberCost(data)#").Width(50);
+                                    columns.Bound(c => c.CostCenterId).Width(200).Title("Cost Center").EditorTemplateName("CostCenters_Grid").ClientTemplate("#:CostCenterName#");
+                                    columns.Bound(o => o.Debit).Width(100);
+                                    columns.Bound(o => o.Credit).Width(100);
+                                    columns.Bound(o => o.Notes);
+              
+                                
+                
+            })
+                           
+           .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                 .Model(model =>
+                       {
+                           model.Id(p => p.Id);
+                           model.Field(p => p.CostCenterId).DefaultValue(0);
+                       })
+                .PageSize(100)
+                               .Read(read => read.Action("LoadCostCenter", "GL_DailyVoucher").Data("SetDailyVoucherRowId"))
+                                                     
+                                                       .ServerOperation(false)
+ 
+                   
+
+            )
+                  .ToolBar(toolBar =>
+                                                             {
+
+                                                                 toolBar.Create().Text("Add record").HtmlAttributes(new {style = "color: #562727" });
+                                                                 toolBar.Custom().Text("Remove record").HtmlAttributes(new { id = "BtnRemoveCostCenter", style = "color: #562727" });
+                                                                 toolBar.Custom().Text("Save and Close").HtmlAttributes(new { id = "GridSaveCost", style = "color: #562727" });
+
+
+                                                             })
+
+                                                          .Events(ev => ev.DataBound("GridDataBoundCost"))
+                                                          .Events(ev => ev.Edit("GridEditCost"))
+                                                        
+            .Selectable()
+                      .Scrollable(scrolling => scrolling.Height(300))         
+            .Sortable()
+           
+        )                                       
+
+                              <br />       
+
+      
+
+            </text>)
+                    //.Scrollable(false)
+
+
+            )
+
+
+
+
+        </div>
+
+    </div>
+
+
+    <style>
+
+        .k-grid .FirstGrid .k-state-selected {
+            background: blue;
+        }
+    </style>
+    <script>
+
+
+   
+  
+        $("#PassedId").val('@ViewData["PassedId"]')
+        $("#BtnRemoveDetailGridRow").kendoButton({
+            icon: "close"
+        });
+        ShowCostCenter
+        $("#BtnRemoveCostCenter").kendoButton({
+            icon: "close"
+        });
+        $("#GridSaveCost").kendoButton({
+            icon: "tick"
+        });
+
+
+
+        function ShowCostCenter(e) {
+
+            $("#DetailGrid").data("kendoGrid").select($(e.currentTarget).closest("tr"));
+
+            //validation
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+            if (dataItem.Id == 0 || dataItem.Id == null)
+            {
+                alert('No Id found for this row cant open center under it')
+                return;
+            }
+
+            if (dataItem.AccountId == 0 || dataItem.AccountId == null) {
+                alert('Please select account first')
+
+                //var cell = $("#DetailGrid").data("kendoGrid").find('tbody tr:eq(2) td:eq(1)'); // or different cell
+                ////var cell = $("#DetailGrid").data("kendoGrid").tbody.find("tr[role='row']:eq(2)" + " td:eq(0)");
+                //$('#DetailGrid').data('kendoGrid').current(cell);
+                //$('#DetailGrid').data('kendoGrid').table.focus();
+                //    //$('#DetailGrid').data('kendoGrid').editCell(cell);
+                //    // cell.focus();
+              
+                ////var theCell = $('#DetailGrid tbody td:eq(2)');//sample selector for a cell
+                ////$('#DetailGrid').data('kendoGrid').editCell(theCell);
+
+               
+                return;
+            }
+
+            if (dataItem.CurrencyId == 0 || dataItem.CurrencyId == null) {
+                alert('Please select currency first')
+                return;
+            }
+            if (dataItem.Rate == 0 || dataItem.Rate == null) {
+                alert('Please select rate first')
+                return;
+            }
+
+            if (dataItem.Debit == 0 && dataItem.Credit == 0) {
+                alert('Please insert debit or credit value')
+                return;
+            }
+
+
+            // get the row with the button    
+          
+          
+        
+            $("#windowCostCenter").parent().css('width', "80%");
+            $("#windowCostCenter").data("kendoWindow").center().open();
+            $("#CostCenterGrid").data("kendoGrid").dataSource.read();
+
+
+         
+        }
+
+
+
+        function Companychange(e) {
+
+         
+            $("#BranchLists").data("kendoDropDownList").dataSource.read();
+            Read(0, ReadType.Last)
+
+
+
+        };
+
+        function Branchchange(e) {
+            Read(0, ReadType.Last)
+        };
+
+        function Journalchange(e) {
+            Read(0, ReadType.Last)
+        };
+        //**  Function Related to Account Column
+        function AccountGridDataBound() {
+            var dataSource = this.dataSource;
+            if (!this._adding) {
+                this._adding = true;
+
+                dataSource.add({
+                    "Id": -800,
+                    "Code": "",
+                    "Name": "Create Edit Search"
+                });
+            }
+            this._adding = false;
+        }
+     
+        function AccountyGridChange(e) {
+            
+        
+            var model = $('#DetailGrid').data().kendoGrid.editable.options.model;
+           
+            model.set('AccountId', e.sender.dataItem().Id);
+            model.set('AccountName', e.sender.dataItem().Name);
+
+
+         
+
+
+        }
+
+        function AccountGridSelect(e) {
+            //Disable select of Create and Edit
+            var dataItem = this.dataItem(e.item.index());
+            if (dataItem.Id === -800) {
+              
+                e.preventDefault();
+              
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+               
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Accounts (Open from Daily voucher)', 'GL_ChartOFAccounts/Index','DetailGrid','Grid','AccountId','AccountName', rowIndex)
+             
+          
+            }
+        }
+
+        //**  End Function Related to Account Column
+
+
+        //**  Function Related to Currency Column
+        function CurrencyGridDataBound() {
+            var dataSource = this.dataSource;
+            if (!this._adding) {
+                this._adding = true;
+
+                dataSource.add({
+                    "Id": -800,
+                    "Code": "",
+                    "Name": "Create Edit Search"
+                });
+            }
+            //this._adding = false;
+        }
+
+        function CurrencyGridChange(e) {
+
+
+            var model = $('#DetailGrid').data().kendoGrid.editable.options.model;
+
+            model.set('CurrencyId', e.sender.dataItem().Id);
+            model.set('CurrencyName', e.sender.dataItem().Name);
+
+
+        }
+
+        function CurrencyGridSelect(e) {
+            //Disable select of Create and Edit
+            var dataItem = this.dataItem(e.item.index());
+            if (dataItem.Id === -800) {
+
+                e.preventDefault();
+
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Currencies (Open from Daily voucher)', 'Currencies/Index', 'DetailGrid', 'Grid', 'CurrencyId', 'CurrencyName', rowIndex)
+
+
+            }
+        }
+
+        //**  End Function Related to Currency Column
+
+ 
+        //**  Function Related to CostCenter Column
+        function CostCentersGridDataBound() {
+            var dataSource = this.dataSource;
+            if (!this._adding) {
+                this._adding = true;
+
+                dataSource.add({
+                    "Id": -800,
+                    "Code": "",
+                    "Name": "Create Edit Search"
+                });
+            }
+            //this._adding = false;
+        }
+
+        function CostCentersGridChange(e) {
+         
+     
+            var model = $('#CostCenterGrid').data().kendoGrid.editable.options.model;
+
+            model.set('CostCenterName', e.sender.dataItem().Name);
+            model.set('CostCenterId', e.sender.dataItem().Id);
+          
+
+
+        }
+
+        function CostCentersGridSelect(e) {
+            //Disable select of Create and Edit
+            var dataItem = this.dataItem(e.item.index());
+            if (dataItem.Id === -800) {
+
+                e.preventDefault();
+
+                var grid = $("#CostCenterGrid").data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Currencies (Open from Daily voucher)', 'GL_ChartOFCostCenters/Index', 'CostCenterGrid', 'Grid', 'CostCenterId', 'CostCenterName', rowIndex)
+
+
+            }
+        }
+
+        //**  End Function Related to CostCenter Column
+
+
+
+        function getCurrentEditedModel() {
+            var grid = $("#DetailGrid").data("kendoGrid");
+            var editRow = grid.tbody.find("tr:has(.k-edit-cell)");
+            return grid.dataItem(editRow);
+        }
+
+        function getCurrentEditedModelCost() {
+            var grid = $("#DetailGrid").data("kendoGrid");
+            var editRow = grid.tbody.find("tr:has(.k-edit-cell)");
+            return grid.dataItem(editRow);
+        }
+        function FilterAccountId() {
+            //var entityGrid = $("#DetailGrid").data("kendoGrid");
+            //var selected = entityGrid.dataItem(entityGrid.select());
+
+         
+            var model = getCurrentEditedModel();
+          
+            return {
+                CompanyId:  $("#CompanyLists").val(),
+                text:$("#AccountId").data("kendoComboBox").text(),
+                Id: model.AccountId
+            };
+        }
+       
+        function FilterCostCenters() {
+            //var entityGrid = $("#DetailGrid").data("kendoGrid");
+            //var selected = entityGrid.dataItem(entityGrid.select());
+
+
+            var model = getCurrentEditedModelCost();
+
+            return {
+                CompanyId: $("#CompanyLists").val(),
+                text: $("#CostCenterId").data("kendoComboBox").text(),
+                Id: 0//model.CostCenterId
+            };
+        }
+
+        var rowNumberId = 0;
+        var rowNumber = 0;
+        var rowNumberCost = 0;
+
+        function GridDataBound(data) {
+            rowNumber = 0;
+            rowNumberId = 0;
+            //this.expandRow(this.tbody.find("tr.k-master-row").first());
+
+            $('#DetailGrid_1').kendoGrid({
+      
+                dataBound: function (e) {
+                    $("#DetailGrid").data("kendoGrid").subgridChange();
+                }
+            });
+        }
+        function GridDataBoundCost(data) {
+       
+          rowNumberCost = 0;
+
+        }
+        function renderNumberId(data) {
+            return ++rowNumberId;
+
+        }
+        function renderNumber(data) {
+            return ++rowNumber;
+           
+        }
+        function renderNumberCost(data) {
+
+            return ++rowNumberCost;
+
+        }
+
+        function GridEditCost(e) {
+            //Default values for new row
+            // Column Code
+
+            if (e.model.isNew()) {
+
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var dataItem = grid.dataItem(grid.select());
+
+                e.model.set("DailyVoucherId", $('#Id').val());
+                e.model.set("DailyVoucherRowId", dataItem.Id);
+                e.model.set("TransactDate_Gregi", dataItem.TransactDate_Gregi);
+                e.model.set("TransactDate_Hijri", dataItem.TransactDate_Hijri);
+                e.model.set("DebitLocal", 0);
+                e.model.set("CreditLocal", 0);
+
+
+               
+            }
+
+        }
+        function GridEdit(e) {
+            //Default values for new row
+           // Column Code
+         
+            if (e.model.isNew() && e.model.Id == 0) {
+                var grid = $("#DetailGrid").data("kendoGrid");
+                //Take value from previous row
+                var model = $('#DetailGrid').data().kendoGrid.dataSource.data()[ grid.dataSource.total()-2];
+                if (model)
+                {
+                    e.model.set("Id", model.Id + 1);
+                }
+                else
+                {
+                    e.model.set("Id", 1);
+
+                }
+            }
+
+            if (e.model.isNew() && e.model.AccountId == null) {
+                //$("td:nth-child(2)").css("display", "none");
+                e.model.set("AccountName", "")
+            }
+
+
+            if (e.model.isNew() && e.model.CurrencyId == 0) {
+
+                $.ajax({
+                    url: "@Url.Content("~/GenerlaClasses/GetLocalCurrency")",
+                    type: 'POST',
+                data: {
+          
+                },
+                dataType: 'json',
+                success: function (result) {
+
+                        if (result.Id != 0  ) {
+                            e.model.set("CurrencyName", result.Name)
+                            e.model.set("CurrencyId", result.Id)
+                            e.model.set("Rate",1)
+                      
+                    }
+
+                },
+                error: function (result) {
+          
+                },
+                });
+
+             
+            }
+            if (e.model.isNew() && e.model.Notes == "") {
+
+                e.model.set("Notes", $('#Notes').val())
+           
+            }
+            if (e.model.isNew() && new Date(e.model.TransactDate_Gregi).getFullYear() == 1900 )  {
+                if ($("#VochTransactDate_Gregi").data("kendoDatePicker").value() == null)
+                {
+                    e.model.set("TransactDate_Gregi", new Date())
+                }
+                else
+                {
+                    e.model.set("TransactDate_Gregi", $("#VochTransactDate_Gregi").data("kendoDatePicker").value())
+
+                }
+               
+            }
+
+            if (e.model.isNew() && e.model.TransactDate_Hijri == "") {
+                var d = new Date(e.model.TransactDate_Gregi)
+
+                iDay = parseInt(d.getDate(), 10);
+                iMonth = parseInt(d.getMonth() + 1, 10);
+                iYear = parseInt(d.getFullYear(), 10);
+
+                var args1 = jd_to_islamic(gregorian_to_jd(iYear, iMonth, iDay));
+
+                var z = args1[2] + "/" + args1[1] + "/" + args1[0];
+                e.model.set("TransactDate_Hijri", z);
+
+            }
+
+
+
+
+
+
+            // Remove Required validation
+            //if (e.container.context.firstChild.id == "AccountId") {
+               
+                //turn off validation for this field (this time only)    
+                e.sender.editable.validatable.validate = function ()
+                { return true; };
+                e.sender.editable.validatable.validateInput = function (input)
+                { return true; };
+            //}
+          
+                e.container.find("[name=DebitLocal]").hide(); //very important code to disable column from edit by user  and leave it editable by code
+                e.container.find("[name=CreditLocal]").hide();
+
+        }
+        function index(dataItem) {
+            var data = $("#DetailGrid").data("kendoGrid").dataSource.data();
+            return data.indexOf(dataItem);
+        }
+
+        function calcDifferance() {
+
+            //Calculate Diifrrance
+            setTimeout(function () {
+            var footer = $('tr.k-footer-template'),
+            aggregateDiff = $(footer).children('td')[4];
+            aggregateDebit = $(footer).children('td')[8];
+            aggregateCredit = $(footer).children('td')[9];
+
+            $(TotalDebit).val($(aggregateDebit).text());
+            $(TotalCredit).val($(aggregateCredit).text());
+
+            $(aggregateDiff).text('Diff: ' + Math.abs(($(aggregateDebit).text() - $(aggregateCredit).text())));
+
+            }, 50);
+        }
+        function aggregation (colIndex ,colName){
+            var footer = $('tr.k-footer-template'),
+               //idx = colindex, // replace 3 with the column index you want to aggregate
+               aggregate = $(footer).children('td')[colIndex];
+            // I had to delay the stuff in this function to get it to load properly
+            setTimeout(function () {
+                var sum = 0;
+                var datasourcedata = $("#DetailGrid").data("kendoGrid").dataSource.data();
+                for (var i = 0; i < datasourcedata.length; i++) {
+                    var dataitem =eval( 'datasourcedata[i].' + colName);
+                   
+                    sum += dataitem;
+                }
+
+                //$('tr[role=row][data-uid]').each(function (i, e) {
+                //    var $cell = $($(e).children()[idx]);
+                //    /* do any necessary manipulations before this 
+                //       if your cell is formatted */
+                //    alert($cell.text())
+                //    var cellAmount = parseFloat($cell.text());
+                //    sum += cellAmount;
+                //});
+                /* do any necessary formatting to sum before this 
+                   if your cell is formatted */
+              
+                $(aggregate).text(sum);
+
+
+
+
+            }, 50);
+        }
+      
+
+        function GridChang(data) {
+
+         
+            // event of change column value
+  
+            if (data.values.AccountId) {
+
+               
+                data.model.set("AccountName", "")
+               
+            }
+
+            if (data.values.CurrencyId || data.values.CurrencyId == 0) {
+
+                $.ajax({
+                    url: "@Url.Content("~/GenerlaClasses/GetCurrencyRate")",
+                    type: 'POST',
+                    data: {
+                        CurrencyId: data.values.CurrencyId
+          
+                },
+                dataType: 'json',
+                success: function (result) {
+                  
+                    data.model.set("Rate", result.Rate)
+                    data.model.set("DebitLocal", data.model.Debit * result.Rate)
+                    data.model.set("CreditLocal", data.model.Credit * result.Rate)
+
+                    aggregation(6, 'Debit');
+                    aggregation(7, 'Credit');
+                    aggregation(8, 'DebitLocal');
+                    aggregation(9, 'CreditLocal');
+
+                    calcDifferance();
+                
+
+                },
+                error: function (result) {
+          
+                },
+                });
+            }
+
+            if (data.values.Rate || data.values.Rate == 0) {
+
+                data.model.set("DebitLocal", data.model.Debit * data.values.Rate)
+                data.model.set("CreditLocal", data.model.Credit * data.values.Rate)
+
+
+                aggregation(6, 'Debit');
+                aggregation(7, 'Credit');
+                aggregation(8, 'DebitLocal');
+                aggregation(9, 'CreditLocal');
+
+                calcDifferance();
+            }
+
+
+            if (data.values.Debit || data.values.Debit==0) {
+               
+            
+
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var selected = grid.dataItem(grid.select());
+                var Rate = selected.Rate;
+
+
+
+            
+            
+                data.model.set("Credit", 0)
+                data.model.set("CreditLocal", 0)
+
+           
+                data.model.set("DebitLocal", data.values.Debit * Rate)
+
+           
+                aggregation(6,'Debit');
+                aggregation(7,'Credit');
+                aggregation(8,'DebitLocal');
+                aggregation(9,'CreditLocal');
+
+                calcDifferance();
+             
+                
+            }
+
+            if (data.values.Credit || data.values.Credit == 0) {
+             
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var selected = grid.dataItem(grid.select());
+                var Rate = selected.Rate;
+
+               
+              
+
+                data.model.set("Debit", 0)
+                data.model.set("DebitLocal", 0)
+
+                data.model.set("CreditLocal", data.values.Credit * Rate)
+
+                aggregation(6, 'Debit');
+                aggregation(7, 'Credit');
+                aggregation(8, 'DebitLocal');
+                aggregation(9, 'CreditLocal');
+
+                calcDifferance();
+
+
+            }
+
+
+
+            // event of change gregi startdate
+            if (data.values.TransactDate_Gregi) {
+
+
+                var d = new Date(data.values.TransactDate_Gregi)
+
+                iDay = parseInt(d.getDate(), 10);
+                iMonth = parseInt(d.getMonth() + 1, 10);
+                iYear = parseInt(d.getFullYear(), 10);
+
+                var args1 = jd_to_islamic(gregorian_to_jd(iYear, iMonth, iDay));
+
+                var z = args1[2] + "/" + args1[1] + "/" + args1[0];
+
+
+                data.model.set("TransactDate_Hijri", z)
+            }
+
+            // event of change Hijri Startdate
+            if (data.values.TransactDate_Hijri) {
+
+
+                var u = data.values.TransactDate_Hijri.split('/');
+
+
+
+                iDay = parseInt(u[0], 10);
+                iMonth = parseInt(u[1], 10);
+                iYear = parseInt(u[2], 10);
+
+
+                var args1 = jd_to_gregorian(islamic_to_jd(iYear, iMonth, iDay));
+                var z = args1[1] + "/" + args1[2] + "/" + args1[0];
+
+
+                data.model.set("TransactDate_Gregi", z)
+            }
+
+
+           
+
+        }
+
+
+
+
+        function GridDataBinding(e) {
+            //if (e.action == "itemchange") {
+            
+            //}
+
+            //if (e.action == "itemchange") {
+            //    e.preventDefault();
+            //}
+            //if (e.action == "add") {
+            //    e.preventDefault();
+            //    //var dataSource = grid.dataSource;
+            //    //var total = dataSource.data().length;
+            //    //dataSource.insert(total, {});
+
+            //  grid.dataSource.add({ Id: 5, AccountId: 0 ,AccountName:"", CurrencyId: 1,CurrencyName:"Rial",TransactDate_Gregi:new Date(),TransactDate_Hijri:""});
+
+            //}
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].AccountId || !data[i].CurrencyId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid 
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows                  
+                    }
+                }
+            }
+
+
+            
+        };
+
+
+        $("#BtnAddDetailGridRow").click(function (e) {
+            e.preventDefault();
+
+            var grid = $("#DetailGrid").data("kendoGrid");
+            //console.log('delete clicked');
+
+            var dataSource = grid.dataSource;
+            var total = dataSource.data().length;
+            dataSource.insert(total, {});
+          
+            //grid.dataSource.add({ Id: 5, AccountId: 0 ,AccountName:"", CurrencyId: 1,CurrencyName:"Rial",TransactDate_Gregi:new Date(),TransactDate_Hijri:""});
+          
+        });
+
+            $("#BtnRemoveDetailGridRow").click(function (e) {
+                e.preventDefault();
+
+              
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var dataItem = grid.dataItem(grid.select());
+                var DailyVoucherRowId = dataItem.Id;
+
+                //After remove related cost center of this row we remove it from grid
+                grid.select().each(function () {
+                    grid.removeRow($(this));; //just gives alert message
+                    //grid.dataSource.remove(dataItem); //removes it actually from the grid
+                });
+
+
+                aggregation(6, 'Debit');
+                aggregation(7, 'Credit');
+                aggregation(8, 'DebitLocal');
+                aggregation(9, 'CreditLocal');
+
+                calcDifferance();
+
+                $.ajax({
+                    url: "@Url.Content("~/GL_DailyVoucher/RemoveCostCookiesValues")",
+                    type: 'POST',
+                data: {
+
+                  
+              
+                    DailyVoucherRowId: DailyVoucherRowId,
+                    CostCentersTables: $('#txtCostCentersTables').val()
+                    },
+                dataType: 'json',
+                success: function (result) {
+             
+                    $('#txtCostCentersTables').val(result.CookiesVal);
+
+               
+                },
+                error: function (result) {
+                    //Responsible for reload login page if if user not authenticate
+                    window.location.href = window.location.href;
+                },
+                });
+
+
+
+
+         
+        });
+        $("#BtnRemoveCostCenter").click(function (e) {
+ 
+            e.preventDefault();
+
+            var grid = $("#CostCenterGrid").data("kendoGrid");
+            //console.log('delete clicked');
+            grid.select().each(function () {
+
+                grid.removeRow($(this));; //just gives alert message
+                //grid.dataSource.remove(dataItem); //removes it actually from the grid
+            });
+
+        });
+
+            $("#GridSaveCost").click(function (e) {
+                e.preventDefault();
+
+                var grid = $("#DetailGrid").data("kendoGrid");
+                var dataItem = grid.dataItem(grid.select());
+               
+
+                // Save session Here
+                var grid = $("#CostCenterGrid").data("kendoGrid").dataSource.data();
+                $.ajax({
+                    url: "@Url.Content("~/GL_DailyVoucher/UpdateCostCookiesValues")",
+                    type: 'POST',
+                data: {
+
+                  
+                    DailyVoucherRowId:dataItem.Id,
+                    xmlGrid: JSON.stringify(grid),
+                    CostCentersTables: $('#txtCostCentersTables').val()
+                },
+                dataType: 'json',
+                success: function (result) {
+             
+                    //Read Header
+                    $('#txtCostCentersTables').val(result.CookiesVal);
+
+                    $("#windowCostCenter").data("kendoWindow").close();
+               
+                },
+                error: function (result) {
+                    //Responsible for reload login page if if user not authenticate
+                    window.location.href = window.location.href;
+                },
+                });
+
+        });
+
+    </script>
+
+
+  
+</div>
+
+
+<script>
+  
+
+    function SetId() {
+        var info = $("#Id").val();
+        if (info) {
+            return {
+                Id: info
+            };
+        }
+    }
+
+
+   
+
+    function SetDailyVoucherRowId() {
+
+        var grid = $("#DetailGrid").data("kendoGrid");
+        var selected = grid.dataItem(grid.select());
+        if (selected)
+        {
+            var info = selected.Id;
+            if (info) {
+                return {
+                    DailyVoucherId: $('#Id').val(),
+                    DailyVoucherRowId: info,
+                    CostCentersTables: $('#txtCostCentersTables').val()
+                };
+            }
+        }
+      
+
+        //alert('m')
+     
+        //if (info) {
+        //    return {
+        //        DailyVoucherRowId: info
+        //    };
+        //}
+    }
+
+  
+  
+
+</script>
+
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+
+    
+
+        @* Window *@
+        @(Html.Kendo().Window().Name("window").Title("Search Form")
+
+                        //.HtmlAttributes(new { style = "overflow:hidden" })
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Actions(actions => actions.Close())
+                                    .Events(ev => ev.Close("onClose"))
+
+            .Content(@<text>
+
+
+
+                                        <br />
+                                        <div style="width:100%;text-align:center">
+                                            <div class=" row">
+
+                                                <div class="col-lg-6">
+                                                    <div class="input-group">
+                                                        <input id="txtSearchValue" type="text" class="form-control" style="width:75%; max-width:initial" placeholder="Search words">
+                                                        @(Html.Kendo().DropDownList()
+                                                        .Name("CmbSearchType")
+                                                        .HtmlAttributes(new { style = "width:25%;text-align:left;font-size:medium" })
+                                                        .DataTextField("Text")
+                                                        .DataValueField("Value")
+                                                        .BindTo(new List<SelectListItem>() {
+                                                        new SelectListItem() {
+                                                        Text = "Contain",
+                                                        Value = "1"
+                                                        },
+                                                        new SelectListItem() {
+                                                        Text = "Equal",
+                                                        Value = "2"
+                                                        }
+                                                        ,
+                                                       new SelectListItem() {
+                                                       Text = "Start With",
+                                                       Value = "3"
+                                                       }
+                                                       ,
+
+                                                      }))
+                                                        <span class="input-group-btn">
+                                                            <button id="BtnGetSearchResult" class="btn btn-default" type="button">
+                                                                Go!
+                                                            </button>
+                                                        </span>
+                                                    </div><!-- /input-group -->
+                                                </div><!-- /.col-lg-6 -->
+                                            </div><!-- /.row -->
+                                        </div>
+                                        <br />
+
+
+
+      
+                  @(Html.Kendo().Grid<dynamic>()
+                     .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+               columns.Bound("Id").Visible(false);
+               columns.Bound("JournalName").Width(150).Title("Journal Type");
+               columns.Bound("Code").Width(100);
+               columns.Bound("TransactDate_Gregi").Width(120).Title("Date").ClientTemplate("#= kendo.toString(kendo.parseDate(TransactDate_Gregi, 'dd/MM/yyyy'), 'dd/MM/yyyy') #");
+               columns.Bound("TotalDebit").Title("Total").Width(100);
+               columns.Bound("Notes").Width(150);
+               columns.Bound("SourceName").Title("Source").Width(150);
+               columns.Bound("SourceNo").Title("Source No").Width(120);
+             })
+
+             
+                 .Sortable() 
+
+                 
+                       .Scrollable(scrolling => scrolling.Height(350))
+                       .DataSource(dataSource => dataSource.Ajax()
+                           
+                         
+                       .PageSize(1000)
+                     
+                                 .Model(m =>
+                                        {
+
+                                            m.Id("Id");
+                                            m.Field("Code", typeof(string));
+                                            m.Field("JournalName", typeof(string));
+                                            m.Field("TransactDate_Gregi", typeof(DateTime));
+                                            m.Field("TotalDebit", typeof(decimal));
+                                            m.Field("Notes", typeof(string));
+                                            m.Field("SourceName", typeof(string));
+                                            m.Field("SourceNo", typeof(string));
+                                        })
+                                        
+                           .Read(read => read 
+                                               .Action("Search", "GL_DailyVoucher").Data("SetSearchValue")
+                                               
+                                               
+                            ))
+
+                      .Selectable()
+
+                      .Filterable()
+                      //.EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                                        )
+
+                                        @*</div>*@
+
+                                        <br />
+
+            </text>)
+                //.Scrollable(false)
+
+
+        )
+
+
+
+
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+
+    function onClose() {
+        //$("#undo").show();
+    }
+
+
+
+
+
+    function SetSearchValue() {
+        var info = $("#txtSearchValue").val();
+
+        return {
+            FinancialYearId: $('#CmbFinancialYear').val(),
+            SearchType: $('#CmbSearchType').val(),
+            CompanyId: $('#CompanyLists').val(),
+            BranchId: $('#BranchLists').val(),
+            TxtSearchVal: info
+        };
+
+    }
+
+
+    $("#BtnSearch").bind("click", function () {
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+                type: 'POST',
+            data: {
+                PerType:9,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    $("#txtSearchValue").val('')
+                    $("#txtSearchValue").focus();
+
+                    $("#CmbSearchType").data("kendoDropDownList").value(1);
+
+                    $("#window").parent().css('width', "85%");
+                    $("#window").parent().css('height', "500px");
+
+                    $("#window").data("kendoWindow").center().open();
+                    $("#SearchGrid").data("kendoGrid").dataSource.read();
+
+                    $("#txtSearchValue").focus();
+                }
+
+                else
+                {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+            });
+
+
+
+
+
+        });
+
+
+  $("#BtnPrint").click(function (event) {
+
+
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+        data: {
+            PerType: 10,
+            Url: window.location.pathname
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            if (result.result == 'True') {
+
+                var report = "GL/DailyVoucher.trdx";
+                var parameters = "Title:Daily Voucher,Id:" + $("#Id").val();
+
+                window.open('@Url.Action("Index", "Report")' + '?report=' + report + '&parameters=' + parameters, '_blank');
+
+            }
+
+            else {
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+            }
+
+        },
+        error: function (result) {
+
+        },
+        });
+
+    });
+
+
+</script>
+
+
+@* End Window *@
+
+@*Close from here don't have Open Open it in Layout page*@
+</form>
+
+@* Combo Box Events *@
+<script>
+    $("#btnAddNewFor")
+    function onSelect(e) {
+
+    };
+
+    function Currencychange(e) {
+        //Change value of hidden field
+        $('#CurrencyId').val(e.sender.value());
+
+    };
+
+
+
+</script>
+
+@* End Combo Box Events *@
+<script type="text/javascript">
+    function setCookie(key, value) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+        document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+    }
+
+    function getCookie(key) {
+        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+        return keyValue ? keyValue[2] : null;
+    }
+</script>
+
+<script>
+
+    var ReadType = {
+        Empty: 0,
+        First: 1,
+        Next: 2,
+        Current: 3,
+        Previous: 4,
+        Last: 5
+    }
+
+    //Read Function
+    function Read(Id, ReadType) {
+
+      //alert(  $("#PassedId").val())
+     
+
+        if ($("#PassedId").val() != 0 && $("#PassedId").val() != '' && $("#PassedId").val() != null) {
+
+           
+            Id = $("#PassedId").val();
+            ReadType =3;
+        }
+
+        if (Id == 0)
+        {
+            Id = $("#Id").val()
+        }
+
+        
+        $.ajax({
+            url: "@Url.Content("~/GL_DailyVoucher/Read")",
+            type: 'POST',
+            data: {
+
+                Id: Id,
+                FinancialYearId: ($('#CmbFinancialYear').val() == '') ? $.cookie('FinancialYearId') : $('#CmbFinancialYear').val(),
+                CompanyId: $('#CompanyLists').val(),
+                BranchId: $('#BranchLists').val(),
+                JournalId: $('#JournalId').val(),
+                ReadType: ReadType
+            },
+            dataType: 'json',
+            success: function (result) {
+
+           
+
+                $('#txtCostCentersTables').val(result.CookiesVal);
+
+             
+                //Read Header
+                //Read Company and Branch And Journal For Passed Id
+                if ($("#PassedId").val() != 0 && $("#PassedId").val() != '' && $("#PassedId").val() != null)
+                {
+                
+                    $("#CompanyLists").data("kendoDropDownList").value(result.TBL.CompanyId);
+                    $("#BranchLists").data("kendoDropDownList").value(result.TBL.BranchId);
+                    $("#JournalId").data("kendoDropDownList").value(result.TBL.JournalId);
+                }
+
+
+                $('#Id').val(result.TBL.Id);
+
+                if (result.TBL.Id != 0 && result.TBL.Id != null)
+                    {
+                    $("#JournalId").data("kendoDropDownList").value(result.TBL.JournalId);
+                    }
+                $('#Code').val(result.TBL.Code);
+                $("#VochTransactDate_Gregi").data("kendoDatePicker").value(result.TBL.TransactDate.Gregi);
+                $("#VochTransactDate_Hijri").val(result.TBL.TransactDate.Hijri);
+                $('#TotalDebit').val(result.TBL.TotalDebit);
+                $('#TotalCredit').val(result.TBL.TotalCredit);
+                $("#Source").data("kendoDropDownList").value(result.TBL.Source);
+                $('#SourceNo').val(result.TBL.SourceNo);
+                $('#Notes').val(result.TBL.Notes);
+
+                $('#Post').val(result.TBL.Post);
+
+
+                if (result.TBL.Post == true) {
+                    $("#BtnPost span").text(GetMessage(MessageType.PostButtonTxt));
+                }
+                else {
+
+                    $("#BtnPost span").text(GetMessage(MessageType.UnPostButtonTxt));
+                }
+
+                $("#DetailGrid").data("kendoGrid").dataSource.read()
+                $("form.k-filter-menu button[type='reset']").trigger("click");  // Clear filter
+
+                $("#PassedId").val('')
+                $("#window").data("kendoWindow").close();
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                //window.location.href = window.location.href;
+            },
+        });
+    }
+
+    $("#BtnGetSearchResult").click(function () {
+
+        $("#SearchGrid").data("kendoGrid").dataSource.read();
+    })
+
+
+    $("#BtnCloseWindow").click(function (e) {
+        $("#window").data("kendoWindow").close();
+    });
+
+    //Search
+    function item_selected(e) {
+
+        var grid = $("#SearchGrid").data("kendoGrid");
+        var id;
+
+        grid.select().each(function () {
+            var dataItem = grid.dataItem($(this));
+            id = dataItem.Id;
+        });
+
+        Read(id, ReadType.Current);
+
+    }
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#BtnSave").attr('type', 'button');
+        $("#BtnDiscard").attr('type', 'button');
+
+        $("#BtnReuse").removeAttr("data-toggle");
+        $("#BtnReuse").removeAttr("data-target");
+        $("#BtnReuse").removeAttr("data-action");
+
+        $("#BtnDelete").removeAttr("data-toggle");
+        $("#BtnDelete").removeAttr("data-target");
+        $("#BtnDelete").removeAttr("data-action");
+
+        $("#BtnPost").removeAttr("data-toggle");
+        $("#BtnPost").removeAttr("data-target");
+        $("#BtnPost").removeAttr("data-action");
+
+
+
+        $("#DetailGrid").data("kendoGrid").dataSource.read();
+    })
+
+
+
+
+
+
+    $("#BtnCreate").click(function () {
+
+        $(document).ready(function () {
+
+            $("input.form-control").val('');
+            $("#Notes").val('');
+            $("hidden").val('');
+            $("#Id").val('0');
+            $('input:checkbox').removeAttr('checked');
+            $("#DetailGrid").data("kendoGrid").dataSource.read();
+
+            $("#Source").data("kendoDropDownList").value(1);
+
+            $("#VochTransactDate_Gregi").data("kendoDatePicker").value(new Date());
+            $("#VochTransactDate_Gregi").data("kendoDatePicker").trigger("change");
+        });
+
+    })
+
+
+    $("#BtnSave").click(function () {
+
+
+
+        if ($('#Id').val() == null || $('#Id').val() == '') {
+            $('#Id').val('0') //et id to 0 for save furst record in table without click create
+        }
+
+
+        //Validation
+        if ($('#Source').val() != 1) {
+            showAndDismissAlert('danger', 'You cant edit this voucher its related to another transaction')
+            return;
+        }
+        if ($("#VochTransactDate_Gregi").data("kendoDatePicker").value() == null || $("#VochTransactDate_Hijri").val() == '') {
+            showAndDismissAlert('danger', 'Transaction date required')
+            $("#VochTransactDate_Gregi").focus()
+            return;
+        }
+
+        var datasourcedata = $("#DetailGrid").data("kendoGrid").dataSource.data();
+        var grid = $("#DetailGrid").data("kendoGrid")
+
+        for (var i = 0; i < datasourcedata.length; i++) {
+
+            // check for account
+            if (datasourcedata[i].AccountId == 0 || datasourcedata[i].AccountId == null) {
+                showAndDismissAlert('danger', 'Please select account for row ' + (i + 1))
+                row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                grid.select(row);
+                return;
+            }
+
+            //check for currency
+            if (datasourcedata[i].CurrencyId == 0 || datasourcedata[i].CurrencyId == null) {
+                showAndDismissAlert('danger', 'Please select currency for row ' + (i + 1))
+                row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                grid.select(row);
+                return;
+            }
+
+            //check for rate
+            if (datasourcedata[i].Rate == 0 || datasourcedata[i].Rate == null) {
+                showAndDismissAlert('danger', 'Please insert rate for row ' + (i + 1))
+                row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                grid.select(row);
+                return;
+            }
+
+            //check for currency
+            if (datasourcedata[i].Debit == 0 && datasourcedata[i].Credit == 0) {
+                showAndDismissAlert('danger', 'Please insert debit or credit value for row ' + (i + 1))
+                row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                grid.select(row);
+                return;
+            }
+
+
+        }
+
+
+        if ($("#TotalDebit").val() != $("#TotalCredit").val()) {
+            showAndDismissAlert('danger', 'Voucher un-balance please handle it and try again')
+            $("#DetailGrid").data("kendoGrid").focus();
+            return;
+        }
+        if ($("#TotalDebit").val() == 0 || $("#TotalCredit").val() == 0) {
+            showAndDismissAlert('danger', 'Voucher not completed please handle it and try again')
+            $("#DetailGrid").data("kendoGrid").focus();
+            return;
+        }
+
+        if ($("#TotalDebit").val() == '' || $("#TotalCredit").val() == '') {
+            showAndDismissAlert('danger', 'Voucher not completed please handle it and try again')
+            $("#DetailGrid").data("kendoGrid").focus();
+            return;
+        }
+
+        if ($("#DetailGrid").data("kendoGrid").dataSource.total() == 0) {
+            showAndDismissAlert('danger', 'Period detail required')
+            $("#DetailGrid").data("kendoGrid").focus();
+            return;
+        }
+
+
+
+
+        $("#DetailGrid").data("kendoGrid").closeCell();
+
+
+        var grid = $("#DetailGrid").data("kendoGrid").dataSource.data();
+
+
+        $.ajax({
+            url: "@Url.Content("~/GL_DailyVoucher/Insert")",
+            type: 'POST',
+            data: {
+                xmlGrid: JSON.stringify(grid),
+
+
+                Id: $('#Id').val(),
+                FinancialYearId: $('#CmbFinancialYear').val(),
+                CompanyId: $('#CompanyLists').val(),
+                BranchId: $('#BranchLists').val(),
+                JournalId: $('#JournalId').val(),
+                Code: $('#Code').val(),
+                TotalDebit: $('#TotalDebit').val(),
+                TotalCredit: $('#TotalCredit').val(),
+                TransactDate_Gregi: kendo.toString($("#VochTransactDate_Gregi").data("kendoDatePicker").value(), ($.cookie('Language') == "English") ? "MM/dd/yyyy" : "dd/MM/yyyy"),
+                TransactDate_Hijri: $('#VochTransactDate_Hijri').val(),
+                Source: $('#Source').val(),
+                SourceNo: $('#SourceNo').val(),
+                Notes: $('#Notes').val(),
+                CostCentersTables: $('#txtCostCentersTables').val()
+
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    });
+
+
+    $("#BtnDiscard").click(function () {
+
+        var Id
+
+        if ($('#Id').val() == '' || $('#Id').val() == 0) {
+            Id = 0;
+            return Read('@Model.Id', ReadType.Last);
+        }
+        else {
+            Id = $('#Id').val();
+            return Read(Id, ReadType.Current);
+        }
+
+
+
+    });
+
+    $("#BtnReuse").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 5,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    // Show confirmation and if ok execute Reuse function
+                    ShowConfirmMessage(GetMessage(MessageType.ReuseConfirmHDR), GetMessage(MessageType.ReuseConfirm), 'Reuse');
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+
+
+
+
+    });
+
+    function Reuse() {
+
+        //Validation
+        if ($('#Id').val() == '') {
+            showAndDismissAlert('danger', 'No data to reuse')
+            return;
+        }
+
+        if ($('#NameA').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+
+
+
+
+
+
+        $(document).ready(function () {
+
+
+            $.ajax({
+                url: "@Url.Content("~/GL_DailyVoucher/Reuse")",
+                type: 'POST',
+                data: {
+
+                    Id: $('#Id').val(),
+
+
+                },
+                dataType: 'json',
+                success: function (result) {
+
+                    if (result.MessageType == 'success')
+                    { Read(result.Id, ReadType.Current); }
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+                },
+                error: function (result) {
+                    alert("Error");
+                },
+            });
+        });
+    }
+
+    $("#BtnDelete").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 4,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    if ($('#Source').val() != 1) {
+                        showAndDismissAlert('danger', GetMessage(MessageType.RefuseDeleteRelated))
+                        return;
+                    }
+                    if ($('#Post').val() == 'true') {
+                        showAndDismissAlert('info', GetMessage(MessageType.RefuseDeletePosting))
+                        return;
+                    }
+
+                    // Show confirmation and if ok execute Delete function
+                    ShowConfirmMessage(GetMessage(MessageType.DeleteConfirmHDR), GetMessage(MessageType.DeleteConfirm), 'Delete');
+
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+
+    function Delete() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/GL_DailyVoucher/Delete")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Last); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+
+    }
+
+
+    $("#BtnPost").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+        data: {
+            PerType: ($('#Post').val() == 'true')?7:6,
+            Url: window.location.pathname
+        },
+        dataType: 'json',
+        success: function (result) {
+
+            if (result.result == 'True') {
+
+
+                // Show confirmation and if ok execute Delete function
+                if   ($('#Post').val() == 'true')
+                {
+                    ShowConfirmMessage(GetMessage(MessageType.UnPostConfirmHDR), GetMessage(MessageType.UnPostConfirm), 'Post');
+                }
+                else
+                {
+                    ShowConfirmMessage(GetMessage(MessageType.PostConfirmHDR), GetMessage(MessageType.PostConfirm), 'Post');
+                }
+
+
+            }
+
+            else {
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+            }
+
+        },
+        error: function (result) {
+
+        },
+        });
+
+    });
+
+
+
+
+    function Post() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/GL_DailyVoucher/Post")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                alert("Error");
+            },
+        });
+
+    }
+
+    $(document).ready(function () {
+
+
+        $('#CmbFinancialYear').data('kendoDropDownList').value($.cookie('FinancialYearId'))
+    })
+
+    //ComboBox Events
+    function DataBoundEvent() {
+
+    }
+
+    function SelectEvent(e) {
+
+        var dataItem = this.dataItem(e.item.index());
+
+        if (this.element.attr("id") == "CmbFinancialYear") {
+            $('#CmbFinancialYear').data('kendoDropDownList').value(dataItem.Id)
+            Read(0, ReadType.Last)
+        }
+    }
+</script>
+
+
+  
+

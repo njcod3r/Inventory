@@ -1,0 +1,465 @@
+﻿@model int?
+@{var fieldName = ViewData.TemplateInfo.HtmlFieldPrefix;
+var SplitFile = fieldName.Split('_');
+var GridName = SplitFile[0] + "Grid";
+var ControlName = SplitFile[0];
+var ControlTitle = SplitFile[0] + "Title";
+var ControllerName = SplitFile[1];
+var ActionName = SplitFile[2];
+var ShowAllAtFirstRow = SplitFile[3];
+var exampleDiv = SplitFile[0]+"example";
+var chkBoxName = SplitFile[0]+"Chk";
+var ControlNameSpan = SplitFile[0] + "Span";
+var ControlNameTogle = SplitFile[0] + "Togle";
+}
+
+
+<script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
+
+
+<style type='text/css'>
+    #@exampleDiv .btn {
+        font-size: 13px;
+    }
+
+        #@exampleDiv .btn span i {
+            font-size: 8px;
+            line-height: 8px;
+        }
+
+    .k-popup .k-grid {
+        width: 400px;
+        font-size: 13px;
+    }
+
+        .k-popup .k-grid label, .k-popup .k-grid input, .k-popup .k-grid button,
+        .k-popup .k-grid select, .k-popup .k-grid textarea {
+            font-size: 13px;
+            vertical-align: baseline;
+        }
+
+        .k-popup .k-grid input {
+            margin: 0;
+            padding: 1px 6px;
+        }
+
+        .k-popup .k-grid label {
+            margin: 0;
+        }
+
+        .k-popup .k-grid thead {
+            display: none;
+        }
+
+        .k-popup .k-grid td {
+            padding: 0.2em 0.6em;
+        }
+</style>
+<div id="@exampleDiv" class="k-content" ></div>
+<div id="@GridName"></div>
+<div hidden="hidden" id="@ControlName"></div>
+<div hidden="hidden" id="@ControlTitle"></div>
+
+
+
+<script type='text/javascript'>
+
+    var numberOfSelectedItemsToShow = 1;
+    var idFieldName = 'Id';
+    var labelFieldName = 'Name';
+    var labelFieldCode = 'Code';
+
+    var dataSourceUrl = "@Url.Action(ActionName.ToString(),ControllerName.ToString())";
+    var maxLabelLength = 100;
+
+
+
+    var element = $('#' + '@exampleDiv');
+
+    var button = $('<div id=@ControlNameTogle class="k-widget k-dropdown k-header k-state-default" style="border-width:1px;width:99%;height:25px; max-width: 3000px"><a class="k-input" href="#" style="text-decoration:none"><span class="" style="margin-left:3px" id=@ControlNameSpan>No items selected</span> <span style="float:right; margin-top:0px;margin-right:5px" class="k-icon k-i-arrow-s"></span></a></div>').appendTo(element).find('a');
+
+
+
+    var gridEl = $('#' + '@GridName').kendoGrid({
+        dataSource: {
+            type: "json",
+            serverPaging: true,
+            serverSorting: true,
+            serverFiltering: true,
+            pageSize: 100,
+            transport: {
+                read: {
+                    url: dataSourceUrl,
+                    dataType: "json",
+                    data: {
+
+                        CompanyId: function () { return $("#CompanyLists").val() }
+                       
+                    }
+                }
+            },
+
+
+
+            schema: {
+                data: 'Data',
+                total: 'Total',
+
+            },
+            requestEnd: function (e) {
+                var response = e.response;
+                var type = e.type;
+                if (type == 'read' && response && response.d && response.d.results) {
+                    var results = response.d.results;
+                    for (var i = 0, l = results.length; i < l; i++) {
+                        results[i].Selected = false;
+                    }
+                }
+            }
+        },
+        toolbar: kendo.template('<label>Filter: <input type="search" style="width: 150px"/></label><input id="BtnSelectAllUGrid" type="button" class="btn-default" value="Select"/><input id="BtnClearUGrid" type="button" class="btn-default" value="Clear"/>'),
+        rowTemplate: kendo.template('<tr data-uid="#= ' + idFieldName + ' #" #if (Selected) {# class="k-state-selected" #}#><td><input id=@chkBoxName type="checkbox" #if (Selected) {# checked="checked" #}# /></td><td width="75px">#: ' + labelFieldCode + ' #</td><td>#: ' + labelFieldName + ' #</td></tr>'),
+        //height: 350,
+        scrollable: {
+            virtual: true,
+
+        },
+        sortable: true,
+        //scrollable: false,
+        pageable: {
+            buttonCount: 3,
+            numeric: false
+        },
+        selectable: false,
+        columns: [
+            { field: "Selected", width: 30 },
+            { field: labelFieldName }
+        ],
+        dataBound: function () {
+            $('#' + '@GridName' + ' .k-grid-content').height(280);
+
+
+            var dataSource = this.dataSource;
+
+            if ('@ShowAllAtFirstRow' == 'True') {
+                if (dataSource.total() > 0) {
+                    if (!this._adding && dataSource.at(0).Id != 0) {
+                        this._adding = true;
+
+                        $('#' + '@GridName').data('kendoGrid').dataSource.insert(0, { Selected: false, Id: 0, Code: "All", Name: "All" });
+
+                    }
+                    this._adding = false;
+                }
+            }
+
+        },
+        dataBinding: function (e) {
+
+            if (e.action == 'rebind' && e.items) {
+                for (var i = 0, l = e.items.length; i < l; i++) {
+                    e.items[i].Selected = false
+
+                }
+            }
+        }
+    });
+
+    grid = $('#' + '@GridName').data('kendoGrid');
+
+    var dropDown = gridEl.find(".k-toolbar label input[type=search]").bind('propertychange keyup input paste', function () {
+        var value = $(this).val();
+
+        //Return to page 1 to handle problem of filter when you not on page 1
+        $('#' + '@GridName').data('kendoGrid').dataSource.page(1);
+
+        $('#' + '@GridName').data('kendoGrid').dataSource.read({ CompanyId: $("#CompanyLists").val(), filters: value });
+    });
+
+    var ClearButton = gridEl.find(".k-toolbar input[id=BtnClearUGrid]").bind('click', function () {
+
+        var values = $('#' + '@GridName').find(".k-toolbar label input[type=search]").val();
+
+
+        $('#' + '@GridName').data('kendoGrid').dataSource.read({ CompanyId: $("#CompanyLists").val(), filters: values });
+
+        $('#' + '@ControlName').text('')
+        $('#' + '@ControlTitle').text('')
+
+        $('#' + '@ControlNameTogle' + '  ' + 'span:eq(0)').text('No items selected');
+
+
+
+    });
+
+    var SelectAllButton = gridEl.find(".k-toolbar input[id=BtnSelectAllUGrid]").bind('click', function () {
+
+        $('#' + '@ControlName').text('')
+        $('#' + '@ControlTitle').text('')
+
+        var IDS = 'test895478ty'
+        var Names = 'test895478ty'
+
+
+        var grid = $('#' + '@GridName').data('kendoGrid');
+
+        $.each(grid.dataSource.view(), function () {
+
+
+            if (this['Selected'] != true)
+                this.dirty = true;
+            if (this['Id'] == 0) {
+                this['Selected'] = false;
+            }
+            else {
+                this['Selected'] = true;
+            }
+            //alert(this['Id'])
+            if (this['Id'].toString() != '0') {
+
+                IDS = IDS + ',' + this['Id'].toString()
+                Names = Names + ',' + this['Name']
+            }
+
+        });
+
+        grid.refresh();
+
+
+
+        if (IDS == 'test895478ty')
+        {
+            IDS = ""
+            Names=""
+        }
+
+        IDS = IDS.replace('test895478ty,', '')
+        Names = Names.replace('test895478ty,', '')
+
+
+        $('#' + '@ControlName').text(IDS)
+        $('#' + '@ControlTitle').text(Names)
+
+
+        var Spli = IDS.split(',');
+
+
+        if (Spli.length > 1) {
+
+            $('#' + '@ControlNameTogle' + '  ' + 'span:eq(0)').text(Spli.length + ' items selected');
+
+        }
+        else if (IDS == "") {
+            $('#' + '@ControlNameTogle' + '  ' + 'span:eq(0)').text('No items selected');
+        }
+        else {
+
+            if (Names.length > 30) {
+                $('#' + '@ControlNameTogle' + '  ' + 'span:eq(0)').text(Names.substr(0, 30) + '...');
+            }
+            else {
+                $('#' + '@ControlNameTogle' + '  ' + 'span:eq(0)').text(Names);
+            }
+
+
+        }
+
+
+
+
+
+
+    });
+
+    gridEl.appendTo($("<div/>").appendTo(document.body).kendoPopup({
+        toggleTarget: button,
+        anchor: button,
+        open: function () {
+            this.options.toggleTarget.parent().addClass('open');
+            if (grid.virtualScrollable) {
+                setTimeout(function () { grid.virtualScrollable.refresh(); }, 0);
+            }
+        },
+        close: function () {
+            this.options.toggleTarget.parent().removeClass('open');
+        },
+        animation: {}
+    }));
+
+    grid.tbody.on('click', 'tr td input[id=@chkBoxName]', function (e) {
+
+        var tr = $(this).closest('tr'), id = tr.data('uid');
+
+        var PrevIds = $('#' + '@ControlName').text().toString();
+        if (PrevIds.toString() == '0' && id.toString()!='0') {
+            e.preventDefault();
+            return;
+        }
+
+
+        tr.toggleClass('k-state-selected');
+
+     
+
+        if ($(this).is(':checked') == false) {
+
+            SetIDS(id, 0, this.id, tr.children('td:eq(2)').text());
+        } else {
+
+            SetIDS(id, 1, this.id, tr.children('td:eq(2)').text());
+        }
+
+
+
+    });
+
+    function SetIDS(id, ShowHide, ControlName, ItemName) {
+
+        var ControlTitle
+        var GridN
+        if (ControlName != null) {
+
+            ControlName = ControlName.replace('Chk', '')
+            ControlTitle = ControlName + 'Title'
+            GridN = ControlName + 'Grid'
+        }
+
+        if (id == 0 && ShowHide==1)
+        {
+             $('#' + ControlName).text('');
+             $('#' + ControlTitle).text('');
+        }
+
+            var PrevIds = $('#' + ControlName).text().toString();
+            var PrevIdTitles = $('#' + ControlTitle).text().toString();
+
+
+
+
+        if (ShowHide == 0) {
+            var FirstId = PrevIds.substr(0, PrevIds.indexOf(","));
+
+
+            if (id.toString() == FirstId) {
+
+                PrevIds = PrevIds.replace(id.toString() + ',', '')
+            }
+            else if (FirstId.toString() == "") {
+
+                PrevIds = PrevIds.replace(id.toString(), '')
+            }
+            else {
+                PrevIds = PrevIds.replace(',' + id.toString(), '')
+
+            }
+
+            //Title
+            var FirstTitle = PrevIdTitles.substr(0, PrevIdTitles.indexOf(","));
+
+
+            if (ItemName == FirstTitle) {
+                PrevIdTitles = PrevIdTitles.replace(ItemName.toString() + ',', '')
+            }
+            else if (FirstTitle == "") {
+                PrevIdTitles = PrevIdTitles.replace(ItemName.toString(), '')
+            }
+            else {
+                PrevIdTitles = PrevIdTitles.replace(',' + ItemName.toString(), '')
+
+            }
+
+
+
+
+        }
+        else {
+            if (PrevIds == "") {
+                PrevIds = id.toString()
+            }
+            else {
+                PrevIds = PrevIds + ',' + id.toString()
+            }
+
+            //Title
+            if (PrevIdTitles == "") {
+                PrevIdTitles = ItemName.toString()
+            }
+            else {
+                PrevIdTitles = PrevIdTitles + ',' + ItemName.toString()
+            }
+
+            if (id == 0) {
+
+              
+                var grid = $('#' + GridN).data('kendoGrid');
+                $.each(grid.dataSource.view(), function () {
+
+                    if (this['Id'] == 0)
+                    {
+                        this['Selected'] = true;
+                    }
+                    else
+                    {
+                        this['Selected'] = false;
+                    }
+
+                });
+
+                grid.refresh();
+            }
+
+
+        }
+
+        var Spli = PrevIds.split(',');
+
+
+
+
+        $('#' + ControlName).text(PrevIds)
+        $('#' + ControlTitle).text(PrevIdTitles)
+
+
+        if (Spli.length > 1) {
+
+            updateButtonText(Spli.length + ' items selected', ControlName)
+        }
+        else if (PrevIds == "") {
+            updateButtonText('No items selected', ControlName)
+        }
+        else {
+
+            if (PrevIdTitles.length > 30) {
+                updateButtonText(PrevIdTitles.substr(0, 30) + '...', ControlName)
+            }
+            else {
+                updateButtonText(PrevIdTitles, ControlName)
+            }
+
+
+        }
+
+
+
+
+    }
+
+
+
+    function updateButtonText(text, ControlName) {
+
+
+        if (ControlName != null) {
+
+            ControlName = ControlName + 'Togle'
+        }
+
+
+
+        $('#' + ControlName + '  ' + 'span:eq(0)').text(text);
+
+    }
+
+
+
+</script>

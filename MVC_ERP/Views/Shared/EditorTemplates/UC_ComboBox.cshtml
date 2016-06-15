@@ -1,0 +1,71 @@
+﻿@model int?
+@{
+    var fieldName = ViewData.TemplateInfo.HtmlFieldPrefix;
+    var SplitFile = fieldName.Split('_');
+    var ControlName="";
+    var FilterFunction="";
+    var ControllerName ="";
+    var ActionName = "";
+
+    if (SplitFile.Length>1)
+    {
+        //ComboBox
+         ControlName = SplitFile[0];
+         FilterFunction = "Filter" + SplitFile[0] ;
+         ControllerName = SplitFile[1];
+         ActionName = SplitFile[2];
+    }
+    else
+    {
+        //Grid
+        ControlName = fieldName;
+        FilterFunction = "Filter" + fieldName ;
+        ControllerName = ViewData["ControllerName"].ToString();
+        ActionName = ViewData["ActionName"].ToString();
+    } 
+    
+    
+  
+  }
+
+@(Html.Kendo().ComboBoxFor(m => m)
+                      .Name(@ControlName)
+                      .DataTextField("Name")
+                      .DataValueField("Id")
+
+                                 //.HeaderTemplate("<div class='dropdown-header' style='width:500px'><span class='k-widget k-header'  style='margin-right:30px'>Code</span><span class='k-widget k-header'>Name</span></div>")
+                                .Template("# if (data.Code != '') { # <span class='k-state-default'  style='margin-right:10px'>#: data.Code #</span># } # <span class='k-state-default'>#: data.Name #</span>")
+                                .AutoBind(true)
+                            .Placeholder("Type part of cod or name")
+                            .HighlightFirst(true)
+
+              //.MinLength(2)
+
+                .Filter(FilterType.Contains)
+                         .HtmlAttributes(new { style = "width:100%; max-width:3000px;left:0;margin:0;text-align:left" })
+
+
+                            .DataSource(source =>
+                         {
+                             source.Read(read =>
+                             {
+                                 read.Action(ActionName.ToString(), ControllerName.ToString()).Data(@FilterFunction);
+
+                             }).ServerFiltering(true);
+
+                         })
+                         .Events(e =>
+                         {
+                             e.Select("SelectEvent");
+                             e.DataBound("DataBoundEvent");
+                             e.Change("ChangeEvent");
+
+
+                         })
+
+                           //.CascadeFrom("ProductId") 
+                    
+                                       
+                                    
+                         
+)

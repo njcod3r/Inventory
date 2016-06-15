@@ -1,0 +1,124 @@
+﻿@{
+    Layout = "";
+}
+
+@using Telerik.Reporting
+@using Telerik.ReportViewer.Mvc
+
+@{
+    ViewBag.Title = "Telerik HTML5 Report Viewer MVC Demo";
+}
+
+
+
+<script src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")"></script>
+<script src="@Url.Content("~/ReportViewer/js/telerikReportViewer-8.1.14.804.js")"></script>
+
+
+<script src="http://cdn.kendostatic.com/2013.2.918/js/kendo.web.min.js"></script>
+<!--kendo.mobile.min.js - optional, if gestures/touch support is required-->
+<script src="http://cdn.kendostatic.com/2013.2.918/js/kendo.mobile.min.js"></script>
+
+<script src="http://cdn.kendostatic.com/2013.2.918/js/kendo.all.min.js"></script>
+
+
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+
+    <link href="http://cdn.kendostatic.com/2013.2.918/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2013.2.918/styles/kendo.blueopal.min.css" rel="stylesheet" />
+
+@*<link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" />*@
+    <style>
+        #reportViewer1 {
+            position: relative;
+            left: 5px;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            overflow: scroll;
+            width: 100%;
+            font-family: Verdana, Arial;
+        }
+    </style>
+
+ <link href="@Url.Content("~/ReportViewer/styles/telerikReportViewer-8.1.14.804.css")" rel="stylesheet" />
+
+
+@*<div style="height:50px;background-color:aqua">*@
+
+   
+</div>
+
+
+
+@{
+        var dataSource = new UriReportSource() { Uri = Request.QueryString["report"] };
+        dataSource.Parameters.Add(new Telerik.Reporting.Parameter() { Name = "CompanyId", Value = 1 });
+        
+          var Parms = Request.QueryString["parameters"];
+
+          var Par = Parms.Split(',');
+          for (var i = 0; i < Par.Length; i++) {
+            var PP = Par[i].Split(':');
+            var ParameterName=PP[0];
+            var ParameterValue = PP[1];
+
+            dataSource.Parameters.Add(new Telerik.Reporting.Parameter() { Name = ParameterName, Value = ParameterValue });
+
+          }
+          dataSource.Parameters.Add(new Telerik.Reporting.Parameter() { Name = "UserName", Value = (Request.Cookies["Language"].Value == "English" ? Request.Cookies["UserNameE"].Value : Request.Cookies["UserNameA"].Value) });
+   
+        
+        
+
+}
+<div>
+
+ 
+    @(Html.TelerikReporting().ReportViewer()
+                   .Id("reportViewer1")
+                   .ServiceUrl(Url.Content("~/api/reports/"))
+                   .TemplateUrl(Url.Content("~/ReportViewer/templates/telerikReportViewerTemplate-8.1.14.804.html"))
+                   .ViewMode(ViewModes.PRINT_PREVIEW)
+                   .ReportSource(dataSource)
+                   .ScaleMode(ScaleModes.SPECIFIC)
+                   .Scale(1.2)
+
+                   .PersistSession(false)
+                   .PrintMode(PrintMode.AutoSelect)
+                 
+                  
+     )
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        @*var parameters;
+        var params = '@Request.QueryString["parameters"]'
+      
+        var Par = params.split(',');
+        for (var i = 0; i < Par.length; i++) {
+            var PP = Par[i].split(':');
+            var ParameterName=PP[0];
+            var ParameterValue=PP[1];
+
+            parameters = { : ParameterValue} ;
+
+        }
+
+        alert(JSON.stringify(parameters))
+      
+        var viewer = $("#reportViewer1").data("telerik_ReportViewer");
+        viewer.reportSource({
+            report: '@Request.QueryString["report"]',
+            parameters: parameters
+        });
+
+        viewer.viewMode("PRINT_PREVIEW"),
+       
+        viewer.refreshReport();*@
+
+    })
+</script>

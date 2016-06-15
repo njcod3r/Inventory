@@ -1,0 +1,2503 @@
+﻿@model  MVC_ERP.Models.Stock_Products
+@{
+
+
+    <script>
+        document.getElementById("LBLFormHDR").innerText = ($.cookie('Language') == "English") ? "Products" : "المنتجات";
+    </script>
+
+}
+
+<div style="margin-left:10px;margin-right:10px">
+    <div class="row">
+        <br />
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+
+
+        @* Hidden Fields *@
+        @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+
+
+        @* End Of Hidden Fields *@
+    </div>
+
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-9">
+
+            <div class="col-xs-12 col-sm-4">
+                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "كود" : "Code:", new { style = "font-size:12px;color:#5f3110" })
+                @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @style = "width:100% ;max-width:2000px;height:30px", @placeholder = "Leave empty to generate auto code" })
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "المجموعة" : "Group:", new { style = "font-size:12px;color:#5f3110" })
+                @Html.Partial("EditorTemplates/UC_ComboBox", Model.GroupId, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "GroupId_GenerlaClasses_FillProductGroups" }
+                         })
+
+
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "نوع المنتج" : "Type:", new { style = "font-size:12px;color:#5f3110" })
+                @(Html.Kendo().DropDownList()
+                    .Name("ItemType")
+                     .HtmlAttributes(new { style = "width:100%" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = (Request.Cookies["Language"].Value == "Arabic") ? "مخزني" : "Stockable",
+                              Value = "1"
+                               },
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "استهلاكي" : "Consumable",
+                            Value = "2"
+                             }
+                             ,
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "خدمي" : "Service",
+                            Value = "3"
+                             }
+                             ,
+                               new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "مجمع" : "Collection",
+                            Value = "4"
+                             }
+                             ,
+
+                             })
+
+                )
+            </div>
+
+            <div class="col-xs-12 col-sm-4">
+                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الاسم اللاتيني" : "English Name:", new { style = "font-size:12px;color:#5f3110" })
+                @Html.TextBoxFor(model => model.NameE, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الاسم العربي" : "Arabic Name:", new { style = "font-size:12px;color:#5f3110" })
+                @Html.TextBoxFor(model => model.NameA, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "سياسة التكلفة" : "Cost Type:", new { style = "font-size:12px;color:#5f3110" })
+                @(Html.Kendo().DropDownList()
+                    .Name("CostType")
+                     .HtmlAttributes(new { style = "width:100%" })
+                           .DataTextField("Text")
+                           .DataValueField("Value")
+                           .BindTo(new List<SelectListItem>() {
+                              new SelectListItem() {
+                              Text = (Request.Cookies["Language"].Value == "Arabic") ? "متوسط مرجح" : "Average Cost",
+                              Value = "1"
+                               },
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "وارد اولا يصرف اولا" : "FIFO Cost",
+                            Value = "2"
+                             }
+                             ,
+                            new SelectListItem() {
+                            Text = (Request.Cookies["Language"].Value == "Arabic") ? "وارد اخيرا يصرف اولا" : "LIFO Cost",
+                            Value = "3"
+                             }
+                             ,
+
+                             })
+
+                )
+            </div>
+
+
+
+        </div>
+
+        @{
+            string imageBase64;
+            string imageSrc;
+            if (Model.Image != null)
+            {
+                imageBase64 = Convert.ToBase64String(Model.Image);
+                imageSrc = string.Format("data:image/gif;base64,{0}", imageBase64);
+            }
+            else
+            {
+
+                imageBase64 = "";
+                imageSrc = "";
+
+            }
+        }
+        <div class="col-xs-12 col-sm-3">
+            <div class="col-xs-12 col-sm-12">
+                @(Html.Kendo().Window().Name("productImg").Title("Upload Image Product").Draggable(true)
+                .Scrollable(false)
+                .Width(400)
+                .Height(150)
+                .Visible(false)
+                .Iframe(true).Content(@<text>
+                 @(Html.Kendo()
+                 .Upload().Name("files")
+                 .Async(a => a.Save("SaveImage", "Stock_Products", new { Id = Model.Id })
+                 .Remove("RemoveImage", "Stock_Products", new { Id = Model.Id })
+                         .AutoUpload(true)).Multiple(false).Events(events => events.Select("SelectLogoEvent").Upload("onImageUpload")))</text>))
+                <a href="javascript:;" id="anchorImg" style="">@(Request.Cookies["Language"].Value == "Arabic" ? "صورة" : "Image")</a>
+            </div>
+
+
+
+
+            <div class="col-xs-12 col-sm-12">
+
+                <img id="ImgLogo" src="@imageSrc" alt="No Image" style="height:90px;width:100%" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-left:0px;margin-right:0px">
+
+
+
+        <div class="col-xs-12 col-sm-3">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الحد الاقصي" : "Maximum Limit:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.TextBoxFor(model => model.MaxLimit, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "حد اعادة الطلب" : "Require Limit:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.TextBoxFor(model => model.RequireLimit, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الحد الادني" : "Minimum Limit:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.TextBoxFor(model => model.MinLimit, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+
+        <div class="col-xs-12 col-sm-3">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "معدل الركود" : "Slump Rate:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.TextBoxFor(model => model.slumpRate, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+
+
+        <div class="col-xs-12 col-sm-3" style="margin-bottom:5px">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "العلامة التجارية" : "Brand Name:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.Partial("EditorTemplates/UC_ComboBox", Model.BrandId, new ViewDataDictionary
+                         {
+                             TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "BrandId_GenerlaClasses_FillBrands" }
+                         })
+        </div>
+
+
+        <div class="col-xs-12 col-sm-3">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "الضمان للعميل بالشهور" : "Warranty/ Months:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.TextBoxFor(model => model.Warranty, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "التسليم للعميل خلال/ يوم" : "Customer Lead Time/ Days:", new { style = "font-size:12px;color:#5f3110" })
+            @Html.TextBoxFor(model => model.CustomerLeadTime, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+        </div>
+        <div class="col-xs-12 col-sm-3 " style="margin-bottom:5px">
+            @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "معلومات التعبئة/ سم" : "Packing List/CM:", new { style = "font-size:12px;color:#5f3110" })
+            <div class="form-inline" style="width:100%">
+                @Html.TextBoxFor(model => model.Width, new { @class = "form-control", @placeholder = "Width", @style = "width:31% ;max-width:2000px" })
+                @Html.TextBoxFor(model => model.Height, new { @class = "form-control", @placeholder = "Height", @style = "width:31% ;max-width:2000px" })
+                @Html.TextBoxFor(model => model.Depth, new { @class = "form-control", @placeholder = "Depth", @style = "width:31% ;max-width:2000px" })
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-2" style="margin-bottom:5px;margin-top:5px">
+            <label style=" font-size:12px;color:#5f3110"> @Html.CheckBoxFor(model => model.HasSerial, new { style = "font-size:12px;color:#5f3110" }) @(Request.Cookies["Language"].Value == "Arabic" ? "له سريال" : "Has Serial") </label>
+        </div>
+        <div class="col-xs-12 col-sm-2" style="margin-bottom: 5px; margin-top: 5px">
+            <label style="font-size:12px;color:#5f3110">@Html.CheckBoxFor(model => model.SerialNeedInReciept, new { style = "font-size:12px;color:#5f3110" }) @(Request.Cookies["Language"].Value == "Arabic" ? " واجب عند الاستلام" : "S Need In Reciept") </label>
+        </div>
+        <div class="col-xs-12 col-sm-2" style="margin-bottom: 5px; margin-top: 5px">
+            <label style="font-size:12px;color:#5f3110">@Html.CheckBoxFor(model => model.SerialNeedInDeliver, new { style = "font-size:12px;color:#5f3110" }) @(Request.Cookies["Language"].Value == "Arabic" ? " واجب عند الصرف" : "S Need In Deliver")</label>
+        </div>
+
+        <div class="col-xs-12 col-sm-2" style="margin-bottom: 5px; margin-top: 5px">
+            <label style="font-size:12px;color:#5f3110">@Html.CheckBoxFor(model => model.HasValidDate, new { style = "font-size:12px;color:#5f3110" }) @(Request.Cookies["Language"].Value == "Arabic" ? "له تاريخ صلاحية" : "Has Valid Date")</label>
+        </div>
+        <div class="col-xs-12 col-sm-2" style="margin-bottom: 5px; margin-top: 5px">
+            <label style="font-size:12px;color:#5f3110">@Html.CheckBoxFor(model => model.HasColor, new { style = "font-size:12px;color:#5f3110" }) @(Request.Cookies["Language"].Value == "Arabic" ? "مميز بالوان" : "Has Color")</label>
+        </div>
+        <div class="col-xs-12 col-sm-2" style="margin-bottom: 5px; margin-top: 5px">
+            <label style="font-size:12px;color:#5f3110">@Html.CheckBoxFor(model => model.Active, new { style = "font-size:12px;color:#5f3110" }) @(Request.Cookies["Language"].Value == "Arabic" ? "نشط" : "Is Active")</label>
+        </div>
+
+    </div>
+
+    <div class="col-sm-12">
+        @Html.Label((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes:", new { style = "font-size:12px;color:#5f3110" })
+        @Html.TextBoxFor(model => model.Notes, new { @class = "form-control", @style = "width:100% ;max-width:2000px" })
+    </div>
+
+    <div style="height:auto">
+        <br />
+        @(Html.Kendo().TabStrip()
+                .HtmlAttributes(new { style = "height:auto" })
+
+          .Name("tabstrip")
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "الوحدات" : "Units")
+                  .HtmlAttributes(new { style = "height:auto" })
+                  .Selected(true)
+                  .Content(@<text>
+                    <br />
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_Units>()
+                     .Name("UnitsGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('UnitsGrid') #").Width(50);
+                         columns.Bound(c => c.UnitId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "الوحدة" : "Unit").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillUnits" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= UnitName #");
+                         columns.Bound(c => c.IsBaseUnit).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "وحدة رئيسية" : "Base Unit").ClientTemplate("<input type='checkbox' #= IsBaseUnit ? checked='checked':'' # class='chkbx' />");
+                         columns.Bound(c => c.Rate).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "المعدل" : "Rate").Format("1");
+                         columns.Bound(c => c.BarCode).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "باركود" : "BarCode");
+                         columns.Bound(c => c.IsDefault).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "وحدة شائعة" : "Default Unit").ClientTemplate("<input type='checkbox' #= IsDefault ? checked='checked':'' # class='chkbx' />");
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                              .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+                                           model.Field(p => p.UnitId);
+                                           model.Field(p => p.Rate).DefaultValue(1).Editable(false);
+
+
+                                       })
+                                                   .PageSize(1000)
+                                                           .Read(read => read.Action("LoadUnitsGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+
+
+                </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "الموردين" : "Suppliers")
+                  .Content(@<text>
+                    <br />
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_Suppliers>()
+                     .Name("SuppliersGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('SuppliersGrid') #").Width(50);
+                         columns.Bound(c => c.SupplierId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "المورد" : "Supplier").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillSuppliers" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= SupplierName #");
+                         columns.Bound(c => c.ProductCode).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "كود المورد" : "Product Code");
+                         columns.Bound(c => c.MinimalQuantity).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "اقل كمية" : "Minimal Quantity");
+                         columns.Bound(c => c.Warranty).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "الضمان/ شهور" : "Warranty");
+
+
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+
+                                       })
+                                                   .PageSize(1000)
+                                               .Read(read => read.Action("LoadSuppliersGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+
+
+
+
+
+
+
+
+                </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "الأسعار" : "Pricing")
+                     .Content(@<text>
+                    <br />
+
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_Pricing>()
+                     .Name("PricingGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('PricingGrid') #").Width(50);
+                         columns.Bound(c => c.UnitId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "الوحدة" : "Unit").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillProductUnits" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= UnitName #");
+                         columns.Bound(c => c.PurchasePolicy).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "سياسة الشراء" : "Purchase Policy").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillPurchasePricingPolicy" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= PurchasePolicyName #");
+                         columns.Bound(c => c.PCurrencyId).Width(180).Title((Request.Cookies["Language"].Value == "Arabic") ? "العملة" : "Currency").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillCurrencies" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= PCurrencyName #");
+                         columns.Bound(c => c.PurchaseValue).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "القيمة" : "Value");
+                         columns.Bound(c => c.SalesPolicy).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "سياسة البيع" : "Sales Policy").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillSalesPricingPolicy" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= SalesPolicyName #");
+                         columns.Bound(c => c.SCurrencyId).Width(180).Title((Request.Cookies["Language"].Value == "Arabic") ? "العملة" : "Currency").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillCurrencies" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= SCurrencyName #");
+                         columns.Bound(c => c.SalesValue).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "القيمة" : "Value");
+
+
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+
+                                       })
+                                                   .PageSize(1000)
+                                                                           .Read(read => read.Action("LoadPricingGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+
+
+
+
+                    </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "البدائل" : "Alternative")
+                  .Content(@<text>
+                    <br />
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_Alternative>()
+                             .Name("AlternativeGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('AlternativeGrid') #").Width(50);
+                         columns.Bound(c => c.AlternateId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "المنتج البديل" : "Alternate product").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillProducts" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= AlternateName #");
+                         columns.Bound(c => c.Notes).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+
+
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+
+                                       })
+                                                   .PageSize(1000)
+                                                                   .Read(read => read.Action("LoadAlternativeGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+
+
+
+                </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "قطع الغيار الموصى بها" : "Recommended Spare Parts")
+                   .Content(@<text>
+                    <br />
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_RecomendeSP>()
+                     .Name("RecommendedSPGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('RecommendedSPGrid') #").Width(50);
+                         columns.Bound(c => c.SPId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "قطع الغيار" : "Spare Part").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillProducts" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= SPName #");
+                         columns.Bound(c => c.UnitId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "الوحدة" : "Unit").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillProductUnits" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= UnitName #");
+                         columns.Bound(c => c.Quantity).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "الكمية" : "Quantity");
+                         columns.Bound(c => c.Notes).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+
+                                       })
+                                                   .PageSize(1000)
+                                                                   .Read(read => read.Action("LoadRecomendeSPGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+                </text>);
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "تفاصيل التجميع" : "Collection Details")
+                 .Content(@<text>
+                    <br />
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_SPCollection>()
+                     .Name("CollectionGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('CollectionGrid') #").Width(50);
+                         columns.Bound(c => c.SPId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "الصنف" : "Item").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillProducts" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= SPName #");
+                         columns.Bound(c => c.UnitId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "الوحدة" : "Unit").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillProductUnits" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= UnitName #");
+                         columns.Bound(c => c.Quantity).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "الكمية" : "Quantity");
+                         columns.Bound(c => c.Notes).Width(100).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+
+                                       })
+                                                   .PageSize(1000)
+                                                                   .Read(read => read.Action("LoadSPCollectionGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+                </text>);
+
+
+
+              tabstrip.Add().Text((Request.Cookies["Language"].Value == "Arabic") ? "مواقع التخزين الافتراضية" : "Default Storage Location")
+                  .Content(@<text>
+                    <br />
+
+
+
+
+                    @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products_DefaultStorageLocation>()
+                     .Name("StorageLocationGrid")
+
+
+                     .Columns(columns =>
+                     {
+                         columns.Bound(c => c.Id).Hidden();
+                         columns.Template(t => { }).Title((Request.Cookies["Language"].Value == "Arabic") ? "م" : "S.No").ClientTemplate("#= renderNumber('StorageLocationGrid') #").Width(50);
+                         columns.Bound(c => c.WarehouseId).Width(150).Title((Request.Cookies["Language"].Value == "Arabic") ? "المخزن" : "Warehouse").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillWarehouses" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= WarehouseName #");
+                         columns.Bound(c => c.ShelveId).Width(120).Title((Request.Cookies["Language"].Value == "Arabic") ? "شيلف" : "Shelve").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillShelves" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= ShelveName #");
+                         columns.Bound(c => c.RackId).Width(120).Title((Request.Cookies["Language"].Value == "Arabic") ? "راك" : "Rack").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillRacks" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= RackName #");
+                         columns.Bound(c => c.RowId).Width(120).Title((Request.Cookies["Language"].Value == "Arabic") ? "الصف" : "Row").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillRackRows" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= RowName #");
+                         columns.Bound(c => c.CaseId).Width(120).Title((Request.Cookies["Language"].Value == "Arabic") ? "الدرج" : "Case").EditorViewData(new { ControllerName = "GenerlaClasses", ActionName = "FillRackCases" }).EditorTemplateName("UC_ComboBox").ClientTemplate("#= CaseName #");
+                         columns.Bound(c => c.Notes).Width(120).Title((Request.Cookies["Language"].Value == "Arabic") ? "ملاحظات" : "Notes");
+
+                     })
+
+         //.AutoBind(true)
+                            //.Scrollable()
+         .Selectable()
+
+                             .Sortable()
+                             .HtmlAttributes(new { @class = "FirstGrid", style = "width:auto;min-height:300px;height:auto" })
+                                   .Scrollable(scrolling => scrolling.Height(200))
+                             .ToolBar(toolBar =>
+                             {
+
+                                 toolBar.Create().Text((Request.Cookies["Language"].Value == "Arabic") ? "اضافة صف" : "Add Record").HtmlAttributes(new { style = "color:#562727" });
+                                 toolBar.Custom().Text((Request.Cookies["Language"].Value == "Arabic") ? "حذف صف" : "Remove record").Name("BtnRemoveDetailGridRow").HtmlAttributes(new { @class = "RemoveGridRowCSS", style = "color: #562727" });
+
+
+
+                             })
+                            .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                       .DataSource(dataSource => dataSource.Ajax()
+
+
+
+                                       .Model(model =>
+                                       {
+                                           model.Id(p => p.Id);
+
+
+
+                                       })
+                                                   .PageSize(1000)
+                                                                   .Read(read => read.Action("LoadDefaultStorageLocationGrid", "Stock_Products").Data("SetId"))
+
+                                           .ServerOperation(false)
+
+                                          )
+
+                                      //.Selectable()
+
+                        .Filterable()
+
+                              //.EnableCustomBinding(true)
+
+                                                       .Events(ev => ev.DataBound("GridDataBound"))
+                                                       .Events(ev => ev.Save("GridChang"))
+                                                       .Events(ev => ev.Edit("GridEdit"))
+                                                       .Events(ev => ev.DataBinding("GridDataBinding"))
+
+
+
+                    )
+                </text>);
+
+
+          })
+        )
+    </div>
+
+
+</div>
+
+<div class="row">
+
+
+    <div class="col-xs-12">
+
+
+
+        @* Window *@
+        @(Html.Kendo().Window().Name("window").Title("Search Form")
+
+                        //.HtmlAttributes(new { style = "overflow:hidden" })
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Actions(actions => actions.Close())
+                                    .Events(ev => ev.Close("onClose"))
+
+            .Content(@<text>
+
+
+
+                                        <br />
+                                        <div style="width:99%;text-align:center">
+                                            <div class=" row">
+
+                                                <div class="col-lg-6">
+                                                    <div class="input-group">
+                                                        <input id="txtSearchValue" type="text" class="form-control" style="width:100%; max-width:initial" placeholder="Search">
+                                                        <span class="input-group-btn">
+                                                            <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                                                        </span>
+                                                    </div><!-- /input-group -->
+                                                </div><!-- /.col-lg-6 -->
+                                            </div><!-- /.row -->
+                                        </div>
+                                        <br />
+
+
+
+
+                                        @(Html.Kendo().Grid<MVC_ERP.Models.Stock_Products>()
+                     .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+
+
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code).Width(150).Title("Account Code");
+                 columns.Bound(c => c.NameE).Width(150).Title("English Name");
+                 columns.Bound(c => c.NameA).Width(150).Title("Arabic Name");
+                 columns.Bound(c => c.Notes).Width(150).Title("Notes");
+             })
+
+
+                 .Sortable()
+
+
+                       .Scrollable(scrolling => scrolling.Height(200))
+                       .DataSource(dataSource => dataSource.Ajax()
+                       .PageSize(1000)
+
+
+
+                           .Read(read => read
+                                   .Action("Search", "Stock_Products").Data("SetSearchValue")
+
+
+                            ))
+
+                      .Selectable()
+
+                      .Filterable()
+                                                //.EnableCustomBinding(true)
+
+                              .Events(events => events.Change("item_selected"))
+
+                                        )
+
+                                        @*</div>*@
+
+                                        <br />
+
+            </text>)
+                //.Scrollable(false)
+
+
+        )
+
+
+
+
+
+
+    </div>
+
+</div>
+
+@* End Window *@
+@*Close from here don't have Open Open it in Layout page*@
+    </form>
+
+
+@*  Window Events *@
+<script>
+
+    $(".RemoveGridRowCSS").kendoButton({
+        icon: "close"
+    });
+
+
+    $(".RemoveGridRowCSS").click(function (e) {
+        e.preventDefault();
+
+        var gridName = $(this).closest('.k-grid').attr('id');
+
+        var grid = $('#' + gridName).data("kendoGrid");
+        var dataItem = grid.dataItem(grid.select());
+        var RowId = dataItem.Id;
+
+        //After remove related cost center of this row we remove it from grid
+        grid.select().each(function () {
+            grid.removeRow($(this));; //just gives alert message
+            //grid.dataSource.remove(dataItem); //removes it actually from the grid
+        });
+    });
+
+
+
+    function FilterGroupId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#GroupId").data("kendoComboBox").text(),
+            Id: $("#GroupId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterBrandId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#GroupId").data("kendoComboBox").text(),
+            Id: $("#GroupId").data("kendoComboBox").value()
+        };
+    }
+
+
+
+    function getCurrentEditedModel(GridName) {
+        var grid = $("#" + GridName).data("kendoGrid");
+        var editRow = grid.tbody.find("tr:has(.k-edit-cell)");
+        return grid.dataItem(editRow);
+    }
+
+    function FilterUnitId(e) {
+        var GridName = event.currentTarget.id;
+        var model = getCurrentEditedModel(GridName);
+
+        if (GridName == "UnitsGrid") {
+            return {
+                CompanyId: $("#CompanyLists").val(),
+                text: $("#UnitId").data("kendoComboBox").text(),
+                Id: $("#UnitId").data("kendoComboBox").value()
+            };
+        }
+
+        if (GridName == "RecommendedSPGrid") {
+
+            return {
+                CompanyId: $("#CompanyLists").val(),
+                ProductId: model.SPId,
+                text: $("#UnitId").data("kendoComboBox").text(),
+                Id: $("#UnitId").data("kendoComboBox").value()
+            };
+        }
+        if (GridName == "PricingGrid") {
+
+            return {
+                CompanyId: $("#CompanyLists").val(),
+                ProductId: $('#Id').val(),
+                text: $("#UnitId").data("kendoComboBox").text(),
+                Id: $("#UnitId").data("kendoComboBox").value()
+            };
+        }
+
+        if (GridName == "CollectionGrid") {
+
+            return {
+                CompanyId: $("#CompanyLists").val(),
+                ProductId: model.SPId,
+                text: $("#UnitId").data("kendoComboBox").text(),
+                Id: $("#UnitId").data("kendoComboBox").value()
+            };
+        }
+    }
+
+
+    function FilterAlternateId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#AlternateId").data("kendoComboBox").text(),
+            Id: $("#AlternateId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterPCurrencyId() {
+        return {
+
+            text: $("#PCurrencyId").data("kendoComboBox").text(),
+            Id: $("#PCurrencyId").data("kendoComboBox").value()
+        };
+
+    }
+
+
+    function FilterSCurrencyId() {
+        return {
+
+            text: $("#SCurrencyId").data("kendoComboBox").text(),
+            Id: $("#SCurrencyId").data("kendoComboBox").value()
+        };
+
+    }
+
+    function FilterSPId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#SPId").data("kendoComboBox").text(),
+            Id: $("#SPId").data("kendoComboBox").value()
+        };
+    }
+
+
+
+    function FilterSupplierId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#SupplierId").data("kendoComboBox").text(),
+            Id: $("#SupplierId").data("kendoComboBox").value()
+        };
+    }
+
+
+    function FilterPurchasePolicy() {
+
+    }
+    function FilterPurchaseDiscountType() {
+
+    }
+    function FilterSalesPolicy() {
+
+    }
+    function FilterSalesDiscountType() {
+
+    }
+
+    function FilterWarehouseId() {
+
+        return {
+            CompanyId: $("#CompanyLists").val(),
+            text: $("#WarehouseId").data("kendoComboBox").text(),
+            Id: $("#WarehouseId").data("kendoComboBox").value()
+        };
+    }
+
+
+    function FilterShelveId(e) {
+        var GridName = event.currentTarget.id;
+        var model = getCurrentEditedModel(GridName);
+        return {
+            WarehouseId: model.WarehouseId,
+            text: $("#ShelveId").data("kendoComboBox").text(),
+            Id: $("#ShelveId").data("kendoComboBox").value()
+        };
+    }
+
+
+    function FilterRackId(e) {
+        var GridName = event.currentTarget.id;
+        var model = getCurrentEditedModel(GridName);
+        return {
+            ShelveId: model.ShelveId,
+            text: $("#RackId").data("kendoComboBox").text(),
+            Id: $("#RackId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterRowId(e) {
+
+        var GridName = event.currentTarget.id;
+        var model = getCurrentEditedModel(GridName);
+        return {
+            RackId: model.RackId,
+            text: $("#RowId").data("kendoComboBox").text(),
+            Id: $("#RowId").data("kendoComboBox").value()
+        };
+    }
+
+    function FilterCaseId(e) {
+        var GridName = event.currentTarget.id;
+        var model = getCurrentEditedModel(GridName);
+        return {
+            RowId: model.RowId,
+            text: $("#CaseId").data("kendoComboBox").text(),
+            Id: $("#CaseId").data("kendoComboBox").value()
+        };
+    }
+
+    var rowNumberUnitsGrid = 0;
+    var rowNumberSuppliersGrid = 0;
+    var rowNumberPricingGrid = 0;
+    var rowNumberAlternativeGrid = 0;
+    var rowNumberRecommendedSPGrid = 0;
+    var rowNumberCollectionGrid = 0;
+    var rowNumberStorageLocationGrid = 0;
+
+
+    function renderNumber(data) {
+        if (data == 'UnitsGrid') {
+            return ++rowNumberUnitsGrid;
+        }
+        if (data == 'SuppliersGrid') {
+            return ++rowNumberSuppliersGrid;
+        }
+        if (data == 'PricingGrid') {
+            return ++rowNumberPricingGrid;
+        }
+        if (data == 'AlternativeGrid') {
+            return ++rowNumberAlternativeGrid;
+        }
+        if (data == 'RecommendedSPGrid') {
+            return ++rowNumberRecommendedSPGrid;
+        }
+        if (data == 'CollectionGrid') {
+            return ++rowNumberCollectionGrid;
+        }
+        if (data == 'StorageLocationGrid') {
+            return ++rowNumberStorageLocationGrid;
+        }
+
+    }
+    function GridDataBound(data) {
+
+        if (data.sender.element[0].id == 'UnitsGrid') {
+            rowNumberUnitsGrid = 0;
+        }
+        if (data.sender.element[0].id == 'SuppliersGrid') {
+            rowNumberSuppliersGrid = 0;
+        }
+        if (data.sender.element[0].id == 'PricingGrid') {
+            rowNumberPricingGrid = 0;
+        }
+        if (data.sender.element[0].id == 'AlternativeGrid') {
+            rowNumberAlternativeGrid = 0;
+        }
+        if (data.sender.element[0].id == 'RecommendedSPGrid') {
+            rowNumberRecommendedSPGrid = 0;
+        }
+        if (data.sender.element[0].id == 'CollectionGrid') {
+            rowNumberCollectionGrid = 0;
+        }
+        if (data.sender.element[0].id == 'StorageLocationGrid') {
+            rowNumberStorageLocationGrid = 0;
+        }
+
+    }
+
+
+    function GridChang(data) {
+
+        // event of change column value
+        if (data.sender.element[0].id == 'UnitsGrid') {
+            if (data.values.UnitId) {
+
+                data.model.set("UnitName", "")
+            }
+        }
+
+
+    }
+
+
+    function GridDataBinding(e) {
+        if (e.sender.element[0].id == 'UnitsGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].UnitId || !data[i].Rate) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+
+
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+        if (e.sender.element[0].id == 'SuppliersGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].SupplierId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].MinimalQuantity) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please add Minial Quantity ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+        if (e.sender.element[0].id == 'PricingGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].UnitId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].PurchasePolicy) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Purchase Policy  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].PCurrencyId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Currency  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].PurchaseValue) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Purchase Value  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].PurchasePolicy) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Purchase Policy  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].PurchaseDiscountType) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Purchase Discount Type  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].PurchaseDiscountValue) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Purchase Discount Value  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].SalesPolicy) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Sales Policy  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].SCurrencyId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Currency  ?', '', 'WithOutConfirm');
+                        }
+                        if (!data[i].SalesValue) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Sales Value  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].SalesDiscountType) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Sales Discount Type  ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].SalesDiscountValue) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Sales Discount Value  ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+        if (e.sender.element[0].id == 'AlternativeGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].AlternateId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+        if (e.sender.element[0].id == 'RecommendedSPGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].SPId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+                        if (!data[i].UnitId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Unit ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+        if (e.sender.element[0].id == 'CollectionGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].SPId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please valid data entry for current row before adding another ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].UnitId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter unit ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+        if (e.sender.element[0].id == 'StorageLocationGrid') {
+            if (e.action == "add") {
+                var newItemUid = e.items[0].uid;
+                var data = this.dataSource.view();
+                var invalidRows = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].uid != newItemUid) {
+                        //some row validation, in this case all fields are required
+                        if (!data[i].WarehouseId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please Warehouse ?', '', 'WithOutConfirm');
+                        }
+
+                        if (!data[i].ShelveId) {
+                            invalidRows = true;
+                            e.preventDefault(); //prevent the new item from showing in the Grid
+                            ShowConfirmMessage('Row validation error', 'Please enter Shelve  ?', '', 'WithOutConfirm');
+                        }
+                    }
+                    if (invalidRows) {
+                        this.dataSource.remove(e.items[0]); //remove the newly added item from the dataSource, because there are invalid rows
+                    }
+                }
+            }
+
+        }
+
+
+
+    };
+
+
+
+    function GridEdit(e) {
+        //Default values for new row
+        // Column Code
+
+        if (e.sender.element[0].id == 'UnitsGrid') {
+            if (e.model.isNew() && e.model.Id == 0) {
+                var grid = $("#UnitsGrid").data("kendoGrid");
+                //Take value from previous row
+                var model = $('#UnitsGrid').data().kendoGrid.dataSource.data()[grid.dataSource.total() - 2];
+                if (model) {
+                    e.model.set("Id", model.Id + 1);
+                }
+                else {
+                    e.model.set("Id", 1);
+
+                }
+            }
+
+            if (e.model.isNew() && e.model.UnitId == 0) {
+
+                e.model.set("UnitName", "")
+            }
+        }
+
+
+    }
+
+    function SetId() {
+        var info = $("#Id").val();
+        if (info) {
+            return {
+                Id: info
+            };
+        }
+    }
+
+    //ComboBox and ComboBox in Grid Events
+    function DataBoundEvent(e) {
+
+        var ComboBoxName = e.sender.element[0].id //ComboBoxName
+        var GridName = $(e.sender.element[0]).closest('.k-grid').attr('id') //GridName
+
+        if (((GridName == 'RecommendedSPGrid' || GridName == 'CollectionGrid' || GridName == 'PricingGrid') && ComboBoxName == 'UnitId') || ComboBoxName == 'ShelveId' || ComboBoxName == 'RackId' || ComboBoxName == 'RowId' || ComboBoxName == 'CaseId' || ComboBoxName == 'AlternateId' || ComboBoxName == 'SPId' || ComboBoxName == 'PurchasePolicy' || ComboBoxName == 'PurchaseDiscountType' || ComboBoxName == 'SalesPolicy' || ComboBoxName == 'SalesDiscountType') {
+
+        }
+        else {
+            var dataSource = this.dataSource;
+            if (!this._adding) {
+                this._adding = true;
+
+                dataSource.add({
+                    "Id": -800,
+                    "Code": "",
+                    "Name": "Create Edit Search"
+                });
+            }
+            this._adding = false;
+        }
+    }
+
+    function SelectEvent(e) {
+
+        if (this.dataItem(e.item.index()).Id == -800) {
+            e.preventDefault();
+
+            var ComboBoxName = e.sender.element[0].id //ComboBoxName
+            var GridName = $(e.sender.element[0]).closest('.k-grid').attr('id') //GridName
+
+            if (ComboBoxName == 'GroupId') {
+                //Open when Combobox in Header
+                ShowPageAsPopUp('Create Edit Search Groups (Open from Products)', 'Stock_Groups/Index', 'GroupId', 'Combo', '', '', '')
+
+
+            }
+            if (ComboBoxName == 'BrandId') {
+                //Open when Combobox in Header
+                ShowPageAsPopUp('Create Edit Search Brands (Open from Products)', 'Stock_Brands/Index', 'BrandId', 'Combo', '', '', '')
+
+
+            }
+
+            if (ComboBoxName == 'UnitId') {
+                //Open when Combobox in Grid
+
+                var grid = $("#" + GridName).data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Units (Open from Products)', 'Stock_Units/Index', GridName, 'Grid', 'UnitId', 'UnitName', rowIndex)
+
+
+            }
+
+            if (ComboBoxName == 'SupplierId') {
+                //Open when Combobox in Grid
+
+                var grid = $("#" + GridName).data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Suppliers (Open from Products)', 'Suppliers/Index', GridName, 'Grid', 'SupplierId', 'SupplierName', rowIndex)
+
+
+            }
+
+            if (ComboBoxName == 'PCurrencyId') {
+                //Open when Combobox in Grid
+
+                var grid = $("#" + GridName).data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Currencies (Open from Products)', 'Currencies/Index', GridName, 'Grid', 'PCurrencyId', 'PCurrencyName', rowIndex)
+
+
+            }
+
+            if (ComboBoxName == 'SCurrencyId') {
+                //Open when Combobox in Grid
+
+                var grid = $("#" + GridName).data("kendoGrid");
+                var dataRows = grid.items();
+                var rowIndex = dataRows.index(grid.select());
+
+                //Call Main page to add new or edit
+                ShowPageAsPopUp('Create Edit Search Currencies (Open from Products)', 'Currencies/Index', GridName, 'Grid', 'SCurrencyId', 'SCurrencyName', rowIndex)
+
+
+            }
+        }
+    }
+    function ChangeEvent(e) {
+
+
+        var gridName = $(e.sender.element[0]).closest('.k-grid').attr('id');
+
+
+        if (e.sender.element[0].id == 'SPId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('UnitName', '');
+            model.set('UnitId', 0);
+        }
+
+
+
+        if (e.sender.element[0].id == 'UnitId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('UnitId', e.sender.dataItem().Id);
+            model.set('UnitName', e.sender.dataItem().Name);
+        }
+
+
+        if (e.sender.element[0].id == 'SupplierId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('SupplierId', e.sender.dataItem().Id);
+            model.set('SupplierName', e.sender.dataItem().Name);
+        }
+
+        if (e.sender.element[0].id == 'AlternateId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('AlternateId', e.sender.dataItem().Id);
+            model.set('AlternateName', e.sender.dataItem().Name);
+        }
+
+        if (e.sender.element[0].id == 'SPId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('SPId', e.sender.dataItem().Id);
+            model.set('SPName', e.sender.dataItem().Name);
+        }
+
+
+        if (e.sender.element[0].id == 'PurchasePolicy') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('PurchasePolicy', e.sender.dataItem().Id);
+            model.set('PurchasePolicyName', e.sender.dataItem().Name);
+        }
+
+        if (e.sender.element[0].id == 'PurchaseDiscountType') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('PurchaseDiscountType', e.sender.dataItem().Id);
+            model.set('PurchaseDiscountTypeName', e.sender.dataItem().Name);
+        }
+
+        if (e.sender.element[0].id == 'SalesPolicy') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('SalesPolicy', e.sender.dataItem().Id);
+            model.set('SalesPolicyName', e.sender.dataItem().Name);
+        }
+        if (e.sender.element[0].id == 'SalesDiscountType') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('SalesDiscountType', e.sender.dataItem().Id);
+            model.set('SalesDiscountTypeName', e.sender.dataItem().Name);
+        }
+
+
+        if (e.sender.element[0].id == 'PCurrencyId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('PCurrencyId', e.sender.dataItem().Id);
+            model.set('PCurrencyName', e.sender.dataItem().Name);
+        }
+        if (e.sender.element[0].id == 'SCurrencyId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('SCurrencyId', e.sender.dataItem().Id);
+            model.set('SCurrencyName', e.sender.dataItem().Name);
+        }
+
+        if (e.sender.element[0].id == 'WarehouseId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('WarehouseId', e.sender.dataItem().Id);
+            model.set('WarehouseName', e.sender.dataItem().Name);
+
+
+            model.set('ShelveName', '');
+            model.set('ShelveId', 0);
+
+            model.set('RackName', '');
+            model.set('RackId', 0);
+
+            model.set('RowName', '');
+            model.set('RowId', 0);
+
+            model.set('CaseName', '');
+            model.set('CaseId', 0);
+
+        }
+
+        if (e.sender.element[0].id == 'ShelveId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('ShelveId', e.sender.dataItem().Id);
+            model.set('ShelveName', e.sender.dataItem().Name);
+
+            model.set('RackName', '');
+            model.set('RackId', 0);
+
+            model.set('RowName', '');
+            model.set('RowId', 0);
+
+            model.set('CaseName', '');
+            model.set('CaseId', 0);
+        }
+
+        if (e.sender.element[0].id == 'RackId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('RackId', e.sender.dataItem().Id);
+            model.set('RackName', e.sender.dataItem().Name);
+
+            model.set('RowName', '');
+            model.set('RowId', 0);
+
+            model.set('CaseName', '');
+            model.set('CaseId', 0);
+        }
+
+        if (e.sender.element[0].id == 'RowId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('RowId', e.sender.dataItem().Id);
+            model.set('RowName', e.sender.dataItem().Name);
+
+            model.set('CaseName', '');
+            model.set('CaseId', 0);
+        }
+
+        if (e.sender.element[0].id == 'CaseId') {
+
+            var model = $('#' + gridName).data().kendoGrid.editable.options.model;
+            model.set('CaseId', e.sender.dataItem().Id);
+            model.set('CaseName', e.sender.dataItem().Name);
+        }
+
+
+    }
+
+
+    function SelectLogoEvent() {
+
+        if ($('#Id').val() == 0 || $('#Id').val() == null) {
+            alert('Please insert product first')
+            e.preventDefault();
+        }
+    }
+    function Companychange(e) {
+
+        $("#GroupId").data("kendoComboBox").dataSource.read();
+        $('#GroupId').data("kendoComboBox").value(null);
+
+        $("#BrandId").data("kendoComboBox").dataSource.read();
+        $('#BrandId').data("kendoComboBox").value(null);
+
+        Read(0, ReadType.Last)
+
+
+
+    };
+
+    function item_selected(e) {
+
+        var grid = $("#SearchGrid").data("kendoGrid");
+        var id;
+
+        grid.select().each(function () {
+            var dataItem = grid.dataItem($(this));
+            id = dataItem.Id;
+        });
+
+        Read(id, ReadType.Current);
+
+    }
+
+    function Branchchange(e) {
+
+    };
+    $(document).ready(function () {
+        $("#DivBranches").hide();
+
+        $("#CmbFinancialYear").data("kendoDropDownList").wrapper.hide();
+        $("#CompanyLists").parent().css('width', "100%");
+
+        Read(0, ReadType.First);
+
+    })
+
+
+    function onClose() {
+        //$("#undo").show();
+    }
+
+
+
+    function SetSearchValue() {
+        var info = $("#txtSearchValue").val();
+        var CompInfo = $("#CompanyLists").val();
+        return {
+
+            CompanyId: CompInfo,
+            TxtSearchVal: info
+        };
+    }
+
+    $("#BtnSearch").bind("click", function () {
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 9,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    $("#window").parent().css('width', "85%");
+                    $("#window").parent().css('height', "350px");
+
+                    $("#window").data("kendoWindow").center().open();
+                    $("#SearchGrid").data("kendoGrid").dataSource.read();
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+
+    });
+
+    $("#BtnPrint").click(function (event) {
+
+
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 10,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+                    var report = "GL/DailyVoucher.trdx";
+                    var parameters = "Title:Daily Voucher,Id:" + $("#Id").val();
+
+                    window.open('@Url.Action("Index", "Report")' + '?report=' + report + '&parameters=' + parameters, '_blank');
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+    });
+
+
+
+    $("#BtnCloseWindow").click(function (e) {
+        $("#window").data("kendoWindow").close();
+    });
+
+
+    $("#BtnGetSearchResult").click(function () {
+
+        var cc = $("#CompanyList").val();
+        $("#SearchGrid").data("kendoGrid").dataSource.read({ "CompanySearchId": cc });
+    })
+
+
+
+    //Grid
+
+
+
+</script>
+@*  End Window Events *@
+
+
+
+@* Combo Box Events *@
+<script>
+    function getBase64Image(img) {
+        // Create an empty canvas element
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Copy the image contents to the canvas
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        // Get the data-URL formatted image
+        // Firefox supports PNG and JPEG. You could check img.src to
+        // guess the original format, but be aware the using "image/jpg"
+        // will re-encode the image.
+        var dataURL = canvas.toDataURL("image/png");
+
+        return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    }
+
+    function SentCompanyId() {
+        var CompInfo = $("#CompanyLists").val();
+        if (CompInfo) {
+            return {
+                CompanyId: CompInfo,
+            };
+        }
+    }
+
+    function onSelect(e) {
+
+    };
+
+    var ReadType = {
+        Empty: 0,
+        First: 1,
+        Next: 2,
+        Current: 3,
+        Previous: 4,
+        Last: 5
+    }
+
+
+    //Read Function
+    function Read(Id, ReadType) {
+
+
+        if (Id == 0) {
+            Id = $("#Id").val()
+        }
+
+        //Fill Controls
+
+        $.post("@Url.Action("Read", "Stock_Products")", {
+            Id: Id,
+            CompanyId: $('#CompanyLists').val(),
+            ReadType: ReadType,
+        },
+        function (data) {
+
+            //Set All Model fields to avoid refreshing
+
+            $("#Id").val(data.TBL.Id);
+
+            $('#UnitsGrid').data("kendoGrid").dataSource.read();
+            $('#PricingGrid').data("kendoGrid").dataSource.read();
+            $('#AlternativeGrid').data("kendoGrid").dataSource.read();
+            $('#RecommendedSPGrid').data("kendoGrid").dataSource.read();
+            $('#CollectionGrid').data("kendoGrid").dataSource.read();
+            $('#StorageLocationGrid').data("kendoGrid").dataSource.read();
+            $('#GroupId').data("kendoComboBox").value(data.TBL.GroupId)
+            $('#Code').val(data.TBL.Code);
+            $('#NameA').val(data.TBL.NameA);
+            $('#NameE').val(data.TBL.NameE);
+            $('#ItemType').data("kendoDropDownList").value(data.TBL.ItemType);
+            $('#CostType').data("kendoDropDownList").value(data.TBL.CostType);
+            $('#HasValidDate').prop('checked', data.TBL.HasValidDate);
+            $('#HasSerial').prop('checked', data.TBL.HasSerial);
+            $('#SerialNeedInReciept').prop('checked', data.TBL.SerialNeedInReciept);
+            $('#SerialNeedInDeliver').prop('checked', data.TBL.SerialNeedInDeliver);
+            $("#MaxLimit").val(data.TBL.MaxLimit);
+            $("#RequireLimit").val(data.TBL.RequireLimit);
+            $("#MinLimit").val(data.TBL.MinLimit);
+            $("#slumpRate").val(data.TBL.slumpRate);
+            $('#BrandId').data("kendoComboBox").value(data.TBL.BrandId);
+            $('#HasColor').prop('checked', data.TBL.HasColor);
+            $("#Warranty").val(data.TBL.Warranty);
+            $("#CustomerLeadTime").val(data.TBL.CustomerLeadTime);
+            $('#Active').prop('checked', data.TBL.Active);
+            $('#Width').val(data.TBL.Width);
+            $('#Height').val(data.TBL.Height),
+            $('#Depth').val(data.TBL.Depth),
+            $('#Notes').val(data.TBL.Notes);
+            $('#Post').val(data.TBL.Post);
+            $('#ImgLogo').prop('src',data.TBL.Image);
+      
+            var test = getBase64Image(data.TBL.Image);
+            console.log(test);
+
+            if (data.TBL.Post == true) {
+                $("#BtnPost span").text(GetMessage(MessageType.PostButtonTxt));
+            }
+            else {
+
+                $("#BtnPost span").text(GetMessage(MessageType.UnPostButtonTxt));
+            }
+
+
+            $("#UnitsGrid").data("kendoGrid").dataSource.read();
+            $("#SuppliersGrid").data("kendoGrid").dataSource.read();
+            $("#PricingGrid").data("kendoGrid").dataSource.read();
+            $("#AlternativeGrid").data("kendoGrid").dataSource.read();
+            $("#RecommendedSPGrid").data("kendoGrid").dataSource.read();
+            $("#CollectionGrid").data("kendoGrid").dataSource.read();
+            $("#StorageLocationGrid").data("kendoGrid").dataSource.read();
+
+        });
+
+
+
+        $("#window").data("kendoWindow").close();
+    }
+
+
+
+</script>
+
+@* End Combo Box Events *@
+
+
+
+@* General *@
+
+<script>
+
+    function getDateFromAspString(aspString) {
+        if (aspString == null) { return new Date(Date.now()) }
+        var epochMilliseconds = aspString.replace(
+            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+            '$1');
+        if (epochMilliseconds != aspString) {
+            var d = new Date(parseInt(epochMilliseconds));
+            return d;
+        }
+    }
+
+
+
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#BtnSave").attr('type', 'button');
+        $("#BtnDiscard").attr('type', 'button');
+
+        $("#BtnReuse").removeAttr("data-toggle");
+        $("#BtnReuse").removeAttr("data-target");
+        $("#BtnReuse").removeAttr("data-action");
+
+        $("#BtnDelete").removeAttr("data-toggle");
+        $("#BtnDelete").removeAttr("data-target");
+        $("#BtnDelete").removeAttr("data-action");
+
+        $("#BtnPost").removeAttr("data-toggle");
+        $("#BtnPost").removeAttr("data-target");
+        $("#BtnPost").removeAttr("data-action");
+
+
+
+    })
+
+
+
+
+    $("#BtnCreate").click(function () {
+
+
+
+
+        $(document).ready(function () {
+
+
+
+            $("input.form-control").val('');
+            $("hidden").val('');
+            $("#Id").val('0');
+            $("#MemberShipId").val('0');
+
+            $('#GroupId').data("kendoComboBox").value(null)
+            $('#BrandId').data("kendoComboBox").value(null)
+            $('#ItemType').data("kendoDropDownList").value(1);
+            $('#CostType').data("kendoDropDownList").value(1);
+
+
+            $('input:checkbox').prop('checked', false);
+
+        });
+
+    })
+
+
+    $("#BtnSave").click(function () {
+
+
+        if ($('#Id').val() == null || $('#Id').val() == '') {
+            $('#Id').val('0') //Set id to 0 for save first record in table without click create
+        }
+
+
+        //Validation
+        if ($('#NameA').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+        var xmlUntisGrid = $("#UnitsGrid").data("kendoGrid").dataSource.data();
+        var xmlSuppliresGrid = $("#SuppliersGrid").data("kendoGrid").dataSource.data();
+        var xmlPricingGrid = $("#PricingGrid").data("kendoGrid").dataSource.data();
+        var xmlAlternativeGrid = $("#AlternativeGrid").data("kendoGrid").dataSource.data();
+        var xmlRecommendSPGrid = $("#RecommendedSPGrid").data("kendoGrid").dataSource.data();
+        var xmlCollectionDtlGrid = $("#CollectionGrid").data("kendoGrid").dataSource.data();
+        var xmlStorageLocationGrid = $("#StorageLocationGrid").data("kendoGrid").dataSource.data();
+
+
+        var UntisGrid = $("#UnitsGrid").data("kendoGrid");
+        var SuppliresGrid = $("#SuppliersGrid").data("kendoGrid");
+        var PricingGrid = $("#PricingGrid").data("kendoGrid");
+        var AlternativeGrid = $("#AlternativeGrid").data("kendoGrid");
+        var RecommendedSPGrid = $("#RecommendedSPGrid").data("kendoGrid");
+        var CollectionGrid = $("#CollectionGrid").data("kendoGrid");
+        var StorageLocationGrid = $("#StorageLocationGrid").data("kendoGrid");
+
+        for (var i = 0; i < xmlUntisGrid.length; i++) {
+            // check for UnitsGrid
+            if (xmlUntisGrid[i].UnitId == null || xmlUntisGrid[i].UnitId == 0) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = UntisGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                UntisGrid.select(row);
+                return;
+            }
+        }
+
+        for (var i = 0; i < xmlSuppliresGrid.length; i++) {
+            // check for SuppliresGrid
+            if (xmlSuppliresGrid[i].SupplierId == null || xmlSuppliresGrid[i].SupplierId == 0) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = SuppliresGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                SuppliresGrid.select(row);
+                return;
+            }
+        }
+
+
+        for (var i = 0; i < xmlPricingGrid.length; i++) {
+            // check for PricingGrid
+            if (xmlPricingGrid[i].UnitId == null || xmlPricingGrid[i].PurchasePolicy == null || xmlPricingGrid[i].PCurrencyId == null || xmlPricingGrid[i].PurchaseValue == null || xmlPricingGrid[i].PurchaseDiscountType == null || xmlPricingGrid[i].PurchaseDiscountValue == null || xmlPricingGrid[i].SalesPolicy == null || xmlPricingGrid[i].SCurrencyId == null || xmlPricingGrid[i].SalesValue == null || xmlPricingGrid[i].SalesDiscountType == null || xmlPricingGrid[i].SalesDiscountType == null) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = PricingGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                PricingGrid.select(row);
+                return;
+            }
+        }
+
+        for (var i = 0; i < xmlAlternativeGrid.length; i++) {
+            // check for AlternativeGrid
+            if (xmlAlternativeGrid[i].AlternateId == null || xmlAlternativeGrid[i].ProductId == null) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = AlternativeGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                AlternativeGrid.select(row);
+                return;
+            }
+        }
+
+
+        for (var i = 0; i < xmlRecommendSPGrid.length; i++) {
+            // check for RecommendSPGrid
+            if (xmlRecommendSPGrid[i].UnitId == null || xmlRecommendSPGrid[i].SPId == null || xmlRecommendSPGrid[i].ProductId == null) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = RecommendedSPGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                RecommendedSPGrid.select(row);
+                return;
+            }
+        }
+        for (var i = 0; i < xmlCollectionDtlGrid.length; i++) {
+            // check for CollectionDtlGrid
+            if (xmlCollectionDtlGrid[i].UnitId == null || xmlCollectionDtlGrid[i].SPId == null || xmlCollectionDtlGrid[i].ProductId == null) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = CollectionGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                CollectionGrid.select(row);
+                return;
+            }
+        }
+
+
+        for (var i = 0; i < xmlStorageLocationGrid.length; i++) {
+            // check for StorageLocationGrid
+            if (xmlStorageLocationGrid[i].WarehouseId == null || xmlStorageLocationGrid[i].ShelveId == null || xmlStorageLocationGrid[i].ProductId == null) {
+                showAndDismissAlert('danger', 'Please complete data in row ' + (i + 1))
+                row = StorageLocationGrid.tbody.find(">tr:not(.k-grouping-row)").eq(i);
+                StorageLocationGrid.select(row);
+                return;
+            }
+        }
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Products/Insert")",
+            type: 'POST',
+            data: {
+                xmlUntisGrid: JSON.stringify(xmlUntisGrid),
+                xmlSuppliresGrid: JSON.stringify(xmlSuppliresGrid),
+                xmlPricingGrid: JSON.stringify(xmlPricingGrid),
+                xmlAlternativeGrid: JSON.stringify(xmlAlternativeGrid),
+                xmlRecommendSPGrid: JSON.stringify(xmlRecommendSPGrid),
+                xmlCollectionDtlGrid: JSON.stringify(xmlCollectionDtlGrid),
+                xmlStorageLocationGrid: JSON.stringify(xmlStorageLocationGrid),
+
+                Id: $('#Id').val(),
+                CompanyId: $('#CompanyLists').val(),
+                GroupId: $('#GroupId').val(),
+                Code: $('#Code').val(),
+                NameA: $('#NameA').val(),
+                NameE: $('#NameE').val(),
+                ItemType: $("#ItemType").val(),
+                CostType: $("#CostType").val(),
+                HasValidDate: $('#HasValidDate').is(':checked'),
+                HasSerial: $('#HasSerial').is(':checked'),
+                SerialNeedInReciept: $('#SerialNeedInReciept').is(':checked'),
+                SerialNeedInDeliver: $('#SerialNeedInDeliver').is(':checked'),
+                MaxLimit: $("#MaxLimit").val(),
+                RequireLimit: $("#RequireLimit").val(),
+                MinLimit: $("#MinLimit").val(),
+                slumpRate: $("#slumpRate").val(),
+                BrandId: $("#BrandId").val(),
+                HasColor: $("#HasColor").val(),
+                Warranty: $("#Warranty").val(),
+                CustomerLeadTime: $("#CustomerLeadTime").val(),
+                Width: $("#Width").val(),
+                Height: $("#Height").val(),
+                Depth: $("#Depth").val(),
+                Active: $('#Active').is(':checked'),
+                Notes: $("#Notes").val(),
+
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    });
+
+
+    $("#BtnDiscard").click(function () {
+
+        var Id
+
+        if ($('#Id').val() == '' || $('#Id').val() == 0) {
+            Id = 0;
+            return Read(Id, ReadType.First);
+        }
+        else {
+            Id = $('#Id').val();
+            return Read(Id, ReadType.Current);
+        }
+
+
+
+    });
+
+
+    $("#BtnReuse").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 5,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+
+                    // Show confirmation and if ok execute Reuse function
+                    ShowConfirmMessage(GetMessage(MessageType.ReuseConfirmHDR), GetMessage(MessageType.ReuseConfirm), 'Reuse');
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+
+    function Reuse() {
+
+        //Validation
+        if ($('#id').val() == '') {
+            showAndDismissAlert('danger', 'No data to reuse')
+            return;
+        }
+
+        if ($('#NameA').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+
+
+
+
+
+
+
+        $(document).ready(function () {
+
+          
+                $.ajax({
+                    url: "@Url.Content("~/Stock_Products/Reuse")",
+                    type: 'POST',
+                    data: {
+
+                        Id: $('#Id').val(),
+
+
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+
+                        if (result.MessageType == 'success')
+
+
+                        { Read(result.Id, ReadType.Current); }
+                        showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+                    },
+                    error: function (result) {
+                        //Responsible for reload login page if if user not authenticate
+                        window.location.href = window.location.href;
+                    },
+                });
+            });
+    }
+
+    $("#BtnDelete").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: 4,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.result == 'True') {
+
+                    if ($('#Post').val() == 'true') {
+                        showAndDismissAlert('info', GetMessage(MessageType.RefuseDeletePosting))
+                        return;
+                    }
+
+                    // Show confirmation and if ok execute Delete function
+                    ShowConfirmMessage(GetMessage(MessageType.DeleteConfirmHDR), GetMessage(MessageType.DeleteConfirm), 'Delete');
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+    function Delete() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Products/Delete")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Last); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    }
+
+    $("#BtnPost").click(function () {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Base/CheckPermission")",
+            type: 'POST',
+            data: {
+                PerType: ($('#Post').val() == 'true') ? 7 : 6,
+                Url: window.location.pathname
+            },
+            dataType: 'json',
+            success: function (result) {
+               
+                if (result.result == 'True') {
+
+
+                    // Show confirmation and if ok execute Delete function
+                    if ($('#Post').val() == 'true') {
+                        ShowConfirmMessage(GetMessage(MessageType.UnPostConfirmHDR), GetMessage(MessageType.UnPostConfirm), 'Post');
+                    }
+                    else {
+                        ShowConfirmMessage(GetMessage(MessageType.PostConfirmHDR), GetMessage(MessageType.PostConfirm), 'Post');
+                    }
+
+
+                }
+
+                else {
+                    showAndDismissAlert(result.MessageType, result.ReturnMessage)
+                }
+
+            },
+            error: function (result) {
+
+            },
+        });
+
+    });
+
+    function Post() {
+
+
+        $.ajax({
+            url: "@Url.Content("~/Stock_Products/Post")",
+            type: 'POST',
+            data: {
+
+                Id: $('#Id').val(),
+
+            },
+            dataType: 'json',
+            success: function (result) {
+
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+
+            },
+            error: function (result) {
+                //Responsible for reload login page if if user not authenticate
+                window.location.href = window.location.href;
+            },
+        });
+
+    }
+
+
+    $(document).ready(function () {
+
+        $('#anchorImg').click(function () {
+            $("#productImg").data("kendoWindow").center().open();
+            
+            onImageUpload(this);
+
+            $('#files').change(function () {
+                $("#productImg").data("kendoWindow").center().close();
+                
+            })
+
+
+        })
+
+      
+    })
+
+    function onImageUpload(e) {
+        e.data = { Id: $("#Id").val() };
+        Read($("#Id").val(), ReadType.Current);
+    }
+</script>
+@* End General *@
+

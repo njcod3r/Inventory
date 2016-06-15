@@ -1,0 +1,934 @@
+﻿@model  MVC_ERP.Models.Priv_Groups
+
+@{
+    ViewBag.Title = "Groups";
+
+    <script>
+        document.getElementById("LBLFormHDR").innerText = "Groups";
+    </script>
+
+}
+
+<div id="tvformat" hidden="hidden">@ViewData["TVDS"]</div>
+<div style="margin-left:10px;margin-right:10px">
+    <div class="row">
+        <br />
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+
+
+        @* Hidden Fields *@
+        @Html.HiddenFor(model => model.Id, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.MemberShipId, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Create_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Write_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Post_Date, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Deleted, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Uid, new { @class = "form-control" })
+        @Html.HiddenFor(model => model.Delete_Date, new { @class = "form-control" })
+
+
+        @* End Of Hidden Fields *@
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Code")
+        </div>
+        <div class="col-xs-12 col-sm-10" style="margin-bottom: 5px">
+            @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @placeholder = "Leave empty to generate auto code" })
+        </div>
+       
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("English name")
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+            @Html.TextBoxFor(model => model.NameE, new { @class = "form-control" })
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Arabic name")
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+            @Html.TextBoxFor(model => model.NameA, new { @class = "form-control" })
+        </div>
+        
+        <div class="col-xs-12 col-sm-2">
+            @Html.Label("Notes")
+        </div>
+        <div class="col-xs-12 col-sm-4" style="margin-bottom: 5px">
+            @Html.TextBoxFor(model => model.Notes, new { @class = "form-control" })
+        </div>
+
+      
+        
+    </div>
+  
+
+
+    <div style="height:auto">
+        <br />
+        @(Html.Kendo().TabStrip()
+                .HtmlAttributes(new { style = "height:auto" })
+                
+          .Name("tabstrip")
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text("Group rights")
+                  .HtmlAttributes(new { style = "height:auto" })
+                  .Selected(true)
+                  .Content(@<text>
+                    <br />
+
+                    <div class="row">
+                     
+                        <div class="col-xs-12 col-sm-5"  style="margin-bottom: 20px; height: auto">
+                          
+                            <div class="demo-section" style="background-color: #e9f6c8; color: white; width: 90%; height: 100%; scrollbar-arrow-color: red ">
+                                <br />
+                                <div id="treeview" style="height:400px;width:95%;scrollbar-arrow-color:red"></div>
+                            </div>
+                            <script>
+
+                                var tvstring = $("#tvformat").text();
+                                var tvds = eval(tvstring);
+                                var HTDS = new kendo.data.HierarchicalDataSource({
+                                    data: tvds
+                                });
+
+                                var tv = $("#treeview").kendoTreeView({
+
+                                    checkboxes: {
+                                        checkChildren: true,
+                                        name: "checkedItems",
+                                        //template: "<input type='checkbox' name='checkedItems' #= item.checked ? 'checked' : '' # value='#= item.id #' />"
+                                    },
+                                    dataSource: kendo.observableHierarchy(HTDS),
+                                    dataTextField: "text",
+                                    select: treeviewonSelect,
+                                    //expanded: "expanded",
+                                  
+                                    // dataUrlField: "dataUrlField",
+                                }).data("kendoTreeView")
+
+                                $(".k-item").addClass("treenode");
+
+                                function treeviewonSelect(e) {
+                                   
+
+                                    var tv = $("#treeview").data("kendoTreeView");
+                      
+                                    var item = tv.dataItem(e.node);
+                                  
+                                   
+                                $.post("@Url.Action("TreeViewChanged", "Priv_Groups")", { SelectedId: item.id, GroupId: $("#Id").val() },
+                                function (data) {
+                                              
+                                    //Set All Model fields to avoid refreshing
+                                  
+             
+                                    $('#ChkInsert').prop('checked', data.Insert);
+                                    $('#ChkModifay').prop('checked', data.Modifay);
+                                    $('#ChkReserve').prop('checked', data.Reserve);
+                                    $('#ChkDelete').prop('checked', data.Delete);
+                                    $('#ChkReuse').prop('checked', data.Reuse);
+                                    $('#ChkPost').prop('checked', data.Post);
+                                    $('#ChkUnPost').prop('checked', data.UnPost);
+                                    $('#ChkShare').prop('checked', data.Share);
+                                    $('#ChkSearch').prop('checked', data.Search);
+                                    $('#ChkPreview').prop('checked', data.Preview);
+                                    $('#ChkPrint').prop('checked', data.Print);
+                                    $('#ChkExport').prop('checked', data.Export);
+      
+        
+       
+                                });
+
+                                }
+
+                            </script>
+                            <style type="text/css">
+                                .treenode {
+                                    font-size: 12pt;
+                                    /* text-decoration: none;
+                                    overflow: hidden;
+                                    overflow-x: hidden;
+                                    overflow-y: hidden;
+                                    filter: none;
+                                    font-weight: bold;*/
+                                    /*color: white;*/
+                                    /*background-color: transparent;*/
+                                }
+                            </style>
+                        </div>
+
+                        <div class=" col-xs-12" style="width:50%; margin-left:50px;  text-align: center; height: 5px; background: #ffffff; overflow: hidden; margin-bottom: 15px; "></div>
+
+                 
+
+                            <div class=" col-xs-12 col-sm-2 " style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkInsert"  class="FormChk"/> Allow insert</label>
+                            </div>
+
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkModifay" class="FormChk" /> Allow modifay</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkReserve" class="FormChk" /> Allow reserve</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkDelete" class="FormChk" /> Allow delete</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkReuse" class="FormChk" /> Allow reuse</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkPost" class="FormChk" /> Allow post</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkUnPost" class="FormChk" /> Allow un-post</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkShare" class="FormChk" /> Allow share</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkSearch" class="FormChk" /> Allow search</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkPreview" class="FormChk" /> Allow priview</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkPrint" class="FormChk" /> Allow print</label>
+                            </div>
+                            <div class=" col-xs-12 col-sm-2" style="margin-bottom: 5px;">
+                                <label><input type="checkbox" id="ChkExport" class="FormChk" /> Allow export</label>
+                            </div>
+
+                            <div class=" col-xs-12 col-sm-3 " style="margin-bottom: 5px;">
+                                <br />
+                                <button type="button"  id="BtnCheckAll">Check All</button><button type="button" id="BtnUnCheckAll" style="margin-left:5px">Un-Check All</button>
+                            </div>
+
+                            <div class=" col-xs-12" style="width:50%; margin-left:50px;  text-align: center; height: 5px; background: #ffffff; overflow: hidden; margin-bottom: 15px; "></div>
+
+                            <div class=" col-xs-12 col-sm-6 " style="margin-bottom: 5px;color:#ff0000">
+                                <label><input type="radio" id="rdioOneMenue" name="btn_group" checked="checked" /> Applay authentication for selected menu.</label>
+                            </div>
+                            @*<div class=" col-xs-12 col-sm-6 col-md-offset-1" style="margin-bottom: 5px;color:#ff0000">
+                                <label><input type="radio" id="rdioOneMenueAndChildren" name="btn_group" /> Applay authentication for selected menus and it's children.</label>
+                            </div>*@
+                            <div class=" col-xs-12 col-sm-6 " style="margin-bottom: 5px;color:#ff0000">
+                                <label><input type="radio" id="rdioAll" name="btn_group" /> Applay authentication for all  menus.</label>
+                            </div>
+                        
+
+</div> 
+
+                </text>);
+
+              tabstrip.Add().Text("Group members")
+                  .Content(@<text>
+
+        <div style="margin-left:10px;margin-right:10px">
+            <br />
+            <div id="cccc">
+            
+            </div>
+            <div hidden="hidden">
+             
+                @(Html.Kendo().ComboBox()
+
+                          .Name("UserId_List")
+                         .DataTextField("Name")
+                         .AutoBind(true)
+                         .DataValueField("UserId")
+                         .HtmlAttributes(new { style = "width:100%; max-width:600px;left:0;margin:0;text-align:left" })
+                         .DataSource(source =>
+                         { source.Read(read => { read.Action("FillUsers", "GenerlaClasses"); }); })
+
+                )
+            </div>
+
+          
+
+            @(Html.Kendo().Grid<MVC_ERP.Models.Priv_Users_Groups>()
+                     .Name("DetailGrid")
+
+                     .AutoBind(false)
+                     .Columns(columns =>
+                     {
+
+                         columns.Bound(c => c.Id).Hidden().ClientTemplate("#= Id #" + "<input type='hidden' name='Priv_Users_Groups[#= index(data)#].Id' value='#= Id #' />");
+
+                         columns.Bound(c => c.UserId).EditorTemplateName("Users_Grid").Title("User")//.ClientTemplate("#= UserId #"); 
+
+
+
+                                     .ClientTemplate("#= GetUserName(UserId)  #");
+
+                         columns.Bound(c => c.IsAdmin).ClientTemplate("<input type='checkbox' #= IsAdmin ? checked='checked':'' # class='chkbx' />");
+                         columns.Command(command => command.Destroy()).Width(100);
+                     })
+                     
+                     //.AutoBind(true)
+
+                                 //.Sortable()
+                                         .HtmlAttributes(new { style = "width:100%;min-height:100px;height:100%" })
+                                         .Scrollable(scrolling => scrolling.Height(250))
+                                 .ToolBar(toolBar =>
+                                    {
+                                        toolBar.Create();
+                                        // toolBar.Save();
+
+                                    })
+                                        .Editable(editable => editable.Mode(GridEditMode.InCell).CreateAt(GridInsertRowPosition.Bottom))
+                                                   .DataSource(dataSource => dataSource.Ajax()
+                                                       // .Batch(true)
+
+                                                   .Model(model =>
+                                                   {
+                                                       model.Id(p => p.Id);
+                                                       model.Field(p => p.UserId).DefaultValue(0);//.Editable(false);
+                                                   })
+                                                               .PageSize(1000)
+                                                                               .Read(read => read.Action("LoadUserGrid", "Priv_Groups").Data("SetGroupId"))
+
+                                                       .ServerOperation(false)
+
+                                                      )
+
+                                          //.Selectable()
+                    //.Filterable()
+
+                                          //.EnableCustomBinding(true)
+
+                                                 //.Events(events => events.DataBound("onGridDataBound"))
+                                    //.Events(events => events.Change("onChange"))
+            )
+
+          
+        </div>
+
+
+                </text>);
+            
+          
+
+          })
+        )
+    </div>
+</div>
+
+
+<script>
+    function Companychange(e) {
+
+    };
+    function Branchchange(e) {
+
+    };
+
+    $(document).ready(function () {
+        $("#DivCompanies").hide();
+        $("#DivBranches").hide();
+        $("#CmbFinancialYear").data("kendoDropDownList").wrapper.hide();
+    })
+
+    function SetGroupId() {
+        var info = $("#Id").val();
+        if (info) {
+            return {
+                Id: info
+            };
+        }
+    }
+
+ 
+    function GetUserName(UserId) {
+        if (UserId == null || UserId == 0) { UserId = 0; return "Please Select"; }
+     
+        var combobox = $("#UserId_List").data("kendoComboBox")
+        combobox.value(UserId);
+
+       return ($("#UserId_List").data("kendoComboBox").text());
+     
+    }
+
+   
+
+    $(function () {
+        $('#DetailGrid').on('click', '.chkbx', function () {
+            var checked = $(this).is(':checked');
+            var grid = $('#DetailGrid').data().kendoGrid;
+            var dataItem = grid.dataItem($(this).closest('tr'));
+            dataItem.set('IsAdmin', checked);
+        })
+    })
+
+    $(function () {
+        $('#DetailGrid').on('click', '.chkbx', function () {
+            var checked = $(this).is(':checked');
+            var grid = $('#DetailGrid').data().kendoGrid;
+            var dataItem = grid.dataItem($(this).closest('tr'));
+            dataItem.set('IsAdmin', checked);
+        })
+    })
+
+    function checkAll(ele) {
+        var state = $(ele).is(':checked');
+        var grid = $('#persons').data().kendoGrid;
+        $.each(grid.dataSource.view(), function () {
+            if (this['IsAdmin'] != state)
+                this.dirty = true;
+            this['IsAdmin'] = state;
+        });
+        grid.refresh();
+    }
+
+</script>
+
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+
+     @* Window *@
+        @(Html.Kendo().Window().Name("window").Title("Search companies")
+
+            .Content(@<text>
+
+
+      
+        <br />
+        <div class="row">
+            
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <input id="txtSearchValue" type="text" class="form-control" style="max-width:3000px" placeholder="Search">
+                    <span class="input-group-btn">
+                        <button id="BtnGetSearchResult" class="btn btn-default" type="button">Go!</button>
+                    </span>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+
+        <br />
+
+
+
+        <div style="width:100%; height:300px">
+            @(Html.Kendo().Grid<MVC_ERP.Models.Priv_Groups>()
+             .Name("SearchGrid")
+            .AutoBind(false)
+             .Columns(columns =>
+             {
+                 columns.Bound(c => c.Id).Visible(false);
+                 columns.Bound(c => c.Code);
+                 columns.Bound(c => c.NameE);
+                 columns.Bound(c => c.NameA);
+                 columns.Bound(c => c.Notes);
+             })
+            
+            
+                 .Sortable()
+                .HtmlAttributes(new { style = "width:100%;min-height:200px;height:100%" })
+
+                       .Scrollable(scrolling => scrolling.Height(250))
+                       .DataSource(dataSource => dataSource.Ajax()
+                       .PageSize(1000)
+                           .Read(read => read 
+                               .Action("Search", "Priv_Groups").Data("SetSearchValue")
+                            ))
+                          
+                      .Selectable()
+                      .Filterable()
+                      .EnableCustomBinding(true)
+                    
+                              .Events(events => events.Change("item_selected"))
+
+                     )
+            
+        </div>
+
+            <br />
+          
+    </text>)
+        .Scrollable(false)
+      
+                            .Visible(false)
+                            .Modal(true)
+                            .Actions(actions => actions.Close())
+                            .Events(ev => ev.Close("onClose"))
+
+
+    )
+
+
+
+
+    </div>
+
+</div>
+
+
+<script>
+   
+    function index(dataItem) {
+        var data = $("#DetailGrid").data("kendoGrid").dataSource.data();
+        return data.indexOf(dataItem);
+    }
+
+    function onClose() {
+        //$("#undo").show();
+    }
+
+    function SetSearchValue() {
+        var info = $("#txtSearchValue").val();
+        if (info) {
+            return {
+                TxtSearchVal: info
+            };
+        }
+    }
+
+    $(document).ready(function () {
+        $("#BtnSearch").bind("click", function () {
+            $("#window").data("kendoWindow").center().open();
+            $("#SearchGrid").data("kendoGrid").dataSource.read();
+
+        });
+    });
+</script>
+
+
+@* End Window *@
+
+@*Close from here don't have Open Open it in Layout page*@
+</form>
+
+@* Combo Box Events *@
+<script>
+
+    function onSelect(e) {
+
+    };
+
+    function Currencychange(e) {
+        //Change value of hidden field
+        $('#CurrencyId').val(e.sender.value());
+
+    };
+
+
+
+</script>
+
+@* End Combo Box Events *@
+
+<script>
+
+    var ReadType = {
+        Empty: 0,
+        First: 1,
+        Next: 2,
+        Current: 3,
+        Previous: 4,
+        Last: 5
+    }
+
+    //Read Function
+    function Read(Id, ReadType) {
+
+        if (Id == 0) {
+            Id = $("#Id").val()
+        }
+        $.ajax({
+            url: "@Url.Content("~/Priv_Groups/Read")",
+            type: 'POST',
+        data: {
+
+            Id: Id,
+            ReadType: ReadType
+            },
+        dataType: 'json',
+        success: function (result) {
+             
+            //Read Header
+            $('#Id').val(result.Id);
+            $('#Code').val(result.Code);
+            $('#NameA').val(result.NameA);
+            $('#NameE').val(result.NameE);
+            $('#Notes').val(result.Notes);
+            $('#Post').val(result.Post);
+            $('#Deleted').val(result.Deleted);
+
+            //Read Grid
+            $("#DetailGrid").data("kendoGrid").dataSource.read();
+
+            //Read Tree
+           
+            var HTDS = new kendo.data.HierarchicalDataSource({
+                data: eval(result.TreeDS)
+            });
+
+            var treeview= $("#treeview").data("kendoTreeView");
+            treeview.setDataSource(HTDS);
+     
+            $("#treeview").data("kendoTreeView").expand(".k-item");
+            $("#window").data("kendoWindow").close();
+               
+        },
+        error: function (result) {
+            alert("Error");
+        },
+            });
+    }
+
+    $("#BtnGetSearchResult").click(function () {
+             
+              $("#SearchGrid").data("kendoGrid").dataSource.read();
+            })
+
+
+    $("#BtnCloseWindow").click(function (e) {
+        $("#window").data("kendoWindow").close();
+    });
+
+    //Search 
+    function item_selected(e) {
+
+        var grid = $("#SearchGrid").data("kendoGrid");
+        var id;
+                   
+        grid.select().each(function() {
+            var dataItem = grid.dataItem($(this));
+            id = dataItem.Id;
+        });
+        
+        Read(id,ReadType.Current);
+   
+    }
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#BtnSave").attr('type', 'button');
+        $("#BtnDiscard").attr('type', 'button');
+
+        $("#BtnReuse").removeAttr("data-toggle");
+        $("#BtnReuse").removeAttr("data-target");
+        $("#BtnReuse").removeAttr("data-action");
+
+        $("#BtnDelete").removeAttr("data-toggle");
+        $("#BtnDelete").removeAttr("data-target");
+        $("#BtnDelete").removeAttr("data-action");
+
+        $("#BtnPost").removeAttr("data-toggle");
+        $("#BtnPost").removeAttr("data-target");
+        $("#BtnPost").removeAttr("data-action");
+
+     
+  
+        $("#treeview").data("kendoTreeView").expand(".k-item");
+       
+        $("#DetailGrid").data("kendoGrid").dataSource.read();
+    })
+
+    $("#BtnCheckAll").click(function () {
+
+        $(document).ready(function () {
+
+            $('input.FormChk').prop('checked', true);
+        });
+
+    })
+
+
+
+    $("#BtnUnCheckAll").click(function () {
+
+        $(document).ready(function () {
+           
+            $('input.FormChk').removeAttr('checked');
+        });
+
+    })
+
+
+    $("#BtnCreate").click(function () {
+
+        $(document).ready(function () {
+            $("input.form-control").val('');
+            $("hidden").val('');
+            $("#Id").val('0');
+            $("#MemberShipId").val('0');
+            $('input:checkbox').removeAttr('checked');
+            $('#treeview input[type="checkbox"]').prop('checked', false).change();
+            $("#DetailGrid").data("kendoGrid").dataSource.read();
+
+    
+        });
+
+    })
+
+
+    
+    $("#BtnSave").click(function () {
+
+
+
+        var tv = $("#treeview").data("kendoTreeView");
+        var selectedNode = tv.select();
+        var item = tv.dataItem(selectedNode);
+        var SItem;
+        if (item) {
+            SItem=item.id;
+        } else {
+            SItem = 0;
+        }
+
+        var RadioType;
+        if ($('#rdioOneMenue').is(':checked')) { RadioType = 1 }
+        if ($('#rdioOneMenueAndChildren').is(':checked')) { RadioType = 2 }
+        if ($('#rdioAll').is(':checked')) { RadioType = 3 }
+
+        //Validation
+        if ($('#NameA').val()=='') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if (SItem == 0 && RadioType != 3)
+        {
+            showAndDismissAlert('danger', 'No menu item selected')
+            return;
+        }
+
+
+
+
+
+
+
+        $(document).ready(function () {
+
+            var tree = $("#treeview").data("kendoTreeView").dataSource.data();
+            var grid = $("#DetailGrid").data("kendoGrid").dataSource.data();
+            $.ajax({
+                url: "@Url.Content("~/Priv_Groups/Insert")",
+                type: 'POST',
+                data: {
+                xmlNodes: JSON.stringify(tree),
+                xmlGrid: JSON.stringify(grid),
+                SelectedId: SItem,
+                RadioType: RadioType,
+                Id: $('#Id').val(),
+                Code: $('#Code').val(),
+                NameA: $('#NameA').val(),
+                NameE: $('#NameE').val(),
+                Notes: $('#Notes').val(),
+                Insert: $('#ChkInsert').is(':checked'),
+                Modifay: $('#ChkModifay').is(':checked'),
+                Reserve: $('#ChkReserve').is(':checked'),
+                Delete: $('#ChkDelete').is(':checked'),
+                Reuse: $('#ChkReuse').is(':checked'),
+                Post: $('#ChkPost').is(':checked'),
+                UnPost: $('#ChkUnPost').is(':checked'),
+                Share: $('#ChkShare').is(':checked'),
+                Search: $('#ChkSearch').is(':checked'),
+                Preview: $('#ChkPreview').is(':checked'),
+                Print: $('#ChkPrint').is(':checked'),
+                Export: $('#ChkExport').is(':checked')
+
+                
+
+            },
+            dataType: 'json',
+            success: function (result) {
+                
+              
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+             
+            },
+            error: function (result) {
+                alert("Error");
+            },
+            });
+        });
+    });
+
+
+    $("#BtnDiscard").click(function () {
+
+        var Id
+
+        if ($('#Id').val() == '' || $('#Id').val() == 0)
+        {
+            Id = 0;
+            return Read(Id, ReadType.Last);
+        }
+        else
+        {
+            Id = $('#Id').val();
+            return Read(Id, ReadType.Current);
+        }
+
+     
+   
+    });
+
+    $("#BtnReuse").click(function () {
+
+       // Show confirmation and if ok execute Reuse function
+        ShowConfirmMessage('Reuse confirmation', 'This action will duplicate these data with new code are you sure you want to reuse ?', 'Reuse');
+
+
+    });
+
+    function Reuse() {
+
+        //Validation
+        if ($('#Id').val() == '') {
+            showAndDismissAlert('danger', 'No data to reuse')
+            return;
+        }
+
+        if ($('#NameA').val()=='') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+        if ($('#NameE').val() == '') {
+            showAndDismissAlert('danger', 'Name required')
+            return;
+        }
+       
+
+
+
+
+
+
+        $(document).ready(function () {
+
+        
+            $.ajax({
+                url: "@Url.Content("~/Priv_Groups/Reuse")",
+                type: 'POST',
+            data: {
+              
+                Id: $('#Id').val(),
+                Code: $('#Code').val(),
+                NameA: $('#NameA').val(),
+                NameE: $('#NameE').val(),
+                Notes: $('#Notes').val(),
+              
+
+                },
+            dataType: 'json',
+            success: function (result) {
+                
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+             
+            },
+            error: function (result) {
+                alert("Error");
+            },
+            });
+    });
+    }
+
+    $("#BtnDelete").click(function () {
+
+        // Show confirmation and if ok execute Delete function
+        ShowConfirmMessage('Delete confirmation', 'Are you sure you want to delete ?', 'Delete');
+
+
+    });
+
+    function Delete() {
+
+     
+            $.ajax({
+                url: "@Url.Content("~/Priv_Groups/Delete")",
+                type: 'POST',
+            data: {
+              
+                Id: $('#Id').val(),
+            
+            
+                },
+            dataType: 'json',
+            success: function (result) {
+                
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Last); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+             
+            },
+            error: function (result) {
+                alert("Error");
+            },
+            });
+   
+    }
+
+    $("#BtnPost").click(function () {
+
+        // Show confirmation and if ok execute Delete function
+        ShowConfirmMessage('Post confirmation', 'Posting prevent edit or delete are you sure you want to pot?', 'Post');
+
+
+    });
+
+    function Post() {
+
+        
+            $.ajax({
+                url: "@Url.Content("~/Priv_Groups/Post")",
+                type: 'POST',
+            data: {
+              
+                Id: $('#Id').val(),
+            
+                },
+            dataType: 'json',
+            success: function (result) {
+                
+                if (result.MessageType == 'success')
+                { Read(result.Id, ReadType.Current); }
+                showAndDismissAlert(result.MessageType, result.ReturnMessage)
+             
+            },
+            error: function (result) {
+                alert("Error");
+            },
+            });
+   
+    }
+
+    //ComboBox Events
+    function DataBoundEvent() {
+
+    }
+
+    function SelectEvent(e) {
+
+ 
+    }
+</script>
+
+
+  
+

@@ -1,0 +1,14 @@
+﻿@model object
+
+    @*<input type="button" value="+" title="Add new" onclick="showDetails(e)" />*@
+    @(
+ Html.Kendo().ComboBoxFor(m => m)
+         .Placeholder("Please select")
+         .Filter(FilterType.Contains)
+      
+ 
+        .BindTo((SelectList)ViewData[ViewData.TemplateInfo.GetFullHtmlFieldName("") + "_Data"])
+
+
+
+    )

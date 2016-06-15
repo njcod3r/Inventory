@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report DataSourceName="ReportDS" Width="8.1in" UnitOfMeasure="Inch" Name="CostCenterStatement" xmlns="http://schemas.telerik.com/reporting/2012/3.6">
+  <DataSources>
+    <SqlDataSource ConnectionString="MSDBContext" SelectCommand="--declare @CompanyId int=1&#xD;&#xA;--declare @BranchId int=1&#xD;&#xA;--declare @FirstDate datetime ='11/23/2010'&#xD;&#xA;--declare @LastDate  datetime = '1/1/2015'&#xD;&#xA;--declare @AccountId  nvarchar(max)      = '0'&#xD;&#xA;--declare @CostCenterId  nvarchar(max)   = '1'&#xD;&#xA;&#xD;&#xA;if(@AccountId='0' and @CostCenterId='0')&#xD;&#xA;begin&#xD;&#xA;select CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA,sum(isnull(Debit,0)) as Debit,sum(isnull(Credit,0)) as Credit from(&#xD;&#xA;SELECT        GL_DailyVoucher_CostCenter.CostCenterId, GL_ChartOfCostCenter.Code AS CostCenterCode, GL_ChartOfCostCenter.NameA AS CostCenterNameA, &#xD;&#xA;                         GL_ChartOfCostCenter.NameE AS CostCenterNameE, GL_DailyVoucher_DTL.TransactDate_Gregi, GL_DailyVoucher_DTL.TransactDate_Hijri, &#xD;&#xA;                         GL_DailyVoucher_DTL.AccountId, GL_ChartOfAccounts.Code AS AccountCode, GL_ChartOfAccounts.NameA AS AccountNameA, &#xD;&#xA;                         GL_ChartOfAccounts.NameE AS AccountNameE, GL_DailyVoucher_CostCenter.Notes, Sys_Branches.NameA AS BranchNameA, Sys_Branches.NameE AS BranchNameE, &#xD;&#xA;                         GL_DailyVoucher.Source, GL_DailyVoucher.SourceNo, GL_DailyVoucher_CostCenter.DebitLocal AS Debit, &#xD;&#xA;                         GL_DailyVoucher_CostCenter.CreditLocal AS Credit&#xD;&#xA;FROM            GL_DailyVoucher_CostCenter INNER JOIN&#xD;&#xA;                         GL_DailyVoucher_DTL ON GL_DailyVoucher_CostCenter.DailyVoucherRowId = GL_DailyVoucher_DTL.Id INNER JOIN&#xD;&#xA;                         GL_DailyVoucher ON GL_DailyVoucher_CostCenter.DailyVoucherId = GL_DailyVoucher.Id AND &#xD;&#xA;                         GL_DailyVoucher_DTL.DailyVoucherId = GL_DailyVoucher.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfAccounts ON GL_DailyVoucher_DTL.AccountId = GL_ChartOfAccounts.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfCostCenter ON GL_DailyVoucher_CostCenter.CostCenterId = GL_ChartOfCostCenter.Id INNER JOIN&#xD;&#xA;                         Sys_Branches ON GL_DailyVoucher.BranchId = Sys_Branches.Id&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; where GL_DailyVoucher.CompanyId in (@CompanyId) and GL_DailyVoucher.BranchId in (@BranchId)&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; and cast(GL_DailyVoucher_DTL.TransactDate_Gregi as date) between @FirstDate and @LastDate &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;) as Tbl&#xD;&#xA;group by CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA&#xD;&#xA;order by CostCenterCode,AccountCode&#xD;&#xA;end&#xD;&#xA;&#xD;&#xA;if(@AccountId='0' and @CostCenterId !='0')&#xD;&#xA;begin&#xD;&#xA;&#xD;&#xA;select CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA,sum(isnull(Debit,0)) as Debit,sum(isnull(Credit,0)) as Credit from(&#xD;&#xA;SELECT        GL_DailyVoucher_CostCenter.CostCenterId, GL_ChartOfCostCenter.Code AS CostCenterCode, GL_ChartOfCostCenter.NameA AS CostCenterNameA, &#xD;&#xA;                         GL_ChartOfCostCenter.NameE AS CostCenterNameE, GL_DailyVoucher_DTL.TransactDate_Gregi, GL_DailyVoucher_DTL.TransactDate_Hijri, &#xD;&#xA;                         GL_DailyVoucher_DTL.AccountId, GL_ChartOfAccounts.Code AS AccountCode, GL_ChartOfAccounts.NameA AS AccountNameA, &#xD;&#xA;                         GL_ChartOfAccounts.NameE AS AccountNameE, GL_DailyVoucher_CostCenter.Notes, Sys_Branches.NameA AS BranchNameA, Sys_Branches.NameE AS BranchNameE, &#xD;&#xA;                         GL_DailyVoucher.Source, GL_DailyVoucher.SourceNo, GL_DailyVoucher_CostCenter.DebitLocal AS Debit, &#xD;&#xA;                         GL_DailyVoucher_CostCenter.CreditLocal AS Credit&#xD;&#xA;FROM            GL_DailyVoucher_CostCenter INNER JOIN&#xD;&#xA;                         GL_DailyVoucher_DTL ON GL_DailyVoucher_CostCenter.DailyVoucherRowId = GL_DailyVoucher_DTL.Id INNER JOIN&#xD;&#xA;                         GL_DailyVoucher ON GL_DailyVoucher_CostCenter.DailyVoucherId = GL_DailyVoucher.Id AND &#xD;&#xA;                         GL_DailyVoucher_DTL.DailyVoucherId = GL_DailyVoucher.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfAccounts ON GL_DailyVoucher_DTL.AccountId = GL_ChartOfAccounts.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfCostCenter ON GL_DailyVoucher_CostCenter.CostCenterId = GL_ChartOfCostCenter.Id INNER JOIN&#xD;&#xA;                         Sys_Branches ON GL_DailyVoucher.BranchId = Sys_Branches.Id&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; where GL_DailyVoucher.CompanyId in (@CompanyId) and GL_DailyVoucher.BranchId in (@BranchId)&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; and cast(GL_DailyVoucher_DTL.TransactDate_Gregi as date) between @FirstDate and @LastDate and&#xD;&#xA;                         GL_DailyVoucher_CostCenter.CostCenterId in( select Value from fn_Split( @CostCenterId,','))&#xD;&#xA;&#xD;&#xA;) as Tbl&#xD;&#xA;group by CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA&#xD;&#xA;order by CostCenterCode,AccountCode&#xD;&#xA;end&#xD;&#xA;&#xD;&#xA;if(@AccountId!='0' and @CostCenterId ='0')&#xD;&#xA;begin&#xD;&#xA;&#xD;&#xA;select CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA,sum(isnull(Debit,0)) as Debit,sum(isnull(Credit,0)) as Credit from(&#xD;&#xA;SELECT        GL_DailyVoucher_CostCenter.CostCenterId, GL_ChartOfCostCenter.Code AS CostCenterCode, GL_ChartOfCostCenter.NameA AS CostCenterNameA, &#xD;&#xA;                         GL_ChartOfCostCenter.NameE AS CostCenterNameE, GL_DailyVoucher_DTL.TransactDate_Gregi, GL_DailyVoucher_DTL.TransactDate_Hijri, &#xD;&#xA;                         GL_DailyVoucher_DTL.AccountId, GL_ChartOfAccounts.Code AS AccountCode, GL_ChartOfAccounts.NameA AS AccountNameA, &#xD;&#xA;                         GL_ChartOfAccounts.NameE AS AccountNameE, GL_DailyVoucher_CostCenter.Notes, Sys_Branches.NameA AS BranchNameA, Sys_Branches.NameE AS BranchNameE, &#xD;&#xA;                         GL_DailyVoucher.Source, GL_DailyVoucher.SourceNo, GL_DailyVoucher_CostCenter.DebitLocal AS Debit, &#xD;&#xA;                         GL_DailyVoucher_CostCenter.CreditLocal AS Credit&#xD;&#xA;FROM            GL_DailyVoucher_CostCenter INNER JOIN&#xD;&#xA;                         GL_DailyVoucher_DTL ON GL_DailyVoucher_CostCenter.DailyVoucherRowId = GL_DailyVoucher_DTL.Id INNER JOIN&#xD;&#xA;                         GL_DailyVoucher ON GL_DailyVoucher_CostCenter.DailyVoucherId = GL_DailyVoucher.Id AND &#xD;&#xA;                         GL_DailyVoucher_DTL.DailyVoucherId = GL_DailyVoucher.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfAccounts ON GL_DailyVoucher_DTL.AccountId = GL_ChartOfAccounts.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfCostCenter ON GL_DailyVoucher_CostCenter.CostCenterId = GL_ChartOfCostCenter.Id INNER JOIN&#xD;&#xA;                         Sys_Branches ON GL_DailyVoucher.BranchId = Sys_Branches.Id&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; where GL_DailyVoucher.CompanyId in (@CompanyId) and GL_DailyVoucher.BranchId in (@BranchId)&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; and cast(GL_DailyVoucher_DTL.TransactDate_Gregi as date) between @FirstDate and @LastDate and&#xD;&#xA;                          GL_DailyVoucher_DTL.AccountId  in(select Value from fn_Split(@AccountId,','))&#xD;&#xA;&#xD;&#xA;) as Tbl&#xD;&#xA;group by CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA&#xD;&#xA;order by CostCenterCode,AccountCode&#xD;&#xA;&#xD;&#xA;end&#xD;&#xA;&#xD;&#xA;if(@AccountId!='0' and @CostCenterId !='0')&#xD;&#xA;begin&#xD;&#xA;&#xD;&#xA;select CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA,sum(isnull(Debit,0)) as Debit,sum(isnull(Credit,0)) as Credit from(&#xD;&#xA;SELECT        GL_DailyVoucher_CostCenter.CostCenterId, GL_ChartOfCostCenter.Code AS CostCenterCode, GL_ChartOfCostCenter.NameA AS CostCenterNameA, &#xD;&#xA;                         GL_ChartOfCostCenter.NameE AS CostCenterNameE, GL_DailyVoucher_DTL.TransactDate_Gregi, GL_DailyVoucher_DTL.TransactDate_Hijri, &#xD;&#xA;                         GL_DailyVoucher_DTL.AccountId, GL_ChartOfAccounts.Code AS AccountCode, GL_ChartOfAccounts.NameA AS AccountNameA, &#xD;&#xA;                         GL_ChartOfAccounts.NameE AS AccountNameE, GL_DailyVoucher_CostCenter.Notes, Sys_Branches.NameA AS BranchNameA, Sys_Branches.NameE AS BranchNameE, &#xD;&#xA;                         GL_DailyVoucher.Source, GL_DailyVoucher.SourceNo, GL_DailyVoucher_CostCenter.DebitLocal AS Debit, &#xD;&#xA;                         GL_DailyVoucher_CostCenter.CreditLocal AS Credit&#xD;&#xA;FROM            GL_DailyVoucher_CostCenter INNER JOIN&#xD;&#xA;                         GL_DailyVoucher_DTL ON GL_DailyVoucher_CostCenter.DailyVoucherRowId = GL_DailyVoucher_DTL.Id INNER JOIN&#xD;&#xA;                         GL_DailyVoucher ON GL_DailyVoucher_CostCenter.DailyVoucherId = GL_DailyVoucher.Id AND &#xD;&#xA;                         GL_DailyVoucher_DTL.DailyVoucherId = GL_DailyVoucher.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfAccounts ON GL_DailyVoucher_DTL.AccountId = GL_ChartOfAccounts.Id INNER JOIN&#xD;&#xA;                         GL_ChartOfCostCenter ON GL_DailyVoucher_CostCenter.CostCenterId = GL_ChartOfCostCenter.Id INNER JOIN&#xD;&#xA;                         Sys_Branches ON GL_DailyVoucher.BranchId = Sys_Branches.Id&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; where GL_DailyVoucher.CompanyId in (@CompanyId) and GL_DailyVoucher.BranchId in (@BranchId)&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; and cast(GL_DailyVoucher_DTL.TransactDate_Gregi as date) between @FirstDate and @LastDate and&#xD;&#xA;                         GL_DailyVoucher_CostCenter.CostCenterId in(select Value from fn_Split( @CostCenterId,',')) and &#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9; GL_DailyVoucher_DTL.AccountId  in(select Value from fn_Split(@AccountId,',') )&#xD;&#xA;&#xD;&#xA;) as Tbl&#xD;&#xA;group by CostCenterId,CostCenterCode,CostCenterNameE,CostCenterNameA,AccountId,AccountCode,AccountNameE,AccountNameA&#xD;&#xA;order by CostCenterCode,AccountCode&#xD;&#xA;&#xD;&#xA;end&#xD;&#xA;" Name="ReportDS" ParameterValues="{@CompanyId:1},{@BranchId:1},{@FirstDate:1/1/2014},{@LastDate:1/1/2015},{@AccountId:0},{@CostCenterId:1}">
+      <Parameters>
+        <SqlDataSourceParameter DbType="Int32" Name="@CompanyId">
+          <Value>
+            <String>=Parameters.CompanyId.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="Int32" Name="@BranchId">
+          <Value>
+            <String>=Parameters.BranchId.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="DateTime" Name="@FirstDate">
+          <Value>
+            <String>=Parameters.FirstDate.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="DateTime" Name="@LastDate">
+          <Value>
+            <String>=Parameters.LastDate.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="String" Name="@AccountId">
+          <Value>
+            <String>=Parameters.Accounts.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+        <SqlDataSourceParameter DbType="String" Name="@CostCenterId">
+          <Value>
+            <String>=Parameters.CostCenters.Value</String>
+          </Value>
+        </SqlDataSourceParameter>
+      </Parameters>
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <DetailSection Height="0.399999777475988in" Name="detailSection1">
+      <Style>
+        <BorderStyle Top="None" Bottom="Solid" Left="None" Right="None" />
+        <BorderColor Top="Black" Bottom="Black" Left="Black" Right="Black" />
+        <BorderWidth Top="1pt" Bottom="1pt" Left="1pt" Right="1pt" />
+      </Style>
+      <Items>
+        <TextBox Width="1.01230019330978in" Height="0.340000003576279in" Left="6.14007886250814in" Top="0in" Value="= Fields.Credit" Format="{0:N2}" Name="textBox49">
+          <Style VerticalAlign="Middle">
+            <BorderStyle Top="None" Bottom="None" Right="None" />
+            <BorderWidth Default="0.5pt" />
+            <Font Size="9pt" />
+          </Style>
+        </TextBox>
+        <TextBox Width="0.904007891813914in" Height="0.340000003576279in" Left="5.23583475748698in" Top="0in" Value="= Fields.Debit" Format="{0:N2}" Name="textBox50">
+          <Style VerticalAlign="Middle">
+            <BorderStyle Top="None" Bottom="None" Right="None" />
+            <BorderWidth Default="0.5pt" />
+            <Font Size="9pt" />
+          </Style>
+        </TextBox>
+        <TextBox Width="0.947462578614553in" Height="0.340000003576279in" Left="7.15245819091797in" Top="0in" Value="=  Fields.Debit / IIf(Exec(&quot;GroupMain&quot;,sum(Fields.Debit))=0,99999999999999999999999999999999999999999999999999999,Exec(&quot;GroupMain&quot;,sum(Fields.Debit)))" Format="{0:P2}" Name="textBox53">
+          <Style Visible="True" TextAlign="Left" VerticalAlign="Middle">
+            <BorderStyle Top="None" Bottom="None" Right="None" />
+            <BorderWidth Default="0.5pt" />
+            <Font Size="9pt" />
+          </Style>
+        </TextBox>
+        <TextBox Width="3.03166715304056in" Height="0.340000003576279in" Left="2.20000012715658in" Top="0in" Value="= IIf(Parameters.OrderBy.Value=1, Fields.AccountNameE, Fields.CostCenterNameE) " Name="textBox56">
+          <Style VerticalAlign="Middle">
+            <BorderStyle Top="None" Bottom="None" Right="None" />
+            <BorderWidth Default="0.5pt" />
+            <Font Size="9pt" />
+          </Style>
+        </TextBox>
+        <TextBox Width="2.19988189140956in" Height="0.340000003576279in" Left="0.00003937880198161in" Top="0in" Value="= IIf(Parameters.OrderBy.Value=1, Fields.AccountCode,Fields.CostCenterCode) " Format="{0:dd/MM/yyyy}" Name="textBox5">
+          <Style VerticalAlign="Middle">
+            <BorderStyle Top="None" Bottom="None" Right="None" />
+            <BorderWidth Default="0.5pt" />
+            <Font Size="9pt" />
+          </Style>
+        </TextBox>
+      </Items>
+    </DetailSection>
+    <PageFooterSection Height="0.500000000000001in" Name="pageFooterSection1">
+      <Items>
+        <TextBox Width="1.20000012715658in" Height="0.199999809265137in" Left="6.78094291687012in" Top="0.200000127156576in" Value="= 'Page ' + PageNumber + ' of ' + PageCount" Name="textBox7" />
+        <TextBox Width="2.60000006357829in" Height="0.199999809265137in" Left="3.29999987284342in" Top="0.200000127156576in" Value="='Print date: ' + Now()" Name="textBox8" />
+        <TextBox Width="2.60000014305115in" Height="0.199999809265137in" Left="0.100000023841858in" Top="0.200000127156576in" Value="='User: ' + Parameters.UserName.Value" Name="textBox9" />
+      </Items>
+    </PageFooterSection>
+  </Items>
+  <StyleSheet>
+    <StyleRule>
+      <Style>
+        <Padding Left="2pt" Right="2pt" />
+      </Style>
+      <Selectors>
+        <TypeSelector Type="TextItemBase" />
+        <TypeSelector Type="HtmlTextBox" />
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style Color="Black">
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="9pt" />
+      </Style>
+      <Selectors>
+        <StyleSelector Type="Table" StyleName="Normal.TableNormal" />
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style VerticalAlign="Middle">
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="10pt" />
+      </Style>
+      <Selectors>
+        <DescendantSelector>
+          <Selectors>
+            <TypeSelector Type="Table" />
+            <StyleSelector Type="ReportItem" StyleName="Normal.TableHeader" />
+          </Selectors>
+        </DescendantSelector>
+      </Selectors>
+    </StyleRule>
+    <StyleRule>
+      <Style>
+        <BorderStyle Default="Solid" />
+        <BorderColor Default="Black" />
+        <BorderWidth Default="1px" />
+        <Font Name="Tahoma" Size="9pt" />
+      </Style>
+      <Selectors>
+        <DescendantSelector>
+          <Selectors>
+            <TypeSelector Type="Table" />
+            <StyleSelector Type="ReportItem" StyleName="Normal.TableBody" />
+          </Selectors>
+        </DescendantSelector>
+      </Selectors>
+    </StyleRule>
+  </StyleSheet>
+  <PageSettings>
+    <PageSettings PaperKind="Letter" Landscape="False">
+      <Margins>
+        <MarginsU Left="0.2in" Right="0.2in" Top="0.3in" Bottom="0.4in" />
+      </Margins>
+    </PageSettings>
+  </PageSettings>
+  <Groups>
+    <Group Name="group1">
+      <GroupHeader>
+        <GroupHeaderSection PrintOnEveryPage="True" Height="0.30000019073486in" Name="groupHeaderSection">
+          <Style>
+            <BorderStyle Top="None" Bottom="None" />
+          </Style>
+          <Items>
+            <SubReport Width="8.09988149007162in" Height="0.300000190734863in" Left="0.00003941853841146in" Top="0in" Name="subReportHeadr">
+              <ReportSource>
+                <UriReportSource Uri="../Header.trdx">
+                  <Parameters>
+                    <Parameter Name="CompanyId">
+                      <Value>
+                        <String>=Parameters.CompanyId.Value</String>
+                      </Value>
+                    </Parameter>
+                    <Parameter Name="Title">
+                      <Value>
+                        <String>=Parameters.Title.Value</String>
+                      </Value>
+                    </Parameter>
+                  </Parameters>
+                </UriReportSource>
+              </ReportSource>
+            </SubReport>
+          </Items>
+        </GroupHeaderSection>
+      </GroupHeader>
+      <GroupFooter>
+        <GroupFooterSection Height="0.0520833134651189in" Name="groupFooterSection" />
+      </GroupFooter>
+    </Group>
+    <Group Name="GroupMain">
+      <GroupHeader>
+        <GroupHeaderSection PrintOnEveryPage="True" PageBreak="Before" Height="1.39999977747599in" Name="groupHeaderSection1">
+          <Items>
+            <TextBox Width="3.031667470932in" Height="0.340000003576279in" Left="2.20000044504801in" Top="0.900079091389974in" Value="= IIf(Parameters.OrderBy.Value=2, &quot;C.Center Name&quot;,&quot; Account Name&quot;)" Name="textBox43">
+              <Style VerticalAlign="Middle">
+                <BorderStyle Top="Solid" Bottom="Solid" Right="None" />
+                <BorderWidth Default="0.5pt" />
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.23166656494141in" Height="0.227856799960136in" Left="0.0683339436848958in" Top="0.0979956785837809in" Value="= IIf(Parameters.OrderBy.Value=1, &quot;C.Center Code&quot;,&quot; Account Code&quot;) " Name="textBox24">
+              <Style>
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="3.70000084241231in" Height="0.227856799960136in" Left="1.40000057220459in" Top="0.0979956785837809in" Value="= IIf(Parameters.OrderBy.Value=1, Fields.CostCenterCode, Fields.AccountCode) " Name="textBox26">
+              <Style>
+                <Font Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.800000468889877in" Height="0.227856794993083in" Left="6.20000139872233in" Top="0.0979956785837809in" Value="= Parameters.FirstDate.Value.Date " Format="{0:dd/MM/yyyy}" Name="textBox23" />
+            <TextBox Width="3.70000084241231in" Height="0.227856799960136in" Left="1.40000057220459in" Top="0.400079011917114in" Value="= IIf(Parameters.OrderBy.Value=1, Fields.CostCenterNameE, Fields.AccountNameE) " Name="textBox27">
+              <Style>
+                <Font Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="2.19996043046315in" Height="0.340000003576279in" Left="0.00004005432128906in" Top="0.900079091389974in" Value="= IIf(Parameters.OrderBy.Value=2, &quot;C.Center Code&quot;,&quot; Account Code&quot;) " Name="textBox44">
+              <Style VerticalAlign="Middle">
+                <BorderStyle Top="Solid" Bottom="Solid" Right="None" />
+                <BorderWidth Default="0.5pt" />
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.23166656494141in" Height="0.227856799960136in" Left="0.0683339436848958in" Top="0.400079011917114in" Value="= IIf(Parameters.OrderBy.Value=1, &quot;C.Center Name&quot;,&quot; Account Name&quot;)" Name="textBox25">
+              <Style>
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.951033115386963in" Height="0.340000003576279in" Left="7.14888827006022in" Top="0.900079091389974in" Value="Percentage:" Name="textBox3">
+              <Style TextAlign="Left" VerticalAlign="Middle">
+                <BorderStyle Top="Solid" Bottom="Solid" Right="None" />
+                <BorderWidth Default="0.5pt" />
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.904007891813914in" Height="0.340000003576279in" Left="5.23166783650716in" Top="0.900079091389974in" Value="DEBIT:" Name="textBox47">
+              <Style VerticalAlign="Middle">
+                <BorderStyle Top="Solid" Bottom="Solid" Right="None" />
+                <BorderWidth Default="0.5pt" />
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="1.01305482784907in" Height="0.340000003576279in" Left="6.13575426737467in" Top="0.900079091389974in" Value="CREDIT:" Name="textBox48">
+              <Style VerticalAlign="Middle">
+                <BorderStyle Top="Solid" Bottom="Solid" Right="None" />
+                <BorderWidth Default="0.5pt" />
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.91879431406657in" Height="0.227856799960136in" Left="5.23166783650716in" Top="0.0854224363962809in" Value="From date:" Name="textBox1">
+              <Style>
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.91879431406657in" Height="0.227856799960136in" Left="5.23166783650716in" Top="0.387505769729614in" Value="To date:" Name="textBox2">
+              <Style>
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.800000429153442in" Height="0.227856799960136in" Left="6.20000139872233in" Top="0.400078932444255in" Value="= Parameters.LastDate.Value" Format="{0:dd/MM/yyyy}" Name="textBox4" />
+            <TextBox Width="0.782296478748322in" Height="0.227856799960136in" Left="7.00000127156575in" Top="0.10007913907369in" Value="= Parameters.FirstDateHijri.Value" Format="" Name="textBox13" />
+            <TextBox Width="0.782296478748322in" Height="0.227856799960136in" Left="7.00000127156575in" Top="0.400079091389974in" Value="= Parameters.LastDateHijri.Value" Format="" Name="textBox14" />
+          </Items>
+        </GroupHeaderSection>
+      </GroupHeader>
+      <GroupFooter>
+        <GroupFooterSection Height="0.700000127156575in" Name="groupFooterSection1">
+          <Items>
+            <TextBox Width="1.07237976789474in" Height="0.340000003576279in" Left="6.14007886250814in" Top="0.200000445048014in" Value="= Sum(Fields.Credit)" Format="{0:N2}" Name="textBox10">
+              <Style VerticalAlign="Middle">
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.899839699268341in" Height="0.340000003576279in" Left="5.23583475748698in" Top="0.200000445048014in" Value="= Sum(Fields.Debit)" Format="{0:N2}" Name="textBox6">
+              <Style VerticalAlign="Middle">
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.88738348086675in" Height="0.340000003576279in" Left="7.21253712972005in" Top="0.199961026509603in" Value="= Sum(Fields.Debit)- Sum(Fields.Credit)" Format="{0:N2}" Name="textBox11">
+              <Style VerticalAlign="Middle">
+                <Font Size="9pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <TextBox Width="0.900001227855682in" Height="0.340000003576279in" Left="4.33166631062825in" Top="0.200000445048014in" Value="Total:" Name="textBox12">
+              <Style VerticalAlign="Middle">
+                <Font Size="11pt" Bold="True" />
+              </Style>
+            </TextBox>
+            <Shape Width="8.09992090861003in" Height="0.0520833333333333in" Left="0in" Top="0.600000381469727in" Name="shape1">
+              <ShapeType>
+                <LineShape Direction="EW" />
+              </ShapeType>
+            </Shape>
+          </Items>
+        </GroupFooterSection>
+      </GroupFooter>
+      <Groupings>
+        <Grouping Expression="= IIf(Parameters.OrderBy.Value=1,Fields.CostCenterId, Fields.AccountId)" />
+      </Groupings>
+    </Group>
+  </Groups>
+  <ReportParameters>
+    <ReportParameter Name="CompanyId" Type="Integer" Text="CompanyId">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="BranchId" Type="Integer" Text="BranchId" MultiValue="True">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="FirstDate" Type="DateTime" Text="FirstDate">
+      <Value>
+        <String>1/1/2014</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="LastDate" Type="DateTime" Text="LastDate">
+      <Value>
+        <String>1/1/2015</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="Accounts" Text="Accounts">
+      <Value>
+        <String>0</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="UserName">
+      <Value>
+        <String>m</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="Title" Text=" ">
+      <Value>
+        <String>m</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="FirstDateHijri">
+      <Value>
+        <String>m</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="LastDateHijri">
+      <Value>
+        <String>m</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="CostCenters" Text="CostCenters">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+    <ReportParameter Name="OrderBy" Text="OrderBy">
+      <Value>
+        <String>1</String>
+      </Value>
+    </ReportParameter>
+  </ReportParameters>
+</Report>
